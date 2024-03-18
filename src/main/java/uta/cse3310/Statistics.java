@@ -3,68 +3,82 @@ package uta.cse3310;
 public class Statistics {
     // this class stores global statistics of the
     // program
-    private Long RunningTime;
-    private Integer XWins;
-    private Integer OWins;
-    private Integer Draws;
-    private Integer TotalGames;
-    private Integer GamesInProgress;
 
-    public Statistics() {
-        RunningTime = 0L;
-        XWins = 0;
-        OWins = 0;
-        Draws = 0;
-        TotalGames = 0;
-        GamesInProgress = 0;
+    public int playerOneScore;
+    public int playerTwoScore;
+    public int playerThreeScore;
+    public int playerFourScore;
+
+    public String printLeaderBoard() {
+
     }
 
-    public Long getRunningTime() {
-        return RunningTime;
+    public String displayPersonalScore() {
+
     }
 
-    public void setRunningTime(Long runningTime) {
-        RunningTime = runningTime;
-    }
+    // private Long RunningTime;
+    // private Integer XWins;
+    // private Integer OWins;
+    // private Integer Draws;
+    // private Integer TotalGames;
+    // private Integer GamesInProgress;
 
-    public Integer getXWins() {
-        return XWins;
-    }
+    // public Statistics() {
+    //     RunningTime = 0L;
+    //     XWins = 0;
+    //     OWins = 0;
+    //     Draws = 0;
+    //     TotalGames = 0;
+    //     GamesInProgress = 0;
+    // }
 
-    public void setXWins(Integer xWins) {
-        XWins = xWins;
-    }
+    // public Long getRunningTime() {
+    //     return RunningTime;
+    // }
 
-    public Integer getOWins() {
-        return OWins;
-    }
+    // public void setRunningTime(Long runningTime) {
+    //     RunningTime = runningTime;
+    // }
 
-    public void setOWins(Integer oWins) {
-        OWins = oWins;
-    }
+    // public Integer getXWins() {
+    //     return XWins;
+    // }
 
-    public Integer getDraws() {
-        return Draws;
-    }
+    // public void setXWins(Integer xWins) {
+    //     XWins = xWins;
+    // }
 
-    public void setDraws(Integer draws) {
-        Draws = draws;
-    }
+    // public Integer getOWins() {
+    //     return OWins;
+    // }
 
-    public Integer getTotalGames() {
-        return TotalGames;
-    }
+    // public void setOWins(Integer oWins) {
+    //     OWins = oWins;
+    // }
 
-    public void setTotalGames(Integer totalGames) {
-        TotalGames = totalGames;
-    }
+    // public Integer getDraws() {
+    //     return Draws;
+    // }
 
-    public Integer getGamesInProgress() {
-        return GamesInProgress;
-    }
+    // public void setDraws(Integer draws) {
+    //     Draws = draws;
+    // }
 
-    public void setGamesInProgress(Integer gamesInProgress) {
-        GamesInProgress = gamesInProgress;
-    }
+    // public Integer getTotalGames() {
+    //     return TotalGames;
+    // }
+
+    // public void setTotalGames(Integer totalGames) {
+    //     TotalGames = totalGames;
+    // }
+
+    // public Integer getGamesInProgress() {
+    //     return GamesInProgress;
+    // }
+
+    // public void setGamesInProgress(Integer gamesInProgress) {
+    //     GamesInProgress = gamesInProgress;
+    // }
 
 }
