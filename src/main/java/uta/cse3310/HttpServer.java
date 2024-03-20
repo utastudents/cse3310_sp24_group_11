@@ -16,38 +16,39 @@ import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
 public class HttpServer {
 
-    private static final String HTML = "./html";
-    int port = 8080;
-    String dirname = HTML;
+    // private static final String HTML = "./html";
+    // int port = 8080;
+    // String dirname = HTML;
+
+    int port;
+    String dirname;
 
     public HttpServer(int portNum, String dirName) {
-        port = portNum;
-        dirname = dirName;
+        // port = portNum;
+        // dirname = dirName;
     }
 
     public void start() {
-        try {
-            File dir = new File(dirname);
-            if (!dir.canRead())
-                throw new FileNotFoundException(dir.getAbsolutePath());
-            // set up server
-            HTTPServer server = new HTTPServer(port);
-            VirtualHost host = server.getVirtualHost(null); // default host
-            host.setAllowGeneratedIndex(true); // with directory index pages
-            host.addContext("/", new FileContextHandler(dir));
-            host.addContext("/api/time", new ContextHandler() {
-                public int serve(Request req, Response resp) throws IOException {
-                    long now = System.currentTimeMillis();
-                    resp.getHeaders().add("Content-Type", "text/plain");
-                    resp.send(200, String.format("%tF %<tT", now));
-                    return 0;
-                }
-            });
-            server.start();
-        } catch (Exception e) {
-            System.err.println("error: " + e);
-        }
-
+        // try {
+        //     File dir = new File(dirname);
+        //     if (!dir.canRead())
+        //         throw new FileNotFoundException(dir.getAbsolutePath());
+        //     // set up server
+        //     HTTPServer server = new HTTPServer(port);
+        //     VirtualHost host = server.getVirtualHost(null); // default host
+        //     host.setAllowGeneratedIndex(true); // with directory index pages
+        //     host.addContext("/", new FileContextHandler(dir));
+        //     host.addContext("/api/time", new ContextHandler() {
+        //         public int serve(Request req, Response resp) throws IOException {
+        //             long now = System.currentTimeMillis();
+        //             resp.getHeaders().add("Content-Type", "text/plain");
+        //             resp.send(200, String.format("%tF %<tT", now));
+        //             return 0;
+        //         }
+        //     });
+        //     server.start();
+        // } catch (Exception e) {
+        //     System.err.println("error: " + e);
+        // }
     }
-
 }
