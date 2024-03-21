@@ -36,36 +36,36 @@ public class App extends WebSocketServer {
   }
 
   public void displayMessageBox(){
-
+    // Displays message chat box
   }
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-
+    // On new websocket connection, creates lobby if no lobby is made, shows game state, game tracking, creates new ServerEvent
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    
+    // Handles closing of websocket connection
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    
+    // Processes messages from players through the websocket connections including logs, run time, and game stats
   }
 
   @Override
   public void onMessage(WebSocket conn, ByteBuffer message) {
-
+    // Handles binary messages
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
-
+    // Handle exceptions that occur for the websocket connection, error manangement and debugging
   }
   
   @Override
   public void onStart(){
-
+    // Initial tasks when server starts up
   }
 }
