@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>uta.cse3310</groupId>
-  <artifactId>TicTacToe</artifactId>
+  <artifactId>WordSearchGame</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>TicTacToe</name>
-  <description>A simple game example.</description>
+  <name>WordSearchGame</name>
+  <description>A Multiplayer Word Search Game.</description>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
