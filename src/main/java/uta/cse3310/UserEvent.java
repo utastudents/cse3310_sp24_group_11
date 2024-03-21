@@ -1,3 +1,5 @@
+package uta.cse3310;
+
 public class UserEvent {
     int gameIdx;
     PlayerType playerType;

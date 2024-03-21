@@ -1,3 +1,5 @@
+package uta.cse3310;
+
 import java.util.ArrayList;
 
 public class wordGrid{

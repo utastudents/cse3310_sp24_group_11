@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.ArrayList;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -30,27 +31,7 @@ public class App extends WebSocketServer {
   private int connectionID;
   public ArrayList<Integer> playerIDs;
   
-  public int App(){
-
-  }
-
-  public void onOpen(){
-
-  }
-
-  public void onClose(){
-
-  }
-
-  public void onMessage(){
-
-  }
-
-  public void onError(){
-
-  }
-
-  public void onStart(){
+  public App(){
 
   }
 
@@ -58,7 +39,33 @@ public class App extends WebSocketServer {
 
   }
 
-  public bool verifyUsername(){
+  @Override
+  public void onOpen(WebSocket conn, ClientHandshake handshake) {
+
+  }
+
+  @Override
+  public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+    
+  }
+
+  @Override
+  public void onMessage(WebSocket conn, String message) {
+    
+  }
+
+  @Override
+  public void onMessage(WebSocket conn, ByteBuffer message) {
+
+  }
+
+  @Override
+  public void onError(WebSocket conn, Exception ex) {
+
+  }
+  
+  @Override
+  public void onStart(){
 
   }
 }

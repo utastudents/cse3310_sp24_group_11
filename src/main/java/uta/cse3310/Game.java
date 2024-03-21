@@ -17,7 +17,7 @@ public class Game {
     }
 
     public boolean checkWinner() {
-
+        return true;  // Placeholder return value
     }
 
     public void uniquePlayerColor() {
@@ -25,7 +25,7 @@ public class Game {
     }
 
     public boolean checkValidWord(String word) {
-
+        return true; // Placeholder return value
     }
 
     public void displayUsersAndData() {

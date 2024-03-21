@@ -1,3 +1,5 @@
+package uta.cse3310;
+
 public class messageBox{
     public String message;
 
@@ -6,7 +8,7 @@ public class messageBox{
     }
 
     public String writeMessage(){
-
+        return "";
     }
 }
 

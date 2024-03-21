@@ -1,13 +1,15 @@
+import java.util.ArrayList;
+
 public class Lobby{
-    public display(){
+    public void display(){
 
     }
 
-    public listGames(){
+    public void listGames(){
 
     }
 
-    public addPlayer(ArrayList<Integer> playerIDs){
+    public void addPlayer(ArrayList<Integer> playerIDs){
 
     }
 }
