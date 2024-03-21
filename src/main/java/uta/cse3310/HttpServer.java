@@ -17,10 +17,10 @@ public class HttpServer {
     String dirname;
 
     public HttpServer(int portNum, String dirName) {
-
+        // Creates instance of HttpServer
     }
 
     public void start() {
-    
+        // Initializes and starts HttpServer
     }
 }
