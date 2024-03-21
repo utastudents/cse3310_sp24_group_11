@@ -12,7 +12,7 @@ import net.freeutils.httpserver.HTTPServer.Response;
 import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
 public class HttpServer {
-
+    //Sets up and runs the HTTP server
     int port;
     String dirname;
 
