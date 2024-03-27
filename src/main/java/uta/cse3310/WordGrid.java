@@ -2,7 +2,7 @@ package uta.cse3310;
 
 import java.util.ArrayList;
 
-public class wordGrid{
+public class WordGrid{
     private ArrayList<String> wordBank;
     private char[][] wordGrid;
     private int densityOfWords;
