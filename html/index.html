@@ -1,4 +1,35 @@
+<!DOCTYPE html>
+
+
+<html>
 <head>
+    <title>PHP Form</title>
+</head>
+<body>
+    <h1>Enter your username</h1>
+    <input type = "text" id = "username">
+    <button onclick = "printUserName()">Submit</button>
+
+
+    <script>
+        function printUserName(){
+            var username = document.getElementById("username").value;
+            if(username == ""){
+                alert('Box cannot be left blank!');
+                return;
+            }
+            //length myust be less than 8
+            if(username.length > 8){
+                alert('Username must be less than 8 characters');
+                return;
+            }
+            document.write('Hello, ' + username + '!');
+        }
+    </script>
+</body>
+</html>
+
+<!-- <head>
     <meta charset="utf-8">
 </head>
 
@@ -117,4 +148,4 @@
         connection.send(JSON.stringify(U));
         console.log(JSON.stringify(U))
     }
-</script>
+</script> -->
