@@ -6,13 +6,13 @@
     <title>Word Search Game</title>
 </head>
 <body>
-    <h1>Enter your username</h1>
-    <input type = "text" id = "username">
-    <button onclick = "printUserName()">Submit</button>
-
-
+    <div id = "getUsername">
+        <h1>Enter your username</h1>
+        <input type = "text" id = "username">
+        <button onclick = "checkUsername()">Submit</button>
+    </div> 
     <script>
-        function printUserName(){
+        function checkUsername(){
             var username = document.getElementById("username").value;
             if(username == ""){
                 alert('Box cannot be left blank!');
@@ -23,9 +23,27 @@
                 alert('Username must be less than 8 characters');
                 return;
             }
-            document.write('Hello, ' + username + '!');
+            //document.write('Hello, ' + username + '!'); 
+            document.getElementById("getUsername").style.display = "none";
+            document.getElementById("Lobby").style.display = "table";
         }
     </script>
+    
+    <div id = "Lobby" style = "display:none">
+        <h1>Word Search Game Lobby</h1>
+        <table>
+            <tr>
+                <td><button onclick = "showPlayers()">Show Players</button>
+                <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
+                <td><button onclick = "GlobalChat()">Global Chat</button>
+            </tr>
+            <tr>
+                <td><button onclick = "game2p()">Join 2 Player Game</button>
+                <td><button onclick = "game3p()">Join 3 Player Game</button>
+                <td><button onclick = "game4p()">Join 4 Player Game</button>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>
 
