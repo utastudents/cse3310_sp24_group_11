@@ -5,9 +5,22 @@ public class Player{
     int playerScore;
     int playerID;
 
-    public boolean verifyUsername(int playerID){
-        // Makes sure usernames entered by players are unique
-        return true;  // Placeholder return value
+    public boolean verifyUsername(String playerName, ArrayList<Player> playerList){
+
+        for (Player player: playerList) {//loops through every player in the player array and checks if any have the same username
+            if(playerName == player.getUsername()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getUsername() {
+        return playerName;
+    }
+
+    public void setUsername(String username) {
+        playerName = username;
     } 
 }
 
