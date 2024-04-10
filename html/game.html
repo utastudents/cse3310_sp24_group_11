@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Word Search Game</title>
+<style>
+    #wordSearchContainer table {
+        border-collapse: collapse;
+        margin: 20px;
+        width: 100%;  
+        table-layout: fixed;  
+    }
+    #wordSearchContainer td {
+        border: 1px solid black;
+        width: 20px;  
+        height: 20px;
+        text-align: center;
+        font-size: 15px;  
+        cursor: pointer;
+    }
+    #messageInput {
+        width: calc(100% - 60px);
+        padding: 10px;
+    }
+</style>
+</head>
+<body>
+    <div id="wordSearchContainer">
+        <table>
+            <tbody id="wordSearchGrid">
+            </tbody>
+        </table>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    generateGrid();
+});
+
+function generateGrid() {
+    const grid = document.getElementById('wordSearchGrid');
+    const size = 50;
+    for (i = 0; i < size; i++) {
+        const row = document.createElement('tr');
+        for (let j = 0; j < size; j++) {
+            const cell = document.createElement('td');
+            cell.innerText = String.fromCharCode('A'.charCodeAt(0) + Math.floor(Math.random() * 26));
+            row.appendChild(cell);
+        }
+        grid.appendChild(row);
+    }
+}
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
