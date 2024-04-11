@@ -64,6 +64,7 @@
         document.getElementById("Players").style.display = "none";
         document.getElementById("content").style.display = "none";
         document.getElementById("Leaderboard").style.display = "none";
+        document.getElementById("GlobalChat").style.display = "none";
         document.getElementById("Lobby").style.display = "table";
     }
     function showButPlay(){
@@ -84,6 +85,10 @@
         document.getElementById("content").innerHTML = lead;
         document.getElementById("content").style.display = "table";
     }
+    function chat(){
+        document.getElementById("GlobalChat").style.display = "none";
+        document.getElementsByClassName("chatting")[0].style.display = "block";
+    }
 </script>
     <div id="Players" style = "display:none">
         <h1>Players</h1>
@@ -101,8 +106,18 @@
     <div id = "GlobalChat" style = "display:none">
         <h1>Global Chat</h1>
         <button onclick = "backToLobby()">Back to Lobby</button>
-        <button onclick = "chat()">Open Chat</button>
+        <button onclick = "chat()">GoToChat</button>
     </div>
-
+    <div class="chatting" style="display: none">
+        <div class="chat-box" id="chatBox"></div>
+        <form id="messageForm">
+          <div class="input-box">
+            <input type="text" id="messageInput" placeholder="Enter message here">
+            <input type="submit" value="Send">
+            <!-- add button to go back to lobby-->
+            <button onclick = "backToLobby()">Back to Lobby</button>
+          </div>
+        </form>
+      </div>
 </body>
 </html>
