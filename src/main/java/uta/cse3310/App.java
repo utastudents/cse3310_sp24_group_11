@@ -68,4 +68,32 @@ public class App extends WebSocketServer {
   public void onStart(){
     // Initial tasks when server starts up
   }
+  public static void main(String[] args) {
+
+    String HttpPort = System.getenv("HTTP_PORT");
+    int port = 9011;    //set http port to 9011 because we are group 11  (9000+11)
+    if (HttpPort!=null) {
+      port = Integer.valueOf(HttpPort);
+    }
+
+    // Set up the http server
+
+    HttpServer H = new HttpServer(port, "./html");
+    H.start();
+    System.out.println("http Server started on port: " + port);
+
+    // create and start the websocket server
+
+    port = 9111;    //websocket port set to 9111 also because we are group 11   (9100+11)
+    String WSPort = System.getenv("WEBSOCKET_PORT");
+    if (WSPort!=null) {
+      port = Integer.valueOf(WSPort);
+    }
+
+    App A = new App(port);
+    A.setReuseAddr(true);
+    A.start();
+    System.out.println("websocket Server started on port: " + port);
+
+  }
 }
