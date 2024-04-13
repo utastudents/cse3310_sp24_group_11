@@ -7,11 +7,12 @@ public class Player{
     int playerID;
     ArrayList<Player> playerList;
 
-    public Player(ArrayList<Player> playerList){
+    public Player(String playerName, ArrayList<Player> playerList){
         this.playerList = playerList;
+        setPlayerName(playerName, playerList);
     }
 
-    public boolean verifyUsername(String playerName){
+    public boolean verifyUsername(String playerName, ArrayList<Player> playerList){
 
         for (Player player: playerList) {//loops through every player in the player array and checks if any have the same username
             if(playerName == player.getPlayerName()){
@@ -25,9 +26,9 @@ public class Player{
         return playerName;
     }
 
-    public void setUsername(String username) {
-        if(verifyUsername(username)){
-            playerName = username;
+    public void setPlayerName(String playerName, ArrayList<Player> playerList) {
+        if(verifyUsername(playerName,playerList)){
+            this.playerName = playerName;
         }
     } 
 }
