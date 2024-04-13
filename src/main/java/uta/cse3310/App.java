@@ -34,7 +34,9 @@ public class App extends WebSocketServer {
   public App(){
 
   }
-
+  public App(int port) {
+    
+  }
   public void displayMessageBox(){
     // Displays message chat box
   }
