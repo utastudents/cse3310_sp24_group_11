@@ -26,6 +26,11 @@
             //document.write('Hello, ' + username + '!'); 
             document.getElementById("getUsername").style.display = "none";
             document.getElementById("Lobby").style.display = "table";
+            const httpPort = parseInt(process.env.HTTP_PORT); 
+            const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
+
+            var connection;
+            var idx;
         }
     </script>
     
@@ -37,11 +42,9 @@
                 <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
                 <td><button onclick = "GlobalChat()">Global Chat</button>
             </tr>
-            <!-- <tr>
-                <td><button onclick = "game2p()">Join 2 Player Game</button>
-                <td><button onclick = "game3p()">Join 3 Player Game</button>
-                <td><button onclick = "game4p()">Join 4 Player Game</button>
-            </tr> -->
+            <tr>
+                <td><button onclick = "game()">Join 2 Player Game</button>
+            </tr>
         </table>
     </div>
     <script>
@@ -80,6 +83,7 @@
     function leaderboard(){
         //add leaderboard
         let lead = "Leaderboard<br>";
+        lead += username.value + "<br>";
         for(let i = 0; i < 4; i++){
             lead += "Player " + i + "<br>";
         }
@@ -129,13 +133,45 @@
         function actuallyChatting(){
             event.preventDefault();
             const message = messageInput.value;
-            if(message === ""){
-                alert('Message cannot be left blank!');
-                return;
-            }
+            // if(message === ""){
+            //     alert('Message cannot be left blank!');
+            //     return;
+            // }
             messageInput.value = "";
             chatBox.innerHTML += username.value + ": " + message + "<br>";
         }
       </script>
+      <script>
+        function game(){
+            var serverUrl;
+            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
+            connection = new WebSocket(serverUrl);
+            idx = -1;
+            var gameid = -1;
+            connection.onopen = function(e){
+                console.log("Connected to server");
+            }
+            connection.onclose = function(e){
+                console.log("Disconnected from server");
+            }
+            connection.onmessage = function(e){
+                const obj = JSON.parse(e.data);
+                if(obj.type === "hello"){
+                    document.write("hello obj type");
+                }
+                if('hello' in obj){
+                    document.write("hello in obj");     
+                }
+                else{
+                    document.write("Error: " + obj.error);
+                }
+                document.write("In onmessage");                
+            }
+        }
+      </script>
+        <div id = "Game" style = "display:none">
+            <h1>Game</h1>
+            <button onclick = "backToLobby()">Back to Lobby</button>
+        </div>
 </body>
 </html>
