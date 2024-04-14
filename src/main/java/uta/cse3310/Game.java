@@ -43,4 +43,10 @@ public class Game {
     public void displayUsersAndData() {
         // Displays player usernames/handles and their scores
     }
+
+    public Statistics getStatistics(){
+        // Returns the statistics of the game
+        return Stats;
+    }
 }
+

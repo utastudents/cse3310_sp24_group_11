@@ -15,7 +15,7 @@ public class Player{
 
     public boolean verifyUsername(String playerName, ArrayList<Player> playerList){
 
-        for (Player player: playerList) {//loops through every player in the player array and checks if any have the same username
+        for (Player player: playerList) {//checks if the username is unused 
             if(playerName == player.getPlayerName()){
                 return false;
             }
