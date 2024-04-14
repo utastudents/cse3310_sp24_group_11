@@ -1,4 +1,8 @@
+package uta.cse3310;
+
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import java.net.InetSocketAddress;
 import org.java_websocket.WebSocketImpl;
 
