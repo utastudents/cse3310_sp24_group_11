@@ -150,6 +150,9 @@
             var gameid = -1;
             connection.onopen = function(e){
                 console.log("Connected to server");
+                if(obj.type === "test"){
+                    document.getElementById("Game").style.display = "table";
+                }
             }
             connection.onclose = function(e){
                 console.log("Disconnected from server");
