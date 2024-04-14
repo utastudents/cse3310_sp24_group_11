@@ -44,42 +44,120 @@ public class App extends WebSocketServer {
   }
   
   public void displayMessageBox(){
-    // Displays message chat box
+    messageBox mb = new messageBox();
+    mb.displayMessage("Your message here");
   }
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-    // On new websocket connection, creates lobby if no lobby is made, shows game state, game tracking, creates new ServerEvent
+    System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
+
+    UserEvent E = new UserEvent(); // Changed from ServerEvent to UserEvent
+
+    // search for a game needing a player
+    Game G = null;
+    for (Game i : ActiveGames) {
+      if (i.Players == uta.cse3310.PlayerType.XPLAYER) {
+        G = i;
+        System.out.println("found a match");
+      }
+    }
+
+    // No matches? Create a new Game.
+    if (G == null) {
+      G = new Game();
+      G.GameId = gameID;
+      gameID++;
+      // Add the first player
+      G.Players = uta.cse3310.PlayerType.XPLAYER;
+      ActiveGames.add(G);
+      System.out.println("creating a new Game");
+    } else {
+      // join an existing game
+      System.out.println("not a new game");
+      G.Players = uta.cse3310.PlayerType.OPLAYER;
+      G.StartGame();
+    }
+    System.out.println("G.players is " + G.Players);
+    // create an event to go to only the new player
+    E.YouAre = G.Players; // This line might need adjustment based on UserEvent's structure
+    E.GameId = G.GameId; // This line might need adjustment based on UserEvent's structure
+    // allows the websocket to give us the Game when a message arrives
+    conn.setAttachment(G);
+
+    Gson gson = new Gson();
+    // Note only send to the single connection
+    conn.send(gson.toJson(E));
+    System.out.println(gson.toJson(E));
+
+    // The state of the game has changed, so lets send it to everyone
+    String jsonString;
+    jsonString = gson.toJson(G);
+
+    System.out.println(jsonString);
+    broadcast(jsonString);
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    // Handles closing of websocket connection
+    System.out.println(conn.getRemoteSocketAddress() + " has closed the connection");
+    // Retrieve the game tied to the websocket connection
+    Game G = conn.getAttachment();
+    if (G != null) {
+        // Perform necessary actions like notifying other players, updating game status, etc.
+        System.out.println("Game ID " + G.GameId + " associated with this connection is now being handled due to disconnection.");
+    }
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    // Processes messages from players through the websocket connections including logs, run time, and game stats
+    System.out.println(conn + ": " + message);
+
+    // Bring in the data from the webpage
+    // A UserEvent is all that is allowed at this point
     GsonBuilder builder = new GsonBuilder();
     Gson gson = builder.create();
-    UserEvent U = gson.fromJson(message, UserEvent.class); 
-    broadcast("lol");
+    UserEvent U = gson.fromJson(message, UserEvent.class);
+    System.out.println(U.Button);
+
+    // Get our Game Object
+    Game G = conn.getAttachment();
+    G.update(userEventInstance);
+
+    // send out the game state every time
+    // to everyone
+    String jsonString;
+    jsonString = gson.toJson(G);
+
+    System.out.println(jsonString);
+    broadcast(jsonString);
+
+    // Broadcast game statistics even before the first click
+    broadcast(Game.getStatistics());
   }
 
   @Override
   public void onMessage(WebSocket conn, ByteBuffer message) {
-    // Handles binary messages
+    System.out.println(conn + ": " + message);
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
-    // Handle exceptions that occur for the websocket connection, error manangement and debugging
+      // Log the error for debugging purposes
+      System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex.getMessage());
+
+      // Optionally, close the connection if an error occurs
+      if (conn != null) {
+          conn.close(1006, "Unexpected error occurred");
+      }
   }
    
   @Override
   public void onStart(){
-    // Initial tasks when server starts up
+    System.out.println("Server started!");
+    setConnectionLostTimeout(0);
   }
+
   public static void main(String[] args) {
 
     String HttpPort = System.getenv("HTTP_PORT");
