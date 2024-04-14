@@ -19,4 +19,13 @@ public class UserEvent {
     public int getButton(){
         return button;
     }
+    public String getMessage(){
+        return message;
+    }
+    public void setMessage(String message){
+        this.message = message;
+    }
+    public void setPlayerType(PlayerType playerType){
+        this.playerType = playerType;
+    }
 }
