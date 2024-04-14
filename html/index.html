@@ -142,13 +142,12 @@
         }
       </script>
       <script>
-        function joinGame(){
+        function game(){
             var serverUrl;
             serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
             connection = new WebSocket(serverUrl);
             idx = -1;
             var gameid = -1;
-            document.write("In joinGame");
             connection.onopen = function(e){
                 const obj = JSON.parse(e.data);
                 console.log("Connected to server");
