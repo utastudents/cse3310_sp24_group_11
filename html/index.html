@@ -26,6 +26,11 @@
             //document.write('Hello, ' + username + '!'); 
             document.getElementById("getUsername").style.display = "none";
             document.getElementById("Lobby").style.display = "table";
+            const httpPort = parseInt(process.env.HTTP_PORT); 
+            const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
+
+            var connection;
+            var idx;
         }
     </script>
     
@@ -137,12 +142,6 @@
         }
       </script>
       <script>
-        const httpPort = parseInt(process.env.HTTP_PORT); 
-        const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
-
-        var connection;
-        var idx;
-
         function joinGame(){
             var serverUrl;
             serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
@@ -161,12 +160,14 @@
             }
             connection.onmessage = function(e){
                 const obj = JSON.parse(e.data);
-                if(obj.type === "gameid"){
-                    gameid = obj.gameid;
-                }
-                if(obj.type === "test"){
+                if(obj.type === "hello")
                     document.getElementById("Game").style.display = "table";
+                if('hello' in obj)
+                    document.getElementById("Game").style.display = "table";    
+                else{
+                    document.write("Error: " + obj.error);
                 }
+
                 
             }
         }

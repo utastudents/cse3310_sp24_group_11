@@ -52,9 +52,7 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);
-    //make obj.type = "lol" and send to html
-    conn.send("test");    
+    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
     // search for a game needing a player
     Game G = null;
     for (Game i : ActiveGames) {
@@ -113,29 +111,31 @@ public class App extends WebSocketServer {
   @Override
   public void onMessage(WebSocket conn, String message) {
     System.out.println(conn + ": " + message);
+    conn.send("hello");
+    broadcast("hello");
 
-    // Bring in the data from the webpage
-    // A UserEvent is all that is allowed at this point
-    GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
-    UserEvent U = gson.fromJson(message, UserEvent.class);
-    System.out.println(U.button);
+    // // Bring in the data from the webpage
+    // // A UserEvent is all that is allowed at this point
+    // GsonBuilder builder = new GsonBuilder();
+    // Gson gson = builder.create();
+    // UserEvent U = gson.fromJson(message, UserEvent.class);
+    // System.out.println(U.button);
 
-    // Get our Game Object
-    Game G = conn.getAttachment();
-    G.update(U);
+    // // Get our Game Object
+    // Game G = conn.getAttachment();
+    // G.update(U);
 
-    // send out the game state every time
-    // to everyone
-    String jsonString;
-    jsonString = gson.toJson(G);
+    // // send out the game state every time
+    // // to everyone
+    // String jsonString;
+    // jsonString = gson.toJson(G);
 
-    System.out.println(jsonString);
-    broadcast(jsonString);
+    // System.out.println(jsonString);
+    // broadcast(jsonString);
 
-    // Broadcast game statistics even before the first click
-    String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
-    broadcast(statsJson);
+    // // Broadcast game statistics even before the first click
+    // String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
+    // broadcast(statsJson);
   }
 
   @Override
