@@ -52,12 +52,12 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    UserEvent E = new UserEvent(); // Changed from ServerEvent to UserEvent
+    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);
 
     // search for a game needing a player
     Game G = null;
     for (Game i : ActiveGames) {
-      if (i.Players == uta.cse3310.PlayerType.XPLAYER) {
+      if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
         G = i;
         System.out.println("found a match");
       }
@@ -69,19 +69,19 @@ public class App extends WebSocketServer {
       G.GameId = gameID;
       gameID++;
       // Add the first player
-      G.Players = uta.cse3310.PlayerType.XPLAYER;
+      G.currentTurn = uta.cse3310.PlayerType.Blue;
       ActiveGames.add(G);
       System.out.println("creating a new Game");
     } else {
       // join an existing game
       System.out.println("not a new game");
-      G.Players = uta.cse3310.PlayerType.OPLAYER;
-      G.StartGame();
+      G.currentTurn = uta.cse3310.PlayerType.Red;
+      G.startGame();
     }
-    System.out.println("G.players is " + G.Players);
+    System.out.println("G.currentTurn is " + G.currentTurn);
     // create an event to go to only the new player
-    E.YouAre = G.Players; // This line might need adjustment based on UserEvent's structure
-    E.GameId = G.GameId; // This line might need adjustment based on UserEvent's structure
+    E.setPlayerType(G.currentTurn);
+    E.gameIdx = G.GameId;
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
 
@@ -118,11 +118,11 @@ public class App extends WebSocketServer {
     GsonBuilder builder = new GsonBuilder();
     Gson gson = builder.create();
     UserEvent U = gson.fromJson(message, UserEvent.class);
-    System.out.println(U.Button);
+    System.out.println(U.button);
 
     // Get our Game Object
     Game G = conn.getAttachment();
-    G.update(userEventInstance);
+    G.update(U);
 
     // send out the game state every time
     // to everyone
@@ -133,7 +133,8 @@ public class App extends WebSocketServer {
     broadcast(jsonString);
 
     // Broadcast game statistics even before the first click
-    broadcast(Game.getStatistics());
+    String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
+    broadcast(statsJson);
   }
 
   @Override

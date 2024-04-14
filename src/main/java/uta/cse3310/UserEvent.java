@@ -26,4 +26,7 @@ public class UserEvent {
     public void setMessage(String message){
         this.message = message;
     }
+    public void setPlayerType(PlayerType playerType){
+        this.playerType = playerType;
+    }
 }
