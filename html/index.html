@@ -38,9 +38,9 @@
                 <td><button onclick = "GlobalChat()">Global Chat</button>
             </tr>
             <tr>
-                <td><button onclick = "game(2)">Join 2 Player Game</button>
-                <td><button onclick = "game(3)">Join 3 Player Game</button>
-                <td><button onclick = "game(4)">Join 4 Player Game</button>
+                <td><button onclick = "game()">Join 2 Player Game</button>
+                <td><button onclick = "game()">Join 3 Player Game</button>
+                <td><button onclick = "game()">Join 4 Player Game</button>
             </tr>
         </table>
     </div>
@@ -144,7 +144,7 @@
         var connection;
         var idx;
 
-        function joinGame(playerCount){
+        function joinGame(){
             var serverUrl;
             serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
             connection = new WebSocket(serverUrl);
@@ -159,7 +159,7 @@
             connection.onmessage = function(e){
                 const obj = JSON.parse(e.data);
                 if('lol' in obj){
-                    console.log(obj.lol);
+                    console.log("lol");
                     document.getElementById("Lobby").style.display = "none";
                     document.getElementById("Game").style.display = "table";
                 }
