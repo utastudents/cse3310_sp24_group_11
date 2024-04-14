@@ -60,6 +60,10 @@ public class App extends WebSocketServer {
   @Override
   public void onMessage(WebSocket conn, String message) {
     // Processes messages from players through the websocket connections including logs, run time, and game stats
+    GsonBuilder builder = new GsonBuilder();
+    Gson gson = builder.create();
+    UserEvent U = gson.fromJson(message, UserEvent.class); 
+    broadcast("lol");
   }
 
   @Override
