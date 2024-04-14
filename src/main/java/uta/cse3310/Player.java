@@ -10,6 +10,7 @@ public class Player{
     public Player(String playerName, ArrayList<Player> playerList){
         this.playerList = playerList;
         setPlayerName(playerName, playerList);
+        playerID = playerList.size()+1;
     }
 
     public boolean verifyUsername(String playerName, ArrayList<Player> playerList){
