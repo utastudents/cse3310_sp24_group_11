@@ -158,11 +158,17 @@
             }
             connection.onmessage = function(e){
                 const obj = JSON.parse(e.data);
-                if("lol" in obj){
-                    document.write('lol');
+                if('lol' in obj){
+                    console.log(obj.lol);
+                    document.getElementById("Lobby").style.display = "none";
+                    document.getElementById("Game").style.display = "table";
                 }
             }
         }
       </script>
+        <div id = "Game" style = "display:none">
+            <h1>Game</h1>
+            <button onclick = "backToLobby()">Back to Lobby</button>
+        </div>
 </body>
 </html>
