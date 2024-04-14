@@ -149,21 +149,19 @@
             idx = -1;
             var gameid = -1;
             connection.onopen = function(e){
-                const obj = JSON.parse(e.data);
                 console.log("Connected to server");
-                if('test' in obj){
-                    document.getElementById("Game").style.display = "table";
-                }
             }
             connection.onclose = function(e){
                 console.log("Disconnected from server");
             }
             connection.onmessage = function(e){
                 const obj = JSON.parse(e.data);
-                if(obj.type === "hello")
-                    document.getElementById("Game").style.display = "table";
-                if('hello' in obj)
-                    document.getElementById("Game").style.display = "table";    
+                if(obj.type === "hello"){
+                    document.write("hello obj type");
+                }
+                if('hello' in obj){
+                    document.write("hello in obj");     
+                }
                 else{
                     document.write("Error: " + obj.error);
                 }

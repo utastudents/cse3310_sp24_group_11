@@ -51,52 +51,50 @@ public class App extends WebSocketServer {
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
-    conn.send("hello");
-    broadcast("hello");
 
-    // UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
-    // // search for a game needing a player
-    // Game G = null;
-    // for (Game i : ActiveGames) {
-    //   if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
-    //     G = i;
-    //     System.out.println("found a match");
-    //   }
-    // }
+    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
+    // search for a game needing a player
+    Game G = null;
+    for (Game i : ActiveGames) {
+      if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
+        G = i;
+        System.out.println("found a match");
+      }
+    }
 
-    // // No matches? Create a new Game.
-    // if (G == null) {
-    //   G = new Game();
-    //   G.GameId = gameID;
-    //   gameID++;
-    //   // Add the first player
-    //   G.currentTurn = uta.cse3310.PlayerType.Blue;
-    //   ActiveGames.add(G);
-    //   System.out.println("creating a new Game");
-    // } else {
-    //   // join an existing game
-    //   System.out.println("not a new game");
-    //   G.currentTurn = uta.cse3310.PlayerType.Red;
-    //   G.startGame();
-    // }
-    // System.out.println("G.currentTurn is " + G.currentTurn);
-    // // create an event to go to only the new player
-    // E.setPlayerType(G.currentTurn);
-    // E.gameIdx = G.GameId;
-    // // allows the websocket to give us the Game when a message arrives
-    // conn.setAttachment(G);
+    // No matches? Create a new Game.
+    if (G == null) {
+      G = new Game();
+      G.GameId = gameID;
+      gameID++;
+      // Add the first player
+      G.currentTurn = uta.cse3310.PlayerType.Blue;
+      ActiveGames.add(G);
+      System.out.println("creating a new Game");
+    } else {
+      // join an existing game
+      System.out.println("not a new game");
+      G.currentTurn = uta.cse3310.PlayerType.Red;
+      G.startGame();
+    }
+    System.out.println("G.currentTurn is " + G.currentTurn);
+    // create an event to go to only the new player
+    E.setPlayerType(G.currentTurn);
+    E.gameIdx = G.GameId;
+    // allows the websocket to give us the Game when a message arrives
+    conn.setAttachment(G);
 
-    // Gson gson = new Gson();
-    // // Note only send to the single connection
-    // conn.send(gson.toJson(E));
-    // System.out.println(gson.toJson(E));
+    Gson gson = new Gson();
+    // Note only send to the single connection
+    conn.send(gson.toJson(E));
+    System.out.println(gson.toJson(E));
 
-    // // The state of the game has changed, so lets send it to everyone
-    // String jsonString;
-    // jsonString = gson.toJson(G);
+    // The state of the game has changed, so lets send it to everyone
+    String jsonString;
+    jsonString = gson.toJson(G);
 
-    // System.out.println(jsonString);
-    // broadcast(jsonString);
+    System.out.println(jsonString);
+    broadcast(jsonString);
   }
 
   @Override
@@ -112,30 +110,33 @@ public class App extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    System.out.println(conn + ": " + message);
+    conn.send("hello");
+    broadcast("hello");
 
-    // Bring in the data from the webpage
-    // A UserEvent is all that is allowed at this point
-    GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
-    UserEvent U = gson.fromJson(message, UserEvent.class);
-    System.out.println(U.button);
+    // System.out.println(conn + ": " + message);
 
-    // Get our Game Object
-    Game G = conn.getAttachment();
-    G.update(U);
+    // // Bring in the data from the webpage
+    // // A UserEvent is all that is allowed at this point
+    // GsonBuilder builder = new GsonBuilder();
+    // Gson gson = builder.create();
+    // UserEvent U = gson.fromJson(message, UserEvent.class);
+    // System.out.println(U.button);
 
-    // send out the game state every time
-    // to everyone
-    String jsonString;
-    jsonString = gson.toJson(G);
+    // // Get our Game Object
+    // Game G = conn.getAttachment();
+    // G.update(U);
 
-    System.out.println(jsonString);
-    broadcast(jsonString);
+    // // send out the game state every time
+    // // to everyone
+    // String jsonString;
+    // jsonString = gson.toJson(G);
 
-    // Broadcast game statistics even before the first click
-    String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
-    broadcast(statsJson);
+    // System.out.println(jsonString);
+    // broadcast(jsonString);
+
+    // // Broadcast game statistics even before the first click
+    // String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
+    // broadcast(statsJson);
   }
 
   @Override
