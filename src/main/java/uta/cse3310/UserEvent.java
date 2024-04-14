@@ -4,7 +4,6 @@ public class UserEvent {
     int gameIdx;
     PlayerType playerType;
     int button;
-    String message;
     
     public UserEvent(int gameIdx, PlayerType playerType, int button) {
         this.gameIdx = gameIdx;
@@ -19,11 +18,5 @@ public class UserEvent {
     }
     public int getButton(){
         return button;
-    }
-    public String getMessage(){
-        return message;
-    }
-    public void setMessage(String message){
-        this.message = message;
     }
 }

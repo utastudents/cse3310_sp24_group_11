@@ -60,14 +60,6 @@ public class App extends WebSocketServer {
   @Override
   public void onMessage(WebSocket conn, String message) {
     // Processes messages from players through the websocket connections including logs, run time, and game stats
-    GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
-    UserEvent U = gson.fromJson(message, UserEvent.class);
-    if("message".equals(U.getMessage())){
-      // Handles chat message
-      String msg = U.getMessage();
-      broadcast(msg);
-    }
   }
 
   @Override
@@ -79,7 +71,7 @@ public class App extends WebSocketServer {
   public void onError(WebSocket conn, Exception ex) {
     // Handle exceptions that occur for the websocket connection, error manangement and debugging
   }
-  
+   
   @Override
   public void onStart(){
     // Initial tasks when server starts up

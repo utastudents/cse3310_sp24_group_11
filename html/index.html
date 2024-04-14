@@ -122,35 +122,19 @@
       </div>
 
       <script>
-        const httpPort = parseInt(process.env.HTTP_PORT); 
-        const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
-
-        var connection;
-        var idx;
         const chatBox = document.getElementById("chatBox");
         const messageForm = document.getElementById("messageForm");
         const messageInput = document.getElementById("messageInput");
         messageForm.addEventListener("submit", actuallyChatting);
         function actuallyChatting(){
-            var serverURL;
-            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
-            connection = new WebSocket(serverUrl);
             event.preventDefault();
-            const mess = username.value + ": " + messageInput.value;
-            connection.send(JSON.stringify({message: mess}));
-            connection.onopen = function(e){
-                console.log("Connected to server");
-            }
-            connection.onclose = function(e){
-                console.log("Disconnected from server");
-            }
-            connection.onmessage = function(e){
-                console.log("Received: " + e.data);
-                const obj = JSON.parse(e.data);
-                if('message' in obj){
-                    chatBox.innerHTML += obj.message + "<br>";
-                }
-            }
+            const message = messageInput.value;
+            // if(message === ""){
+            //     alert('Message cannot be left blank!');
+            //     return;
+            // }
+            messageInput.value = "";
+            chatBox.innerHTML += username.value + ": " + message + "<br>";
         }
       </script>
 </body>
