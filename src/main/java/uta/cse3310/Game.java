@@ -1,15 +1,25 @@
 package uta.cse3310;
 
+import java.util.ArrayList;
+
 public class Game {
-    public int GameId;
-    private PlayerType players;
+    public int gameID;
+    ArrayList<Player> playerList = new ArrayList<Player>();
+    // private PlayerType players;
     public PlayerType currentTurn;
-    public  PlayerType[] button;
+    public PlayerType[] button = new PlayerType[2500];
+    // public 
     public String[] msg;
     public Statistics Stats;
 
+    public Game(ArrayList<Player> playerList, int gameID){//playerList only contains players that are in this game
+        this.gameID = gameID;
+        
+    }
+
     public void update(UserEvent U){
         // Processes user actions and updated game state
+
     }
 
     public void startGame() {
