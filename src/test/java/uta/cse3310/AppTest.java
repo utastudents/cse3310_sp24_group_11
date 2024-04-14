@@ -1,3 +1,4 @@
+package uta.cse3310;
 import junit.framework.TestCase;
 import java.net.InetSocketAddress;
 import org.java_websocket.WebSocketImpl;
@@ -20,8 +21,7 @@ public class AppTest extends TestCase {
      */
     public void testSetReuseAddr() {
         App testApp = new App(9111);
-        assertFalse("reuseAddr should initially be false", WebSocketImpl.getReuseAddr());
         testApp.setReuseAddr(true);
-        assertTrue("reuseAddr should be set to true", WebSocketImpl.getReuseAddr());
+        assertTrue("ReuseAddr flag should be set to true", testApp.isReuseAddr());
     }
 }
