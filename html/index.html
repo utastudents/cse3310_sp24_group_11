@@ -148,6 +148,7 @@
             connection = new WebSocket(serverUrl);
             idx = -1;
             var gameid = -1;
+            document.write("In joinGame");
             connection.onopen = function(e){
                 const obj = JSON.parse(e.data);
                 console.log("Connected to server");
@@ -167,8 +168,7 @@
                 else{
                     document.write("Error: " + obj.error);
                 }
-
-                
+                document.write("In onmessage");                
             }
         }
       </script>
