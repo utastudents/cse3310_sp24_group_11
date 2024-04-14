@@ -26,7 +26,7 @@ import com.google.gson.GsonBuilder;
 public class App extends WebSocketServer {
 
   private Statistics stats;
-  private Vector<Game> ActiveGames;
+  private Vector<Game> ActiveGames = new Vector<Game>();
   private int gameID;
   private int connectionID;
   public ArrayList<Integer> playerIDs;
@@ -52,7 +52,8 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
+    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);
+
     // search for a game needing a player
     Game G = null;
     for (Game i : ActiveGames) {
@@ -110,33 +111,29 @@ public class App extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    conn.send("hello");
-    broadcast("hello");
+    System.out.println(conn + ": " + message);
 
-    // System.out.println(conn + ": " + message);
+    // Bring in the data from the webpage
+    // A UserEvent is all that is allowed at this point
+    GsonBuilder builder = new GsonBuilder();
+    Gson gson = builder.create();
+    UserEvent U = gson.fromJson(message, UserEvent.class);
+    System.out.println(U.button);
 
-    // // Bring in the data from the webpage
-    // // A UserEvent is all that is allowed at this point
-    // GsonBuilder builder = new GsonBuilder();
-    // Gson gson = builder.create();
-    // UserEvent U = gson.fromJson(message, UserEvent.class);
-    // System.out.println(U.button);
+    // Get our Game Object
+    Game G = conn.getAttachment();
+    G.update(U);
+    // send out the game state every time
+    // to everyone
+    String jsonString;
+    jsonString = gson.toJson(G);
 
-    // // Get our Game Object
-    // Game G = conn.getAttachment();
-    // G.update(U);
+    System.out.println(jsonString);
+    broadcast(jsonString);
 
-    // // send out the game state every time
-    // // to everyone
-    // String jsonString;
-    // jsonString = gson.toJson(G);
-
-    // System.out.println(jsonString);
-    // broadcast(jsonString);
-
-    // // Broadcast game statistics even before the first click
-    // String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
-    // broadcast(statsJson);
+    // Broadcast game statistics even before the first click
+    String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
+    broadcast(statsJson);
   }
 
   @Override
