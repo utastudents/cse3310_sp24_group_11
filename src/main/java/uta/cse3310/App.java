@@ -31,12 +31,18 @@ public class App extends WebSocketServer {
   private int connectionID;
   public ArrayList<Integer> playerIDs;
   
-  public App(){
-
-  }
   public App(int port) {
-    
+    super(new InetSocketAddress(port));
   }
+
+  public App(InetSocketAddress address) {
+    super(address);
+  }
+
+  public App(int port, Draft_6455 draft) {
+    super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
+  }
+  
   public void displayMessageBox(){
     // Displays message chat box
   }
