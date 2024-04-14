@@ -149,6 +149,7 @@
             idx = -1;
             var gameid = -1;
             connection.onopen = function(e){
+                const obj = JSON.parse(e.data);
                 console.log("Connected to server");
                 if(obj.type === "test"){
                     document.getElementById("Game").style.display = "table";
