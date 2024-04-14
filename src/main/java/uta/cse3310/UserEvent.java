@@ -4,6 +4,7 @@ public class UserEvent {
     int gameIdx;
     PlayerType playerType;
     int button;
+    String message;
     
     public UserEvent(int gameIdx, PlayerType playerType, int button) {
         this.gameIdx = gameIdx;
