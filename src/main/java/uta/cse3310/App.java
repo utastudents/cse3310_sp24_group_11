@@ -62,8 +62,7 @@ public class App extends WebSocketServer {
     // Processes messages from players through the websocket connections including logs, run time, and game stats
     GsonBuilder builder = new GsonBuilder();
     Gson gson = builder.create();
-    UserEvent U = gson.fromJson(message, UserEvent.class); 
-    broadcast("lol");
+    conn.send("lol");
   }
 
   @Override
