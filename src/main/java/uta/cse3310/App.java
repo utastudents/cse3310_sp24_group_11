@@ -53,7 +53,8 @@ public class App extends WebSocketServer {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
     UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);
-
+    //make obj.type = "lol" and send to html
+    conn.send("test");    
     // search for a game needing a player
     Game G = null;
     for (Game i : ActiveGames) {
