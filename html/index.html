@@ -129,10 +129,10 @@
         function actuallyChatting(){
             event.preventDefault();
             const message = messageInput.value;
-            if(message === ""){
-                alert('Message cannot be left blank!');
-                return;
-            }
+            // if(message === ""){
+            //     alert('Message cannot be left blank!');
+            //     return;
+            // }
             messageInput.value = "";
             chatBox.innerHTML += username.value + ": " + message + "<br>";
         }
