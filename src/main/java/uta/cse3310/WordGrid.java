@@ -17,7 +17,7 @@ public class WordGrid{
             List<String> wordBank = new ArrayList<>();
         }
 
-        //8directions to generate words on the grid
+        //3directions to generate words on the grid
     public static final int[][]DIRS = {
         {1,0},{0,1},{1,1}
     };
@@ -80,6 +80,15 @@ public class WordGrid{
         // Displays word density onto word grid
         int size = grid.wordBank.size();
         System.out.println("Number of Words: " + size);
+
+        for (int r = 0; r<nRows; r++){
+            System.out.printf("%n%d ", r);
+
+            for (int c=0;c<nCols;c++){
+                System.out.printf(" %c ",grid.wordGrid[r][c]);
+            }
+        }
+        System.out.println("\n");
 
 
     }
