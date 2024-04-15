@@ -38,5 +38,9 @@ public class Game {
         // Returns the statistics of the game
         return Stats;
     }
+    public void addPlayer(PlayerType player){
+        // Adds a player to the game
+        
+    }
 }
 

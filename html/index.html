@@ -69,6 +69,7 @@
         document.getElementById("Leaderboard").style.display = "none";
         document.getElementById("GlobalChat").style.display = "none";
         document.getElementsByClassName("chatting")[0].style.display = "none";
+        document.getElementById("Game").style.display = "none";
         document.getElementById("Lobby").style.display = "table";
     }
     function showButPlay(){
@@ -150,22 +151,14 @@
             var gameid = -1;
             connection.onopen = function(e){
                 console.log("Connected to server");
+                connection.send(JSON.stringify({name: username.value}));
             }
             connection.onclose = function(e){
                 console.log("Disconnected from server");
             }
             connection.onmessage = function(e){
                 const obj = JSON.parse(e.data);
-                if(obj.type === "hello"){
-                    document.write("hello obj type");
-                }
-                if('hello' in obj){
-                    document.write("hello in obj");     
-                }
-                else{
-                    document.write("Error: " + obj.error);
-                }
-                document.write("In onmessage");                
+                document.write(obj);
             }
         }
       </script>
