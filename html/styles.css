@@ -1,0 +1,31 @@
+#wordSearchContainer table {
+    border-collapse: collapse;
+    margin: 20px;
+    width: 100%;  
+    table-layout: fixed;  
+}
+
+#wordSearchContainer td {
+    border: 1px solid black;
+    width: 20px;  
+    height: 20px;
+    text-align: center;
+    font-size: 15px;  
+    cursor: pointer;
+}
+
+#chatContainer {
+    margin: 20px;
+}
+
+#messages {
+    height: 150px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    overflow-y: auto;
+}
+
+#messageInput {
+    width: calc(100% - 60px);
+    padding: 10px;
+}
