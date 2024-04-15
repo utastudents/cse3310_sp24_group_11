@@ -139,7 +139,7 @@ public class App extends WebSocketServer {
   }
 
   @Override
-  public void onError(WebSocket conn, Exception ex) {
+  public void onError(WebSocket conn, E xception ex) {
       // Log the error for debugging purposes
       if(conn != null)
         System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex.getMessage());
