@@ -37,8 +37,8 @@ public class WordGrid{
             while(sc.hasNext()){
                 String s = sc.next().trim().toLowerCase();
 
-                //we pick words with length between 3 and maxlength and with a-z inside
-                if (s.matches("^[a-z]{3,"+ maxLength + "}$")){
+                //we pick words with length between 4 and maxlength and with a-z inside
+                if (s.matches("^[a-z]{4,"+ maxLength + "}$")){
                     words.add(s.toUpperCase());
                 }
             }
