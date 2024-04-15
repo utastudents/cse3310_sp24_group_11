@@ -19,7 +19,7 @@ public class WordGrid{
 
         //8directions to generate words on the grid
     public static final int[][]DIRS = {
-        {1,0},{0,1},{1,1},{1,-1},{-1,0},{0,-1},{-1,-1},{-1,1}
+        {1,0},{0,1},{1,1}
     };
 
     //nb rows and cols for the grids
@@ -27,7 +27,7 @@ public class WordGrid{
     public static final int gridSize = nRows*nCols;
 
     //min number of words to place on the grid generate
-    public static final int minWords = 50;
+    public static final int minWords = 330;
     public static final Random RANDOM = new Random();
 
     public static List<String>verifyWord(String filename){
@@ -80,6 +80,8 @@ public class WordGrid{
         // Displays word density onto word grid
         int size = grid.wordBank.size();
         System.out.println("Number of Words: " + size);
+
+
     }
     
     public static void printDisplayOfWords(Grid grid){
