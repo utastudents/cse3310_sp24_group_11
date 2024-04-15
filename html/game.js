@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     generateGrid();
+    setupGridEvents();
 });
 
 function generateGrid() {
     const grid = document.getElementById('wordSearchGrid');
     const size = 50;
-    for (i = 0; i < size; i++) {
+    for (let i = 0; i < size; i++) {
         const row = document.createElement('tr');
         for (let j = 0; j < size; j++) {
             const cell = document.createElement('td');
@@ -26,4 +27,32 @@ function sendMessage() {
         input.value = ''; 
         messages.scrollTop = messages.scrollHeight;
     }
+}
+
+function setupGridEvents() {
+    const cells = document.querySelectorAll('#wordSearchContainer td');
+    let isDragging = false;
+
+    cells.forEach(cell => {
+        cell.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+            isDragging = true;
+            toggleHighlight(cell);
+        });
+
+        cell.addEventListener('mouseover', (event) => {
+            if (isDragging) {
+                event.preventDefault();
+                toggleHighlight(cell);
+            }
+        });
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+}
+
+function toggleHighlight(cell) {
+    cell.classList.toggle('highlighted');
 }
