@@ -7,7 +7,7 @@ public class WordPosition{
   public WordPosition(String word, int startPosition, int endPosition){
     this.word = word;
     this.startPosition = startPosition;
-    this.endPosition = endPosition
+    this.endPosition = endPosition;
   }
 
   public String getWord(){
