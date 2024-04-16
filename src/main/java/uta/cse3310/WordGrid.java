@@ -19,7 +19,7 @@ public class WordGrid{
 
         static List<WordPosition> locations = new ArrayList<>();
 
-        //4directions to generate words on the grid
+        //4 directions to generate words on the grid
     public static final int[][]DIRS = {
     {1, 0},   // Vertical (Downward)
     {0, 1},   // Horizontal (Rightward)
