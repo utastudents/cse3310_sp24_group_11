@@ -53,7 +53,7 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
+    UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
 
     //get the name passed by html
     
