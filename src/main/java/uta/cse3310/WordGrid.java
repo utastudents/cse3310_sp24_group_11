@@ -17,9 +17,14 @@ public class WordGrid{
             List<String> wordBank = new ArrayList<>();
         }
 
-        //3directions to generate words on the grid
+        static List<WordPosition> locations = new ArrayList<>();
+
+        //4directions to generate words on the grid
     public static final int[][]DIRS = {
-        {1,0},{0,1},{1,1}
+    {1, 0},   // Vertical (Downward)
+    {0, 1},   // Horizontal (Rightward)
+    {1, 1},   // Diagonal (Downward-Right)
+    {1, -1}   // Diagonal (Downward-Left)
     };
 
     //nb rows and cols for the grids
@@ -183,7 +188,7 @@ public class WordGrid{
         int lettersPlaced = length - overlaps;
         if (lettersPlaced>0)
         grid.wordBank.add(String.format("%-10s(%d,%d)(%d,%d)",word,c,r,cc,rr));
-
+        locations.add(new WordPosition(word, r, c, rr, cc));
         return lettersPlaced;
     }
 
