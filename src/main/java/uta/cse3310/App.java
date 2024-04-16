@@ -26,10 +26,11 @@ import com.google.gson.GsonBuilder;
 public class App extends WebSocketServer {
 
   private Statistics stats;
-  private Vector<Game> ActiveGames;
+  private Vector<Game> ActiveGames = new Vector<Game>();
   private int gameID;
   private int connectionID;
   public ArrayList<Integer> playerIDs;
+  public ArrayList<String> playerNames = new ArrayList<String>();
   
   public App(int port) {
     super(new InetSocketAddress(port));
@@ -53,6 +54,10 @@ public class App extends WebSocketServer {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
     UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
+
+    //get the name passed by html
+    
+
     // search for a game needing a player
     Game G = null;
     for (Game i : ActiveGames) {
@@ -110,33 +115,22 @@ public class App extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    conn.send("hello");
-    broadcast("hello");
-
-    // System.out.println(conn + ": " + message);
-
-    // // Bring in the data from the webpage
-    // // A UserEvent is all that is allowed at this point
-    // GsonBuilder builder = new GsonBuilder();
-    // Gson gson = builder.create();
-    // UserEvent U = gson.fromJson(message, UserEvent.class);
-    // System.out.println(U.button);
-
-    // // Get our Game Object
-    // Game G = conn.getAttachment();
-    // G.update(U);
-
-    // // send out the game state every time
-    // // to everyone
-    // String jsonString;
-    // jsonString = gson.toJson(G);
-
-    // System.out.println(jsonString);
-    // broadcast(jsonString);
-
-    // // Broadcast game statistics even before the first click
-    // String statsJson = gson.toJson(stats); // Assuming stats is your Statistics object
-    // broadcast(statsJson);
+    Game G = conn.getAttachment();
+    
+    GsonBuilder builder = new GsonBuilder();
+    Gson gson = builder.create();
+    UserEvent E = gson.fromJson(message, UserEvent.class);
+    System.out.println("Received message: " + message);
+    //parse message, message looks like: {"name" : "actualName"}, only print the actual name part
+    String actualName = message.substring(9, message.length()-2);
+    System.out.println("actual name is: " + actualName);
+    //add to arraylist
+    playerNames.add(actualName);
+    //send the arraylist to the html
+    String jsonString = gson.toJson(playerNames);
+    conn.send(jsonString);
+    System.out.println("jsonString is: " + jsonString);
+    //broadcast(jsonString);
   }
 
   @Override
@@ -147,7 +141,8 @@ public class App extends WebSocketServer {
   @Override
   public void onError(WebSocket conn, Exception ex) {
       // Log the error for debugging purposes
-      System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex.getMessage());
+      if(conn != null)
+        System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex.getMessage());
 
       // Optionally, close the connection if an error occurs
       if (conn != null) {
@@ -164,7 +159,7 @@ public class App extends WebSocketServer {
   public static void main(String[] args) {
 
     String HttpPort = System.getenv("HTTP_PORT");
-    int port = 9011;    //set http port to 9011 because we are group 11  (9000+11)
+    int port = 9080;    //set http port to 9011 because we are group 11  (9000+11)
     if (HttpPort!=null) {
       port = Integer.valueOf(HttpPort);
     }
@@ -177,7 +172,7 @@ public class App extends WebSocketServer {
 
     // create and start the websocket server
 
-    port = 9111;    //websocket port set to 9111 also because we are group 11   (9100+11)
+    port = 9180;    //websocket port set to 9111 also because we are group 11   (9100+11)
     String WSPort = System.getenv("WEBSOCKET_PORT");
     if (WSPort!=null) {
       port = Integer.valueOf(WSPort);
