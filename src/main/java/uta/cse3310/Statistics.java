@@ -4,15 +4,7 @@ public class Statistics {
     private int totalGames;
     private int totalPlayers;
     private int gamesInProgress;
-    public String printLeaderBoard(){
-        // Displays overall leaderboard across all games
-        return "";
-    }
-
-    public String displayScoreInGame(){
-        // Displays current score of the game
-        return "";
-    }
+    
     public int getGamesInProgress(){
         // Returns the number of games in progress
         return gamesInProgress;
