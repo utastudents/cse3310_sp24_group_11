@@ -2,6 +2,14 @@ package uta.cse3310;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Test;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Collections;
+import java.util.Scanner;
+import java.util.Random;
+
 
 public class WordGridTest extends TestCase {
     private WordGrid.Grid grid;
