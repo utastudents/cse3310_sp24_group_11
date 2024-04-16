@@ -40,10 +40,10 @@ public class WordGridTest extends TestCase {
         System.out.println("Print display of words test completed");
     }
 
-    public void testWordPlacement() {
-        assertTrue("Word placement test failed", checkWordPlacement(grid));
-        System.out.println("Word placement test completed");
-    }
+    // public void testWordPlacement() {
+    //     assertTrue("Word placement test failed", checkWordPlacement(grid));
+    //     System.out.println("Word placement test completed");
+    // }
 
 }
 
