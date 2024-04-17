@@ -1,7 +1,7 @@
 const usernameInput = document.getElementById("username");
 const usernameError = document.getElementById("usernameError");
 const submitButton = document.getElementById("submitUsername");
-const lobbyDiv = document.getElementById("lobby");
+const lobbyDiv = document.getElementById("Lobby");
 
 function isValidUsername(username) {
     if (!username.trim()) {
