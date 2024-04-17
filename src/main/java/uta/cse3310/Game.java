@@ -8,7 +8,7 @@ public class Game {
     WordGrid wordGrid;
     public PlayerType currentTurn;// there are no turns?
     public PlayerType[] button = new PlayerType[2500];
-    ArrayList<UserEvent> events = new ArrayList<UserEvent>();
+    ArrayList<UserEvent> redEvents,blueEvents,yellowEvents,greenEvents = new ArrayList<UserEvent>();
     public String[] msg;
     public Statistics Stats; 
     WordGrid.Grid grid;
@@ -31,23 +31,66 @@ public class Game {
 
         if(button[U.getButton()] == PlayerType.NOPLAYER){
             button[U.getButton()] = U.getPlayerType();
-            events.add(U);
+            switch (U.getPlayerType()) {
+                case Red:
+                    redEvents.add(U);
+                    break;
+            
+                case Blue:
+                    blueEvents.add(U);
+                    break;
+                
+                case Yellow:
+                    yellowEvents.add(U);
+                    break;
+
+                case Green:
+                    greenEvents.add(U);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        String foundWord = "";
+        Player player = null;
+        if(redEvents.size()==2){
+            foundWord = wordFound(redEvents.get(0).getButton(),redEvents.get(1).getButton(),PlayerType.Red);
+            playerList.get(0);
+            player.playerScore += foundWord.length();
+            playerList.set(0,player);
+        }
+
+        if(blueEvents.size()==2){
+            foundWord = wordFound(blueEvents.get(0).getButton(),blueEvents.get(1).getButton(),PlayerType.Blue);
+            playerList.get(1);
+            player.playerScore += foundWord.length();
+            playerList.set(1,player);
+        }
+
+        if(yellowEvents.size()==2){
+            foundWord = wordFound(yellowEvents.get(0).getButton(),yellowEvents.get(1).getButton(),PlayerType.Yellow);
+            playerList.get(2);
+            player.playerScore += foundWord.length();
+            playerList.set(2,player);
+        }
+
+        if(greenEvents.size()==2){
+            foundWord = wordFound(redEvents.get(0).getButton(),redEvents.get(1).getButton(),PlayerType.Green);
+            playerList.get(3);
+            player.playerScore += foundWord.length();
+            playerList.set(3,player);
         }
         
-
-        
-        
-
-
     }
-    
+
 
     public void startGame() {
         for(Player player: playerList){
             player.playerScore = 0;
         }
         wordGrid = new WordGrid();
-        grid = wordGrid.new Grid();
+        
         grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
         wordGrid.printResult(grid);
         uniquePlayerColor();
@@ -92,7 +135,7 @@ public class Game {
         }
     }
 
-    public String getWordString(int firstButton, int secondButton){
+    public String wordFound(int firstButton, int secondButton, PlayerType type){
 
         int[] first,second;
         first = convertTo2Dcoord(firstButton);
@@ -102,7 +145,8 @@ public class Game {
                 possibleWord.endRow == second[0] && possibleWord.endCol == second[1]){
                 
                 if(checkValidWord(possibleWord.getWord())){
-                    grid.wordsBank.remove(possibleWord.getWord());   
+                    grid.wordsBank.remove(possibleWord.getWord());  
+                    highlightWord(possibleWord, type);
                     return possibleWord.getWord();
                 }
                 
@@ -127,6 +171,10 @@ public class Game {
         if(word.startRow < word.endRow && word.startCol < word.endCol){//left to right up to down
             rowIncrement = 1;
             colIncrement = 1;
+        }
+        if(word.startRow < word.endRow && word.startCol < word.endCol){//right to left up to down
+            rowIncrement = 1;
+            colIncrement = -1;
         }
         if(word.startRow == word.endRow && word.startCol < word.endCol){//left to right 
             
