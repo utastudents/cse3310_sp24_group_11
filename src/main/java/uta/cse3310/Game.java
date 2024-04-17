@@ -12,6 +12,7 @@ public class Game {
     public String[] msg;
     public Statistics Stats; 
     WordGrid.Grid grid;
+
     
     
     
@@ -99,8 +100,12 @@ public class Game {
     }
 
     public boolean checkWinner() {
-        // Checks for winner at the end of the game once all words are found
-        return true;  // Placeholder return value
+
+        if(grid.wordsBank.size()<100){
+            msg[0] = "Game Over";
+            return true;
+        }
+        return false;  
     }
 
     public void uniquePlayerColor() {
