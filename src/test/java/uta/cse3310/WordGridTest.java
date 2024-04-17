@@ -1,58 +1,87 @@
-// package uta.cse3310;
-// import junit.framework.TestCase;
-// import junit.framework.TestSuite;
-// import junit.framework.Test;
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.io.FileNotFoundException;
-// import java.io.FileReader;
-// import java.util.Collections;
-// import java.util.Scanner;
-// import java.util.Random;
+package uta.cse3310;
 
+import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
-// public class WordGridTest extends TestCase {
-//     private WordGrid grid;
+public class WordGridTest extends TestCase {
 
-//     public WordGridTest(String testName) {
-//         super(testName);
-//     }
+    public void setUp() {
+        // Initialize grid before each test
+        List<String> words = new ArrayList<>();
+        try {
+            words = readWordsFromFile("filteredWords.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-//     public static Test suite() {
-//         return new TestSuite(WordGridTest.class);
-//     }
+        WordGrid wordGrid = new WordGrid();
+        WordGrid.Grid grid = wordGrid.new Grid();
+        grid.numAttempts = 1;
+        grid.wordBank.add("WORD");
+        System.out.println("Setup completed");
+    }
 
-//     public void setUp() {
-//         // Initialize grid before each test
-//         List<String> words = WordGrid.verifyWord("words.txt");
-//         grid = new WordGrid(words, 10);
-//         grid.createWords(words);
-//     }
+    private List<String> readWordsFromFile(String fileName) throws IOException {
+        List<String> words = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            words.add(line.trim());
+        }
+        reader.close();
+        return words;
+    }
 
-//     public void testWordVerification() {
-//         assertNotNull("Word verification failed", grid);
-//         assertNotNull("Grid is null", grid.wordGrid);
-//         assertFalse("Word bank is empty", grid.wordBank.isEmpty());
-//         assertTrue("Number of attempts is less than 1", grid.numAttempts >= 1);
-//         System.out.println("Word verification test completed");
-//     }
+    public void testDisplayWords() {
+        WordGrid wordGrid = new WordGrid();
+        WordGrid.Grid grid = wordGrid.new Grid();
+        
+        assertNotNull("Word grid is null", grid);
+        System.out.println("Display words test completed");
+    }
 
-//     public void testDisplayWords() {
-//         assertNotNull("Word grid is null", grid.wordGrid);
-//         WordGrid.displayWords(grid); // Just for visual inspection, no assertions
-//         System.out.println("Display words test completed");
-//     }
+    public void testPrintDisplayOfWords() {
+        WordGrid wordGrid = new WordGrid();
+        WordGrid.Grid grid = wordGrid.new Grid();
+        
+        assertNotNull("Word grid is null", grid);
+        System.out.println("Print display of words test completed");
+    }
 
-//     public void testPrintDisplayOfWords() {
-//         assertNotNull("Word bank is null", grid.wordBank);
-//         WordGrid.printDisplayOfWords(grid); // Just for visual inspection, no assertions
-//         System.out.println("Print display of words test completed");
-//     }
+    public void testCreateWords() {
+        WordGrid wordGrid = new WordGrid();
+        List<String> words = new ArrayList<>();
+        words.add("TEST");
+        WordGrid.Grid grid = wordGrid.new Grid();
+        grid.numAttempts = 1;
+        grid.wordBank.add("WORD");
+        
+        assertNotNull(words);
+        assertFalse(words.isEmpty());
+        assertNotNull(grid);
+        assertTrue(grid.numAttempts > 0);
+        assertFalse(grid.wordBank.isEmpty());
+    }
 
-//     public void testWordPlacement() {
-//         assertTrue("Word placement test failed", checkWordPlacement(grid));
-//         System.out.println("Word placement test completed");
-//     }
+    public void testTryPlaceWord() {
+        WordGrid wordGrid = new WordGrid();
+        WordGrid.Grid grid = wordGrid.new Grid();
+        int lettersPlaced = wordGrid.tryPlaceWord(grid, "HELLO");
+        
+        assertTrue(lettersPlaced > 0);
+        assertFalse(grid.wordBank.isEmpty());
+    }
 
-// }
-
+    public void testTryLocation() {
+        WordGrid wordGrid = new WordGrid();
+        WordGrid.Grid grid = wordGrid.new Grid();
+        int lettersPlaced = wordGrid.tryLocation(grid, "WORLD", 0, 0);
+        
+        assertEquals(5, lettersPlaced);
+        assertFalse(grid.wordBank.isEmpty());
+    }
+}
