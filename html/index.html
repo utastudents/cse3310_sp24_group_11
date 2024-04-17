@@ -158,6 +158,21 @@
                 const obj = JSON.parse(e.data);
                 document.write(obj);
             }
+            connection.onmessage = function(e){
+                const obj = JSON.parse(e.data);
+                document.write(obj);
+            }
+        }
+        function updateWordGridDisplay(grid) {
+            var gridHtml = '';
+            for (var row of grid) {
+                gridHtml += '<div class="grid-row">';
+                for (var cell of row) {
+                    gridHtml += `<div class="grid-cell">${cell}</div>`;
+                }
+                gridHtml += '</div>';
+            }
+            document.getElementById('wordGridContainer').innerHTML = gridHtml;
         }
       </script>
 </body>
