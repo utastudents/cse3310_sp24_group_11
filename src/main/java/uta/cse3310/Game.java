@@ -121,13 +121,26 @@ public class Game {
     private void highlightWord(WordPosition word, PlayerType type){
         int rowIncrement = 0;
         int colIncrement = 0;
-        if(word.startRow < word.endRow && word.startCol == word.endCol){// left to right
-            
+        if(word.startRow < word.endRow && word.startCol == word.endCol){// up to down
+            colIncrement = 1;
         }
+        if(word.startRow < word.endRow && word.startCol < word.endCol){//left to right up to down
+            rowIncrement = 1;
+            colIncrement = 1;
+        }
+        if(word.startRow == word.endRow && word.startCol < word.endCol){//left to right 
+            
+            colIncrement = 1;
+        }
+        
         int length = word.getWord().length()-1;
-            for(int i = 0; i < length; i++){
-
-            }
+        int row = word.getstartRow();
+        int col = word.getstartCol();
+        for(int i = 0; i < length; i++){
+            button[convertTo1Dcoord(row, col)] = type;
+            row += rowIncrement;
+            col += colIncrement;
+        }
 
 
     }
