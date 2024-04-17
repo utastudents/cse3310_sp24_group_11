@@ -1,5 +1,4 @@
 package uta.cse3310;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.io.FileNotFoundException;
@@ -9,40 +8,44 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class WordGrid{
+    //Designing the grid
+    public class Grid{
+        int numAttempts;
+        char [][] wordsGrid = new char[nRows][nCols];
+        List<String>wordsBank = new ArrayList<>();
+    }
+
+    // Arraylist that will store word locations 
+    List<WordPosition> locations = new ArrayList<>();
     
-        //Designing the grid
-        public static class Grid{
-            int numAttempts;
-            char [][] wordGrid = new char[nRows][nCols];
-            List<String> wordBank = new ArrayList<>();
-        }
-
-        static List<WordPosition> locations = new ArrayList<>();
-
-        //4 directions to generate words on the grid
-    public static final int[][]DIRS = {
+    //4directions to generate words on the grid
+    public final int[][]DIRS = {
     {1, 0},   // Vertical (Downward)
     {0, 1},   // Horizontal (Rightward)
     {1, 1},   // Diagonal (Downward-Right)
     {1, -1}   // Diagonal (Downward-Left)
     };
 
+   
+    
     //nb rows and cols for the grids
-    public static final int nRows = 50, nCols = 50;
-    public static final int gridSize = nRows*nCols;
-
+    public int nRows = 50, nCols = 50;
+    public int gridSize = nRows*nCols;
     //min number of words to place on the grid generate
-    public static final int minWords = 330;
-    public static final Random RANDOM = new Random();
+    public int minWords = 330;
+    public Random RANDOM = new Random();
 
-    public static List<String>verifyWord(String filename){
+
+
+    // Method to read real words from a file
+    public List<String>realWords(String filename){
         int maxLength = Math.max(nRows,nCols);
         List<String> words = new ArrayList<>();
         try(Scanner sc = new Scanner(new FileReader(filename))){
             while(sc.hasNext()){
                 String s = sc.next().trim().toLowerCase();
 
-                //we pick words with length between 4 and maxlength and with a-z inside
+                //we pick words with length between 4 and maxLength and with a-z inside
                 if (s.matches("^[a-z]{4,"+ maxLength + "}$")){
                     words.add(s.toUpperCase());
                 }
@@ -53,8 +56,8 @@ public class WordGrid{
         return words;
     }
 
-    public static Grid createWords(List<String>words){
-        // Create words for the word grid from word.txt file
+    // Method to create a word search grid
+    public Grid createWordSearch(List<String>words){
         Grid grid = null;
         int numAttempts = 0;
 
@@ -62,15 +65,15 @@ public class WordGrid{
         while(++numAttempts < 100){
             Collections.shuffle(words);//we shuffle words
             grid = new Grid();
-            int messageLength = placeMessage(grid, "WORD GRID SEARCH GAME");
+            int messageLength = placeMessage(grid, "Word Search Game");
             int target = gridSize- messageLength;
-            int wordFilled = 0;
+            int cellsFilled = 0;
 
             for (String word: words){
-                wordFilled +=tryPlaceWord(grid, word);
+                cellsFilled +=tryPlaceWord(grid, word);
 
-                if (wordFilled == target){
-                    if (grid.wordBank.size()>= minWords){
+                if (cellsFilled == target){
+                    if (grid.wordsBank.size()>= minWords){
                         grid.numAttempts = numAttempts;
                         return grid;
 
@@ -81,57 +84,26 @@ public class WordGrid{
         return grid;
 
     }
-    public static void displayWords(Grid grid){
-        // Displays word density onto word grid
-        int size = grid.wordBank.size();
-        System.out.println("Number of Words: " + size);
 
-        for (int r = 0; r<nRows; r++){
-            System.out.printf("%n%d ", r);
-
-            for (int c=0;c<nCols;c++){
-                System.out.printf(" %c ",grid.wordGrid[r][c]);
-            }
-        }
-        System.out.println("\n");
-
-
-    }
-    
-    public static void printDisplayOfWords(Grid grid){
-        // Prints the count of each orientation of words, filler characters, and density to fit the requirements
-        if(grid == null || grid.numAttempts == 0){
-            System.out.println("No grid to display");
-            return;
-        }
-        int size = grid.wordBank.size();
-
-        System.out.println("Number of Attempts :" + grid.numAttempts);
-
-        //display word to place
-        for (int i=0; i<size-1; i +=1){
-            System.out.printf("%s \n",grid.wordBank.get(i));
-        }
-    }
-
-    
-
-    public static int placeMessage(Grid grid, String msg){
+    // Method to place a message on the grid
+    public int placeMessage(Grid grid, String msg){
         msg = msg.toUpperCase().replaceAll("[^A-Z]","");
         int messageLength = msg.length();
 
         if (messageLength >0 &&messageLength<gridSize){
             int gapSize = gridSize / messageLength;
         
-        for (int i=0; i<messageLength;i++){
-            int pos = i*gapSize + RANDOM.nextInt(gapSize);
-            grid.wordGrid[pos/ nCols][pos % nCols] = msg.charAt(i);
-        }
-        return messageLength;
+            for (int i=0; i<messageLength;i++){
+                int pos = i*gapSize + RANDOM.nextInt(gapSize);
+                grid.wordsGrid[pos/ nCols][pos % nCols] = msg.charAt(i);
+            }
+            return messageLength;
         }
         return 0;
     }
-    public static int tryPlaceWord(Grid grid, String word){
+
+    // Method to try placing a word on the grid
+    public int tryPlaceWord(Grid grid, String word){
         int randDir = RANDOM.nextInt(DIRS.length);
         int randPos = RANDOM.nextInt(gridSize);
 
@@ -139,18 +111,20 @@ public class WordGrid{
             dir = (dir + randDir)% DIRS.length;
         
 
-        for (int pos = 0; pos<gridSize;pos++){
-            pos = (pos+randPos)%gridSize;
+            for (int pos = 0; pos<gridSize;pos++){
+                pos = (pos+randPos)%gridSize;
 
-            int lettersPlaced = tryLocation(grid, word,dir,pos);
+                int lettersPlaced = tryLocation(grid, word,dir,pos);
 
-            if (lettersPlaced>0)
-            return lettersPlaced;
-        }
+                if (lettersPlaced>0)
+                    return lettersPlaced;
+            }
         }
         return 0;
     }
-    public static int tryLocation(Grid grid, String word, int dir, int pos){
+
+    // Method to try placing a word at a location on the grid
+    public int tryLocation(Grid grid, String word, int dir, int pos){
         int r=pos/nCols;
         int c = pos%nCols;
         int length = word.length();
@@ -164,9 +138,9 @@ public class WordGrid{
 
         int i,rr,cc,overlaps = 0;
 
-        //we check wordgrid
+        //we check cells
         for (i=0, rr=r, cc=c;i<length;i++){
-            if (grid.wordGrid[rr][cc]!=0 && grid.wordGrid[rr][cc]!= word.charAt(i))
+            if (grid.wordsGrid[rr][cc]!=0 && grid.wordsGrid[rr][cc]!= word.charAt(i))
             return 0;
 
             cc +=DIRS[dir][0];
@@ -175,9 +149,9 @@ public class WordGrid{
 
         //we place word
         for (i=0,rr=r,cc=c; i<length;i++){
-            if (grid.wordGrid[rr][cc]==word.charAt(i))
+            if (grid.wordsGrid[rr][cc]==word.charAt(i))
             overlaps++;
-            else grid.wordGrid[rr][cc] = word.charAt(i);
+            else grid.wordsGrid[rr][cc] = word.charAt(i);
 
             if (i<length-1){
                 cc += DIRS[dir][0];
@@ -187,15 +161,49 @@ public class WordGrid{
 
         int lettersPlaced = length - overlaps;
         if (lettersPlaced>0)
-        grid.wordBank.add(String.format("%-10s(%d,%d)(%d,%d)",word,c,r,cc,rr));
+        grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)",word,r,c,rr,cc));
         locations.add(new WordPosition(word, r, c, rr, cc));
         return lettersPlaced;
+
+
     }
 
-    // public static void main(String[] args){
-    //     //we meed to create these methods to look
-    //     displayWords(createWords(verifyWord("words.txt")));
-    //     printDisplayOfWords(createWords(verifyWord("words.txt")));
+    public void printResult(Grid grid){
+        if(grid == null || grid.numAttempts == 0){
+            System.out.println("No grid to display");
+            return;
+        }
+        int size = grid.wordsBank.size();
 
-    //}
+        System.out.println("Number of Attempts :" + grid.numAttempts);
+        System.out.println("Number of Words: " + size);
+        System.out.println("\n      ");
+
+        System.out.println();
+        for (int r = 0; r<nRows; r++){
+            System.out.printf("%n%d ", r);
+
+            for (int c=0;c<nCols;c++){
+                System.out.printf(" %c ",grid.wordsGrid[r][c]);
+            }
+        }
+        System.out.println("\n");
+
+        //display word to place
+        for (int i=0; i<size-1; i +=2){
+            System.out.printf("%s %s%n",grid.wordsBank.get(i),grid.wordsBank.get(i+1));
+        }
+
+        if (size %2 ==1){
+            System.out.println(grid.wordsBank.get(size-1));
+        }
+        for (WordPosition location : locations) {
+        System.out.printf("Word: %s, Start: (%d,%d), End: (%d,%d)%n", location.word, location.startRow, location.startCol, location.endRow, location.endCol);
+        }
+    }
+
+
+    
 }
+    
+
