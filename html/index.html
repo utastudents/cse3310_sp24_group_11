@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <title>Word Search Game</title>
+</head>
+<body>
+    <div id = "getUsername">
+        <h1>Enter your username</h1>
+        <input type = "text" id = "username">
+        <button onclick = "checkUsername()">Submit</button>
+    </div> 
+    <div id = "Game" style = "display:none">
+        <h1>Game</h1>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
+    <div id = "Lobby" style = "display:none">
+        <h1>Word Search Game Lobby</h1>
+        <table>
+            <tr>
+                <td><button onclick = "showPlayers()">Show Players</button>
+                <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
+                <td><button onclick = "GlobalChat()">Global Chat</button>
+            </tr>
+            <tr>
+                <td><button onclick = "game()">Join 2 Player Game</button>
+            </tr>
+        </table>
+    </div>
+    <div id="Players" style = "display:none">
+        <h1>Players</h1>
+            <button onclick = "showButPlay()">Show</button>
+            <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
+    <div id="content" style = "display:none;">
+        placeholder
+    </div>
+    <div id =  "Leaderboard" style = "display:none">
+        <h1>Leaderboard</h1>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+        <button onclick = "leaderboard()">Refresh</button>
+    </div>
+    <div id = "GlobalChat" style = "display:none">
+        <h1>Global Chat</h1>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+        <button onclick = "chat()">GoToChat</button>
+    </div>
+    <div class="chatting" style="display: none">
+        <div class="chat-box" id="chatBox"></div>
+        <form id="messageForm">
+          <div class="input-box">
+            <input type="text" id="messageInput" placeholder="Enter message here">
+            <!-- <input type="submit" value="Send"> -->
+            <button onclick="actuallyChatting()">Send</button>
+            <button onclick = "backToLobby()">Back to Lobby</button>
+          </div>
+        </form>
+    </div>
+
+    <script>
+        function checkUsername(){
+            var username = document.getElementById("username").value;
+            if(username == ""){
+                alert('Box cannot be left blank!');
+                return; 
+            }
+            //length myust be less than 8
+            if(username.length > 8){
+                alert('Username must be less than 8 characters');
+                return;
+            }
+            //document.write('Hello, ' + username + '!'); 
+            document.getElementById("getUsername").style.display = "none";
+            document.getElementById("Lobby").style.display = "table";
+            const httpPort = parseInt(process.env.HTTP_PORT); 
+            const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
+
+            var connection;
+            var idx;
+        }
+
+        function showPlayers(){
+            document.getElementById("Lobby").style.display = "none";
+            document.getElementById("Players").style.display = "table";
+        }
+        function showLeaderboard(){
+            document.getElementById("Lobby").style.display = "none";
+            document.getElementById("Leaderboard").style.display = "table";
+        }
+        function GlobalChat(){
+            document.getElementById("Lobby").style.display = "none";
+            document.getElementById("GlobalChat").style.display = "table";
+        }
+        function backToLobby(){
+            document.getElementById("Players").style.display = "none";
+            document.getElementById("content").style.display = "none";
+            document.getElementById("Leaderboard").style.display = "none";
+            document.getElementById("GlobalChat").style.display = "none";
+            document.getElementsByClassName("chatting")[0].style.display = "none";
+            document.getElementById("Game").style.display = "none";
+            document.getElementById("Lobby").style.display = "table";
+        }
+        function showButPlay(){
+            //add username to play
+            let play = username.value + "<br>";
+            for(let i = 0; i < 4; i++){
+                play += "Player " + i + "<br>";
+            }
+            document.getElementById("content").innerHTML = play;
+            document.getElementById("content").style.display = "table";
+        }
+        
+        function leaderboard(){
+            //add leaderboard
+            let lead = "Leaderboard<br>";
+            lead += username.value + "<br>";
+            for(let i = 0; i < 4; i++){
+                lead += "Player " + i + "<br>";
+            }
+            document.getElementById("content").innerHTML = lead;
+            document.getElementById("content").style.display = "table";
+        }
+        function chat(){
+            document.getElementById("GlobalChat").style.display = "none";
+            document.getElementsByClassName("chatting")[0].style.display = "block";
+        }
+
+        const chatBox = document.getElementById("chatBox");
+        const messageForm = document.getElementById("messageForm");
+        const messageInput = document.getElementById("messageInput");
+        messageForm.addEventListener("submit", actuallyChatting);
+        function actuallyChatting(){
+            event.preventDefault();
+            const message = messageInput.value;
+            // if(message === ""){
+            //     alert('Message cannot be left blank!');
+            //     return;
+            // }
+            messageInput.value = "";
+            chatBox.innerHTML += username.value + ": " + message + "<br>";
+        }
+
+        function game(){
+            var serverUrl;
+            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
+            connection = new WebSocket(serverUrl);
+            idx = -1;
+            var gameid = -1;
+            connection.onopen = function(e){
+                console.log("Connected to server");
+                connection.send(JSON.stringify({name: username.value}));
+            }
+            connection.onclose = function(e){
+                console.log("Disconnected from server");
+            }
+            connection.onmessage = function(e){
+                const obj = JSON.parse(e.data);
+                document.write(obj);
+            }
+        }
+      </script>
+</body>
+</html>

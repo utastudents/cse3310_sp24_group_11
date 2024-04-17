@@ -26,46 +26,162 @@ import com.google.gson.GsonBuilder;
 public class App extends WebSocketServer {
 
   private Statistics stats;
-  private Vector<Game> ActiveGames;
+  private Vector<Game> ActiveGames = new Vector<Game>();
   private int gameID;
   private int connectionID;
   public ArrayList<Integer> playerIDs;
+  public ArrayList<String> playerNames = new ArrayList<String>();
   
-  public App(){
-
+  public App(int port) {
+    super(new InetSocketAddress(port));
   }
 
+  public App(InetSocketAddress address) {
+    super(address);
+  }
+
+  public App(int port, Draft_6455 draft) {
+    super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
+  }
+  
   public void displayMessageBox(){
-    // Displays message chat box
+    messageBox mb = new messageBox();
+    mb.displayMessage("Your message here");
   }
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-    // On new websocket connection, creates lobby if no lobby is made, shows game state, game tracking, creates new ServerEvent
+    System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
+
+    UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
+
+    //get the name passed by html
+    
+
+    // search for a game needing a player
+    Game G = null;
+    for (Game i : ActiveGames) {
+      if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
+        G = i;
+        System.out.println("found a match");
+      }
+    }
+
+    // No matches? Create a new Game.
+    if (G == null) {
+      G = new Game();
+      G.GameId = gameID;
+      gameID++;
+      // Add the first player
+      G.currentTurn = uta.cse3310.PlayerType.Blue;
+      ActiveGames.add(G);
+      System.out.println("creating a new Game");
+    } else {
+      // join an existing game
+      System.out.println("not a new game");
+      G.currentTurn = uta.cse3310.PlayerType.Red;
+      G.startGame();
+    }
+    System.out.println("G.currentTurn is " + G.currentTurn);
+    // create an event to go to only the new player
+    E.setPlayerType(G.currentTurn);
+    E.gameIdx = G.GameId;
+    // allows the websocket to give us the Game when a message arrives
+    conn.setAttachment(G);
+
+    Gson gson = new Gson();
+    // Note only send to the single connection
+    conn.send(gson.toJson(E));
+    System.out.println(gson.toJson(E));
+
+    // The state of the game has changed, so lets send it to everyone
+    String jsonString;
+    jsonString = gson.toJson(G);
+
+    System.out.println(jsonString);
+    broadcast(jsonString);
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    // Handles closing of websocket connection
+    System.out.println(conn.getRemoteSocketAddress() + " has closed the connection");
+    // Retrieve the game tied to the websocket connection
+    Game G = conn.getAttachment();
+    if (G != null) {
+        // Perform necessary actions like notifying other players, updating game status, etc.
+        System.out.println("Game ID " + G.GameId + " associated with this connection is now being handled due to disconnection.");
+    }
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    // Processes messages from players through the websocket connections including logs, run time, and game stats
+    Game G = conn.getAttachment();
+    
+    GsonBuilder builder = new GsonBuilder();
+    Gson gson = builder.create();
+    UserEvent E = gson.fromJson(message, UserEvent.class);
+    System.out.println("Received message: " + message);
+    //parse message, message looks like: {"name" : "actualName"}, only print the actual name part
+    String actualName = message.substring(9, message.length()-2);
+    System.out.println("actual name is: " + actualName);
+    //add to arraylist
+    playerNames.add(actualName);
+    //send the arraylist to the html
+    String jsonString = gson.toJson(playerNames);
+    conn.send(jsonString);
+    System.out.println("jsonString is: " + jsonString);
+    //broadcast(jsonString);
   }
 
   @Override
   public void onMessage(WebSocket conn, ByteBuffer message) {
-    // Handles binary messages
+    System.out.println(conn + ": " + message);
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
-    // Handle exceptions that occur for the websocket connection, error manangement and debugging
+      // Log the error for debugging purposes
+      if(conn != null)
+        System.err.println("An error occurred on connection " + conn.getRemoteSocketAddress() + ": " + ex.getMessage());
+
+      // Optionally, close the connection if an error occurs
+      if (conn != null) {
+          conn.close(1006, "Unexpected error occurred");
+      }
   }
-  
+   
   @Override
   public void onStart(){
-    // Initial tasks when server starts up
+    System.out.println("Server started!");
+    setConnectionLostTimeout(0);
+  }
+
+  public static void main(String[] args) {
+
+    String HttpPort = System.getenv("HTTP_PORT");
+    int port = 9011;    //set http port to 9011 because we are group 11  (9000+11)
+    if (HttpPort!=null) {
+      port = Integer.valueOf(HttpPort);
+    }
+
+    // Set up the http server
+
+    HttpServer H = new HttpServer(port, "./html");
+    H.start();
+    System.out.println("http Server started on port: " + port);
+
+    // create and start the websocket server
+
+    port = 9111;    //websocket port set to 9111 also because we are group 11   (9100+11)
+    String WSPort = System.getenv("WEBSOCKET_PORT");
+    if (WSPort!=null) {
+      port = Integer.valueOf(WSPort);
+    }
+
+    App A = new App(port);
+    A.setReuseAddr(true);
+    A.start();
+    System.out.println("websocket Server started on port: " + port);
+
   }
 }

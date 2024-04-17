@@ -1,7 +1,11 @@
 package uta.cse3310;
 
+
+// A player can be Red, Blue, Yellow, Green, and NoPlayer
 public enum PlayerType {
-    // Colors assigned for players
-    Blue, Red, Yellow, Green, NoPlayer
+    NOPLAYER,
+    Red,
+    Blue,
+    Yellow,
+    Green;
 }
- 
