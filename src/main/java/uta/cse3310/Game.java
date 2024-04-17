@@ -11,14 +11,14 @@ public class Game {
     ArrayList<UserEvent> events = new ArrayList<UserEvent>();
     public String[] msg;
     public Statistics Stats; 
-    Grid grid;
+    WordGrid.Grid grid;
     
     
     
 
     
     public Game(){
-
+        
     }
     public Game(ArrayList<Player> playerList, int gameID){//playerList only contains players that are in this game
         GameId = gameID;
@@ -47,10 +47,10 @@ public class Game {
             player.playerScore = 0;
         }
         wordGrid = new WordGrid();
-        
-        // grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
-        // wordGrid.printResult(grid);
-        // uniquePlayerColor();
+        grid = wordGrid.new Grid();
+        grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
+        wordGrid.printResult(grid);
+        uniquePlayerColor();
         
 
     }
@@ -119,9 +119,16 @@ public class Game {
         return false; 
     }
     private void highlightWord(WordPosition word, PlayerType type){
+        int rowIncrement = 0;
+        int colIncrement = 0;
         if(word.startRow < word.endRow && word.startCol == word.endCol){// left to right
-            int length = word.getWord().length()-1;
+            
         }
+        int length = word.getWord().length()-1;
+            for(int i = 0; i < length; i++){
+
+            }
+
 
     }
 
@@ -130,7 +137,6 @@ public class Game {
     }
 
     public Statistics getStatistics(){
-        // Returns the statistics of the game
         return Stats;
     }
     public void addPlayer(Player player){
