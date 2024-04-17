@@ -6,6 +6,61 @@
 <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+    <div id="getUsername">
+        <h1>Enter your Username/Handle</h1>
+        <input type="text" id="username">
+        <span id="usernameError" class="error"></span>
+        <button id="submitUsername">Submit</button>
+    </div>
+    <div id="lobby" style="display: none;">
+    </div>    
+
+    <div id = "Game" style = "display:none">
+        <h1>Game</h1>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
+    <div id = "Lobby" style = "display:none">
+        <h1>Word Search Game Lobby</h1>
+        <table>
+            <tr>
+                <td><button onclick = "showPlayers()">Show Players</button>
+                <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
+                <td><button onclick = "GlobalChat()">Global Chat</button>
+            </tr>
+            <tr>
+                <td><button onclick = "game()">Join 2 Player Game</button>
+            </tr>
+        </table>
+    </div>
+    <div id="Players" style = "display:none">
+        <h1>Players</h1>
+            <button onclick = "showButPlay()">Show</button>
+            <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
+    <div id="content" style = "display:none;">
+        placeholder
+    </div>
+    <div id =  "Leaderboard" style = "display:none">
+        <h1>Leaderboard</h1>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+        <button onclick = "leaderboard()">Refresh</button>
+    </div>
+    <div id = "GlobalChat" style = "display:none">
+        <h1>Global Chat</h1>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+        <button onclick = "chat()">GoToChat</button>
+    </div>
+    <div class="chatting" style="display: none">
+        <div class="chat-box" id="chatBox"></div>
+        <form id="messageForm">
+          <div class="input-box">
+            <input type="text" id="messageInput" placeholder="Enter message here">
+            <!-- <input type="submit" value="Send"> -->
+            <button onclick="actuallyChatting()">Send</button>
+            <button onclick = "backToLobby()">Back to Lobby</button>
+          </div>
+        </form>
+    </div>
     <div id="wordSearchContainer">
         <table>
             <tbody id="wordSearchGrid">
@@ -17,6 +72,8 @@
         <input type="text" id="messageInput" placeholder="Type a message...">
         <button onclick="sendMessage()">Send</button>
     </div>
+<script src="username.js"></script>
+<script src="lobby.js"></script>
 <script src="game.js"></script>
 </body>
 </html>
