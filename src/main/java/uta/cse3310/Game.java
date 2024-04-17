@@ -54,7 +54,7 @@ public class Game {
             }
         }
         String foundWord = "";
-        Player player = null;
+        Player player = new Player("",null);
         if(redEvents.size()==2){
             foundWord = wordFound(redEvents.get(0).getButton(),redEvents.get(1).getButton(),PlayerType.Red);
             playerList.get(0);
