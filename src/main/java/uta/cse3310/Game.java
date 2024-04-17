@@ -14,6 +14,7 @@ public class Game {
     Grid grid;
     
     
+    
 
     
     public Game(){
@@ -33,6 +34,8 @@ public class Game {
             events.add(U);
         }
         
+
+        
         
 
 
@@ -44,8 +47,10 @@ public class Game {
             player.playerScore = 0;
         }
         wordGrid = new WordGrid();
-        grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
-        wordGrid.printResult(grid);
+        
+        // grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
+        // wordGrid.printResult(grid);
+        // uniquePlayerColor();
         
 
     }
@@ -96,8 +101,10 @@ public class Game {
             if(possibleWord.startRow==first[0] && possibleWord.startCol == first[1] &&
                 possibleWord.endRow == second[0] && possibleWord.endCol == second[1]){
                 
-                if(checkValidWord(possibleWord.getWord()))
+                if(checkValidWord(possibleWord.getWord())){
+                    grid.wordsBank.remove(possibleWord.getWord());   
                     return possibleWord.getWord();
+                }
                 
             }
         }
@@ -110,6 +117,12 @@ public class Game {
             if(word == possibleWord) return true;
         }
         return false; 
+    }
+    private void highlightWord(WordPosition word, PlayerType type){
+        if(word.startRow < word.endRow && word.startCol == word.endCol){// left to right
+            int length = word.getWord().length()-1;
+        }
+
     }
 
     public void displayUsersAndData() {
@@ -130,6 +143,9 @@ public class Game {
         int row = input/50;
         int col = input%50;
         return new int[]{row,col};
+    }
+    private int convertTo1Dcoord(int row, int col){
+        return row*50 + col;
     }
 }
 

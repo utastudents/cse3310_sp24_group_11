@@ -7,16 +7,13 @@ import java.util.Collections;
 import java.util.Scanner;
 import java.util.Random;
 
-class Grid{
-    int numAttempts;
-    int nRows = 50;
-    int nCols = 50;
-    char [][] wordsGrid = new char[nRows][nCols];
-    List<String>wordsBank = new ArrayList<>();
-}
 public class WordGrid{
     //Designing the grid
-    
+    public class Grid{
+        int numAttempts;
+        char [][] wordsGrid = new char[nRows][nCols];
+        List<String>wordsBank = new ArrayList<>();
+    }
 
     // Arraylist that will store word locations 
     List<WordPosition> locations = new ArrayList<>();
