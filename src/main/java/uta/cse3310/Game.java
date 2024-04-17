@@ -11,6 +11,9 @@ public class Game {
     ArrayList<UserEvent> events = new ArrayList<UserEvent>();
     public String[] msg;
     public Statistics Stats; 
+    Grid grid;
+    
+    
 
     
     public Game(){
@@ -25,11 +28,11 @@ public class Game {
     public void update(UserEvent U){
         // Processes user actions and updated game state
 
-        if(button[U.getButton()] == PlayerType.NoPlayer){
+        if(button[U.getButton()] == PlayerType.NOPLAYER){
             button[U.getButton()] = U.getPlayerType();
             events.add(U);
         }
-        checkSelectedWords();
+        
         
 
 
@@ -41,6 +44,9 @@ public class Game {
             player.playerScore = 0;
         }
         wordGrid = new WordGrid();
+        grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
+        wordGrid.printResult(grid);
+        
 
     }
 
@@ -51,23 +57,58 @@ public class Game {
 
     public void uniquePlayerColor() {
         // Assigns unique player colors to each player
+        int counter = 0;
+        for(Player player: playerList){
+            switch (counter) {
+                case 0:
+                    player.type = PlayerType.Blue;
+                    counter++;
+                    break;
+                
+                case 1:
+                    player.type = PlayerType.Red;
+                    counter++;
+                    break;
+            
+                case 2:
+                    player.type = PlayerType.Yellow;
+                    counter++;
+                    break;
+                case 3:
+                    player.type = PlayerType.Green;
+                    counter++;
+                    break;
+
+                default:
+                    break;
+            }
+            
+            
+        }
     }
 
-    public void checkSelectedWords(){
-       //wordGrid.getWord(); maybe?
-        
-    }
     public String getWordString(int firstButton, int secondButton){
 
+        int[] first,second;
+        first = convertTo2Dcoord(firstButton);
+        second = convertTo2Dcoord(secondButton);
+        for(WordPosition possibleWord: wordGrid.locations){
+            if(possibleWord.startRow==first[0] && possibleWord.startCol == first[1] &&
+                possibleWord.endRow == second[0] && possibleWord.endCol == second[1]){
+                
+                if(checkValidWord(possibleWord.getWord()))
+                    return possibleWord.getWord();
+                
+            }
+        }
 
         return "";
     }
 
     public boolean checkValidWord(String word) {
-        // Checks if highlighted word by player is a valid word to be scored from the word bank
-        // for(String wordFromBank: wordGrid.getWordBank()){
-        //     if(wordFromBank == word) return true;
-        // }
+        for(String possibleWord: grid.wordsBank){
+            if(word == possibleWord) return true;
+        }
         return false; 
     }
 
@@ -79,9 +120,16 @@ public class Game {
         // Returns the statistics of the game
         return Stats;
     }
-    public void addPlayer(PlayerType player){
-        // Adds a player to the game
+    public void addPlayer(Player player){
+        if(playerList.size()<4){
+            playerList.add(player);
+        }
         
+    }
+    private int[] convertTo2Dcoord(int input){
+        int row = input/50;
+        int col = input%50;
+        return new int[]{row,col};
     }
 }
 

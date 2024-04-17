@@ -6,6 +6,7 @@ public class Player{
     int playerScore;
     int playerID;
     ArrayList<Player> playerList;
+    PlayerType type;
 
     public Player(String playerName, ArrayList<Player> playerList){
         this.playerList = playerList;
