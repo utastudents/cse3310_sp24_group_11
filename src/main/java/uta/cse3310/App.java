@@ -53,7 +53,7 @@ public class App extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
-    UserEvent E = new UserEvent(0, PlayerType.NoPlayer, 0);  
+    UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
 
     //get the name passed by html
     
@@ -159,7 +159,7 @@ public class App extends WebSocketServer {
   public static void main(String[] args) {
 
     String HttpPort = System.getenv("HTTP_PORT");
-    int port = 9080;    //set http port to 9011 because we are group 11  (9000+11)
+    int port = 9011;    //set http port to 9011 because we are group 11  (9000+11)
     if (HttpPort!=null) {
       port = Integer.valueOf(HttpPort);
     }
@@ -172,7 +172,7 @@ public class App extends WebSocketServer {
 
     // create and start the websocket server
 
-    port = 9180;    //websocket port set to 9111 also because we are group 11   (9100+11)
+    port = 9111;    //websocket port set to 9111 also because we are group 11   (9100+11)
     String WSPort = System.getenv("WEBSOCKET_PORT");
     if (WSPort!=null) {
       port = Integer.valueOf(WSPort);
