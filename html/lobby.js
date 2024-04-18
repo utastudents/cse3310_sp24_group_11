@@ -58,3 +58,54 @@ function actuallyChatting(){
     messageInput.value = "";
     chatBox.innerHTML += username.value + ": " + message + "<br>";
 }
+
+function gameRoom() {
+    // Show the Two Player Game section
+    document.getElementById("twoPlayerGame").style.display = "block";
+    
+    // Reset ready status
+    player1Ready = false;
+    player2Ready = false;
+    
+    // Reset button text
+    document.getElementById('ready1').innerText = 'Ready';
+    document.getElementById('ready2').innerText = 'Ready';
+    
+    document.getElementById('ready1').addEventListener('click', function() {
+        toggleReady(1);
+    });
+    
+    document.getElementById('ready2').addEventListener('click', function() {
+        toggleReady(2);
+    });
+    
+    // Clear message
+    document.getElementById('message').innerText = '';
+
+    document.getElementById("Players").style.display = "none";
+    document.getElementById("content").style.display = "none";
+    document.getElementById("Leaderboard").style.display = "none";
+    document.getElementById("GlobalChat").style.display = "none";
+}
+
+function toggleReady(playerNumber) {
+    if (playerNumber === 1) {
+        player1Ready = !player1Ready;
+        document.getElementById('ready1').innerText = player1Ready ? 'Unready' : 'Ready';
+    } else if (playerNumber === 2) {
+        player2Ready = !player2Ready;
+        document.getElementById('ready2').innerText = player2Ready ? 'Unready' : 'Ready';
+    }
+
+    checkReadyStatus();
+}
+
+function checkReadyStatus() {
+    if (player1Ready && player2Ready) {
+        document.getElementById('message').innerText = 'Both players are ready! Starting the game...';
+        // add code to start game HERE
+    } else {
+        document.getElementById('message').innerText = '';
+    }
+}
+

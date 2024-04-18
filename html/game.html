@@ -28,7 +28,7 @@
                 <td><button onclick = "GlobalChat()">Global Chat</button>
             </tr>
             <tr>
-                <td><button onclick = "game()">Join 2 Player Game</button>
+                <td><button onclick = "gameRoom()">Join 2 Player Game</button>
             </tr>
         </table>
     </div>
@@ -61,6 +61,21 @@
           </div>
         </form>
     </div>
+    <div id="twoPlayerGame" style="display: none;">
+        <h1>Two Player Game</h1>
+        <div id="player1">
+            <h2>Player 1</h2>
+            <button id="ready1">Ready</button>
+            <span id="status1"></span>
+        </div>
+        <div id="player2">
+            <h2>Player 2</h2>
+            <button id="ready2">Ready</button>
+            <span id="status2"></span>
+        </div>
+
+        <div id="message"></div>
+
     <div id="wordSearchContainer" style="display: none;">
         <table>
             <tbody id="wordSearchGrid">
@@ -75,5 +90,11 @@
 <script src="username.js"></script>
 <script src="lobby.js"></script>
 <script src="game.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        generateGrid();
+        setupGridEvents();
+    });
+</script>
 </body>
 </html>

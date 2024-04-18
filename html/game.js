@@ -1,8 +1,3 @@
-document.addEventListener('DOMContentLoaded', function() {
-    generateGrid();
-    setupGridEvents();
-});
-
 function game(){
     var serverUrl;
     serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
