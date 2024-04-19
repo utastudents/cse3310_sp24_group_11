@@ -32,7 +32,9 @@ public class WordGrid{
     public int nRows = 50, nCols = 50;
     public int gridSize = nRows*nCols;
     //min number of words to place on the grid generate
-    public int minWords = 330;
+    public int minWords = 350;
+    public double density = 1700;
+    //public int totalLengthOfWords = 0;
     public Random RANDOM = new Random();
 
 
@@ -41,18 +43,20 @@ public class WordGrid{
     public List<String>realWords(String filename){
         int maxLength = Math.max(nRows,nCols);
         List<String> words = new ArrayList<>();
+        int totalLengthOfWords = 0;
         try(Scanner sc = new Scanner(new FileReader(filename))){
             while(sc.hasNext()){
                 String s = sc.next().trim().toLowerCase();
-
                 //we pick words with length between 4 and maxLength and with a-z inside
                 if (s.matches("^[a-z]{4,"+ maxLength + "}$")){
                     words.add(s.toUpperCase());
+                    totalLengthOfWords += s.length();
                 }
             }
         }catch(FileNotFoundException e){
             //manage error!
         }
+        System.out.println("Total Length of Words: " + totalLengthOfWords);
         return words;
     }
 
@@ -62,7 +66,7 @@ public class WordGrid{
         int numAttempts = 0;
 
         //we make 100 attempts to generate a grid
-        while(++numAttempts < 100){
+        while(++numAttempts < 10){
             Collections.shuffle(words);//we shuffle words
             grid = new Grid();
             int messageLength = placeMessage(grid, "Word Search Game");
@@ -79,6 +83,14 @@ public class WordGrid{
 
                     }else break;//we fulfill he grid but we have not enough words, we start over!
                 }
+            }
+        }
+        grid.numAttempts = numAttempts;
+        //add dashes to non-filled cells
+        for (int r=0;r<nRows;r++){
+            for (int c=0;c<nCols;c++){
+                if (grid.wordsGrid[r][c]==0)
+                    grid.wordsGrid[r][c] = '-';
             }
         }
         return grid;
@@ -180,14 +192,20 @@ public class WordGrid{
         System.out.println("\n      ");
 
         System.out.println();
-        for (int r = 0; r<nRows; r++){
-            System.out.printf("%n%d ", r);
+        // for (int r = 0; r<nRows; r++){
+        //     System.out.printf("%n%d ", r);
 
-            for (int c=0;c<nCols;c++){
-                System.out.printf(" %c ",grid.wordsGrid[r][c]);
+        //     for (int c=0;c<nCols;c++){
+        //         System.out.printf(" %c ",grid.wordsGrid[r][c]);
+        //     }
+        // }
+        // System.out.println("\n");
+        for(int i = 0; i < nRows; i++){
+            for(int j = 0; j < nCols; j++){
+                System.out.print(grid.wordsGrid[i][j] + " ");
             }
+            System.out.println();
         }
-        System.out.println("\n");
 
         //display word to place
         for (int i=0; i<size-1; i +=2){
@@ -197,9 +215,9 @@ public class WordGrid{
         if (size %2 ==1){
             System.out.println(grid.wordsBank.get(size-1));
         }
-        for (WordPosition location : locations) {
-        System.out.printf("Word: %s, Start: (%d,%d), End: (%d,%d)%n", location.word, location.startRow, location.startCol, location.endRow, location.endCol);
-        }
+        // for (WordPosition location : locations) {
+        // System.out.printf("Word: %s, Start: (%d,%d), End: (%d,%d)%n", location.word, location.startRow, location.startCol, location.endRow, location.endCol);
+        // }
     }
 
 

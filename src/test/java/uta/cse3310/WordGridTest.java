@@ -39,7 +39,10 @@ public class WordGridTest extends TestCase {
     public void testPrintResult() {
         WordGrid wordGrid = new WordGrid();
         WordGrid.Grid grid = wordGrid.new Grid();
-    
+        List<String> word = new ArrayList<>();
+        word = wordGrid.realWords("filteredWords.txt");
+        grid = wordGrid.createWordSearch(word);
+        wordGrid.printResult(grid);
         assertNotNull("Word grid is null", grid);
         System.out.println("Print result test completed");
     }
