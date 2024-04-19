@@ -11,6 +11,7 @@ function GlobalChat(){
     document.getElementById("GlobalChat").style.display = "table";
 }
 function backToLobby(){
+    console.log("Back to lobby function called");
     document.getElementById("Players").style.display = "none";
     document.getElementById("content").style.display = "none";
     document.getElementById("Leaderboard").style.display = "none";
@@ -59,16 +60,26 @@ function actuallyChatting(){
     chatBox.innerHTML += username.value + ": " + message + "<br>";
 }
 
-function gameRoom() {
- 
+function twoPlayerGame() {
+    // Hide all elements except the "Two Player Game" section
+    document.getElementById("Players").style.display = "none";
+    document.getElementById("content").style.display = "none";
+    document.getElementById("Leaderboard").style.display = "none";
+    document.getElementById("GlobalChat").style.display = "none";
+    document.getElementById("Game").style.display = "none";
+    
+    // Show the "Two Player Game" section
     document.getElementById("twoPlayerGame").style.display = "block";
     
+    // Reset player readiness
     player1Ready = false;
     player2Ready = false;
     
+    // Reset ready buttons
     document.getElementById('ready1').innerText = 'Ready';
     document.getElementById('ready2').innerText = 'Ready';
     
+    // Add event listeners for ready buttons
     document.getElementById('ready1').addEventListener('click', function() {
         toggleReady(1);
     });
@@ -77,15 +88,10 @@ function gameRoom() {
         toggleReady(2);
     });
     
+    // Clear any messages
     document.getElementById('message').innerText = '';
-
-    document.getElementById("Players").style.display = "none";
-    document.getElementById("content").style.display = "none";
-    document.getElementById("Leaderboard").style.display = "none";
-    document.getElementById("GlobalChat").style.display = "none";
-    document.getElementsByClassName("chatting")[0].style.display = "none";
-    document.getElementById("Game").style.display = "none";
 }
+
 
 function toggleReady(playerNumber) {
     if (playerNumber === 1) {
