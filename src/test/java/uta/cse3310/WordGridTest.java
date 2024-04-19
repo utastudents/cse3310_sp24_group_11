@@ -38,10 +38,18 @@ public class WordGridTest extends TestCase {
 
     public void testPrintResult() {
         WordGrid wordGrid = new WordGrid();
-        WordGrid.Grid grid = wordGrid.new Grid();
-    
-        assertNotNull("Word grid is null", grid);
-        System.out.println("Print result test completed");
+        WordGrid.Grid grid;
+        //print grid
+        List<String> word = new ArrayList<>();
+        word = wordGrid.realWords("filteredWords.txt");
+        grid = wordGrid.createWordSearch(word);
+        wordGrid.printResult(grid);
+        // for(int i = 0; i < grid.wordsGrid.length; i++){
+        //     for(int j = 0; j < grid.wordsGrid[i].length; j++){
+        //         System.out.print(grid.wordsGrid[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
     }
 
 
