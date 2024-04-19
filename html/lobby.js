@@ -60,14 +60,12 @@ function actuallyChatting(){
 }
 
 function gameRoom() {
-    // Show the Two Player Game section
+ 
     document.getElementById("twoPlayerGame").style.display = "block";
     
-    // Reset ready status
     player1Ready = false;
     player2Ready = false;
     
-    // Reset button text
     document.getElementById('ready1').innerText = 'Ready';
     document.getElementById('ready2').innerText = 'Ready';
     
@@ -79,13 +77,14 @@ function gameRoom() {
         toggleReady(2);
     });
     
-    // Clear message
     document.getElementById('message').innerText = '';
 
     document.getElementById("Players").style.display = "none";
     document.getElementById("content").style.display = "none";
     document.getElementById("Leaderboard").style.display = "none";
     document.getElementById("GlobalChat").style.display = "none";
+    document.getElementsByClassName("chatting")[0].style.display = "none";
+    document.getElementById("Game").style.display = "none";
 }
 
 function toggleReady(playerNumber) {
