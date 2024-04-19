@@ -6,6 +6,7 @@
     <title>Word Search Game</title>
 </head>
 <body>
+    <div id="wordGrid" style="display:none"></div>
     <div id = "getUsername">
         <h1>Enter your username</h1>
         <input type = "text" id = "username">
@@ -73,11 +74,6 @@
             //document.write('Hello, ' + username + '!'); 
             document.getElementById("getUsername").style.display = "none";
             document.getElementById("Lobby").style.display = "table";
-            const httpPort = parseInt(process.env.HTTP_PORT); 
-            const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
-
-            var connection;
-            var idx;
         }
 
         function showPlayers(){
@@ -154,25 +150,21 @@
             connection.onclose = function(e){
                 console.log("Disconnected from server");
             }
-            connection.onmessage = function(e){
-                const obj = JSON.parse(e.data);
-                document.write(obj);
-            }
-            connection.onmessage = function(e){
-                const obj = JSON.parse(e.data);
-                document.write(obj);
-            }
-        }
-        function updateWordGridDisplay(grid) {
-            var gridHtml = '';
-            for (var row of grid) {
-                gridHtml += '<div class="grid-row">';
-                for (var cell of row) {
-                    gridHtml += `<div class="grid-cell">${cell}</div>`;
+            
+            connection.onmessage = function(event) {
+                var wordGrid = JSON.parse(event.data);
+                var gridHtml = "<table>";
+                for(var i = 0; i < wordGrid.wordsGrid.length; i++){
+                    gridHtml += "<tr>";
+                    for(var j = 0; j < wordGrid.wordsGrid[i].length; j++){
+                        gridHtml += `<td style="border: 1px solid black; padding: 5px; text-align: center;">${wordGrid.wordsGrid[i][j]}</td>`;
+                    }
+                    gridHtml += "</tr>";
                 }
-                gridHtml += '</div>';
-            }
-            document.getElementById('wordGridContainer').innerHTML = gridHtml;
+                gridHtml += "</table>";
+                document.getElementById("wordGrid").innerHTML = gridHtml;
+                document.getElementById("wordGrid").style.display = "block";
+            };
         }
       </script>
 </body>

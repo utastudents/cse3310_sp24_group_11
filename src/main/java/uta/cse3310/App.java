@@ -89,17 +89,17 @@ public class App extends WebSocketServer {
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
 
-    Gson gson = new Gson();
-    // Note only send to the single connection
-    conn.send(gson.toJson(E));
-    System.out.println(gson.toJson(E));
+    // Gson gson = new Gson();
+    // // Note only send to the single connection
+    // conn.send(gson.toJson(E));
+    // System.out.println(gson.toJson(E));
 
     // The state of the game has changed, so lets send it to everyone
-    String jsonString;
-    jsonString = gson.toJson(G);
+    // String jsonString;
+    // jsonString = gson.toJson(G);
 
-    System.out.println(jsonString);
-    broadcast(jsonString);
+    // System.out.println(jsonString);
+    // broadcast(jsonString);
   }
 
   @Override
@@ -126,9 +126,13 @@ public class App extends WebSocketServer {
     System.out.println("actual name is: " + actualName);
     //add to arraylist
     playerNames.add(actualName);
-    //send the arraylist to the html
-    String jsonString = gson.toJson(playerNames);
+    //send the grid
+    G.startGame();
+    String jsonString = gson.toJson(G.grid);
     conn.send(jsonString);
+    //send the arraylist to the html
+    // String jsonString = gson.toJson(playerNames);
+    // conn.send(jsonString);
     System.out.println("jsonString is: " + jsonString);
     //broadcast(jsonString);
   }
