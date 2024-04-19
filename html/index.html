@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Word Search Game</title>
+<meta charset="UTF-8">
+<title>Word Search Game</title>
+<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <div id = "getUsername">
-        <h1>Enter your username</h1>
-        <input type = "text" id = "username">
-        <button onclick = "checkUsername()">Submit</button>
-    </div> 
+    <div id="getUsername">
+        <h1>Enter your Username/Handle</h1>
+        <input type="text" id="username">
+        <span id="usernameError" class="error"></span>
+        <button id="submitUsername">Submit</button>
+    </div>
+    <div id="lobby" style="display: none;">
+    </div>    
+
     <div id = "Game" style = "display:none">
         <h1>Game</h1>
         <button onclick = "backToLobby()">Back to Lobby</button>
@@ -22,7 +28,9 @@
                 <td><button onclick = "GlobalChat()">Global Chat</button>
             </tr>
             <tr>
-                <td><button onclick = "game()">Join 2 Player Game</button>
+                <td><button onclick = "twoPlayerGame()">Join 2 Player Game</button>
+                <td><button onclick = "threePlayerGame()">Join 3 Player Game</button>
+                <td><button onclick = "fourPlayerGame()">Join 4 Player Game</button>
             </tr>
         </table>
     </div>
@@ -55,108 +63,87 @@
           </div>
         </form>
     </div>
+    <div id="twoPlayerGame" style="display: none;">
+        <h1>Two Player Game</h1>
+        <div id="player1">
+            <h2>Player 1</h2>
+            <button id="ready1">Ready</button>
+            <span id="status1"></span>
+        </div>
+        <div id="player2">
+            <h2>Player 2</h2>
+            <button id="ready2">Ready</button>
+            <span id="status2"></span>
+        </div>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
 
-    <script>
-        function checkUsername(){
-            var username = document.getElementById("username").value;
-            if(username == ""){
-                alert('Box cannot be left blank!');
-                return; 
-            }
-            //length myust be less than 8
-            if(username.length > 8){
-                alert('Username must be less than 8 characters');
-                return;
-            }
-            //document.write('Hello, ' + username + '!'); 
-            document.getElementById("getUsername").style.display = "none";
-            document.getElementById("Lobby").style.display = "table";
-            const httpPort = parseInt(process.env.HTTP_PORT); 
-            const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
+    <div id="threePlayerGame" style="display: none;">
+        <h1>Three Player Game</h1>
+        <div id="player1">
+            <h2>Player 1</h2>
+            <button id="ready1">Ready</button>
+            <span id="status1"></span>
+        </div>
+        <div id="player2">
+            <h2>Player 2</h2>
+            <button id="ready2">Ready</button>
+            <span id="status2"></span>
+        </div>
+        <div id="player3">
+            <h2>Player 3</h2>
+            <button id="ready3">Ready</button>
+            <span id="status2"></span>
+        </div>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
 
-            var connection;
-            var idx;
-        }
+    <div id="fourPlayerGame" style="display: none;">
+        <h1>Two Player Game</h1>
+        <div id="player1">
+            <h2>Player 1</h2>
+            <button id="ready1">Ready</button>
+            <span id="status1"></span>
+        </div>
+        <div id="player2">
+            <h2>Player 2</h2>
+            <button id="ready2">Ready</button>
+            <span id="status2"></span>
+        </div>
+        <div id="player3">
+            <h2>Player 3</h2>
+            <button id="ready2">Ready</button>
+            <span id="status2"></span>
+        </div>
+        <div id="player4">
+            <h2>Player 4</h2>
+            <button id="ready2">Ready</button>
+            <span id="status2"></span>
+        </div>
+        <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
 
-        function showPlayers(){
-            document.getElementById("Lobby").style.display = "none";
-            document.getElementById("Players").style.display = "table";
-        }
-        function showLeaderboard(){
-            document.getElementById("Lobby").style.display = "none";
-            document.getElementById("Leaderboard").style.display = "table";
-        }
-        function GlobalChat(){
-            document.getElementById("Lobby").style.display = "none";
-            document.getElementById("GlobalChat").style.display = "table";
-        }
-        function backToLobby(){
-            document.getElementById("Players").style.display = "none";
-            document.getElementById("content").style.display = "none";
-            document.getElementById("Leaderboard").style.display = "none";
-            document.getElementById("GlobalChat").style.display = "none";
-            document.getElementsByClassName("chatting")[0].style.display = "none";
-            document.getElementById("Game").style.display = "none";
-            document.getElementById("Lobby").style.display = "table";
-        }
-        function showButPlay(){
-            //add username to play
-            let play = username.value + "<br>";
-            for(let i = 0; i < 4; i++){
-                play += "Player " + i + "<br>";
-            }
-            document.getElementById("content").innerHTML = play;
-            document.getElementById("content").style.display = "table";
-        }
-        
-        function leaderboard(){
-            //add leaderboard
-            let lead = "Leaderboard<br>";
-            lead += username.value + "<br>";
-            for(let i = 0; i < 4; i++){
-                lead += "Player " + i + "<br>";
-            }
-            document.getElementById("content").innerHTML = lead;
-            document.getElementById("content").style.display = "table";
-        }
-        function chat(){
-            document.getElementById("GlobalChat").style.display = "none";
-            document.getElementsByClassName("chatting")[0].style.display = "block";
-        }
+    <div id="message"></div>
 
-        const chatBox = document.getElementById("chatBox");
-        const messageForm = document.getElementById("messageForm");
-        const messageInput = document.getElementById("messageInput");
-        messageForm.addEventListener("submit", actuallyChatting);
-        function actuallyChatting(){
-            event.preventDefault();
-            const message = messageInput.value;
-            // if(message === ""){
-            //     alert('Message cannot be left blank!');
-            //     return;
-            // }
-            messageInput.value = "";
-            chatBox.innerHTML += username.value + ": " + message + "<br>";
-        }
-
-        function game(){
-            var serverUrl;
-            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
-            connection = new WebSocket(serverUrl);
-            idx = -1;
-            var gameid = -1;
-            connection.onopen = function(e){
-                console.log("Connected to server");
-                connection.send(JSON.stringify({name: username.value}));
-            }
-            connection.onclose = function(e){
-                console.log("Disconnected from server");
-            }
-            connection.onmessage = function(e){
-                const obj = JSON.parse(e.data);
-                document.write(obj);
-            }
-        }
-      </script>
+    <div id="wordSearchContainer" style="display: none;">
+        <table>
+            <tbody id="wordSearchGrid">
+            </tbody>
+        </table>
+    </div>
+    <div id="chatContainer" style="display: none;">
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+<script src="username.js"></script>
+<script src="lobby.js"></script>
+<script src="game.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        generateGrid();
+        setupGridEvents();
+    });
+</script>
 </body>
 </html>

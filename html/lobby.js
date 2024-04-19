@@ -10,6 +10,9 @@ function GlobalChat(){
     document.getElementById("Lobby").style.display = "none";
     document.getElementById("GlobalChat").style.display = "table";
 }
+function initialLobby(){
+
+}
 function backToLobby(){
     console.log("Back to lobby function called");
     document.getElementById("Players").style.display = "none";
@@ -18,6 +21,9 @@ function backToLobby(){
     document.getElementById("GlobalChat").style.display = "none";
     document.getElementsByClassName("chatting")[0].style.display = "none";
     document.getElementById("Game").style.display = "none";
+    document.getElementById("twoPlayerGame").style.display = "none";
+    document.getElementById("threePlayerGame").style.display = "none";
+    document.getElementById("fourPlayerGame").style.display = "none";
     document.getElementById("Lobby").style.display = "table";
 }
 function showButPlay(){
@@ -67,6 +73,7 @@ function twoPlayerGame() {
     document.getElementById("Leaderboard").style.display = "none";
     document.getElementById("GlobalChat").style.display = "none";
     document.getElementById("Game").style.display = "none";
+    document.getElementById("Lobby").style.display = "none";
     
     // Show the "Two Player Game" section
     document.getElementById("twoPlayerGame").style.display = "block";
@@ -92,6 +99,84 @@ function twoPlayerGame() {
     document.getElementById('message').innerText = '';
 }
 
+function threePlayerGame() {
+    
+    document.getElementById("Players").style.display = "none";
+    document.getElementById("content").style.display = "none";
+    document.getElementById("Leaderboard").style.display = "none";
+    document.getElementById("GlobalChat").style.display = "none";
+    document.getElementById("Game").style.display = "none";
+    document.getElementById("Lobby").style.display = "none";
+    
+    // Show the "Two Player Game" section
+    document.getElementById("threePlayerGame").style.display = "block";
+    
+    // Reset player readiness
+    player1Ready = false;
+    player2Ready = false;
+    player3Ready = false;
+    
+    // Reset ready buttons
+    document.getElementById('ready1').innerText = 'Ready';
+    document.getElementById('ready2').innerText = 'Ready';
+    document.getElementById('ready3').innerText = 'Ready';
+
+    // Add event listeners for ready buttons
+    document.getElementById('ready1').addEventListener('click', function() {
+        toggleReady(1);
+    });
+    document.getElementById('ready2').addEventListener('click', function() {
+        toggleReady(2);
+    });
+    document.getElementById('ready3').addEventListener('click', function() {
+        toggleReady(3);
+    });
+    
+    // Clear any messages
+    document.getElementById('message').innerText = '';
+}
+
+function fourPlayerGame() {
+    
+    document.getElementById("Players").style.display = "none";
+    document.getElementById("content").style.display = "none";
+    document.getElementById("Leaderboard").style.display = "none";
+    document.getElementById("GlobalChat").style.display = "none";
+    document.getElementById("Game").style.display = "none";
+    document.getElementById("Lobby").style.display = "none";
+    
+    // Show the "Two Player Game" section
+    document.getElementById("fourPlayerGame").style.display = "block";
+    
+    // Reset player readiness
+    player1Ready = false;
+    player2Ready = false;
+    player3Ready = false;
+    player4Ready = false;
+    
+    // Reset ready buttons
+    document.getElementById('ready1').innerText = 'Ready';
+    document.getElementById('ready2').innerText = 'Ready';
+    document.getElementById('ready3').innerText = 'Ready';
+    document.getElementById('ready4').innerText = 'Ready';
+
+    // Add event listeners for ready buttons
+    document.getElementById('ready1').addEventListener('click', function() {
+        toggleReady(1);
+    });
+    document.getElementById('ready2').addEventListener('click', function() {
+        toggleReady(2);
+    });
+    document.getElementById('ready3').addEventListener('click', function() {
+        toggleReady(3);
+    });
+    document.getElementById('ready4').addEventListener('click', function() {
+        toggleReady(4);
+    });
+    
+    // Clear any messages
+    document.getElementById('message').innerText = '';
+}
 
 function toggleReady(playerNumber) {
     if (playerNumber === 1) {
