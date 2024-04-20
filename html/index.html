@@ -157,15 +157,58 @@
                 for(var i = 0; i < wordGrid.wordsGrid.length; i++){
                     gridHtml += "<tr>";
                     for(var j = 0; j < wordGrid.wordsGrid[i].length; j++){
-                        gridHtml += `<td style="border: 1px solid black; padding: 5px; text-align: center;">${wordGrid.wordsGrid[i][j]}</td>`;
+                        gridHtml += `<td onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 5px; text-align: center; cursor: pointer;">${wordGrid.wordsGrid[i][j]}</td>`;
                     }
                     gridHtml += "</tr>";
                 }
                 gridHtml += "</table>";
                 document.getElementById("wordGrid").innerHTML = gridHtml;
                 document.getElementById("wordGrid").style.display = "block";
+
+                document.addEventListener('mouseup', function() {
+                    isMouseDown = false;
+                });
             };
         }
+        var isMouseDown = false;
+        // Array to keep track of cells with changed color
+        var changedCells = [];
+
+        function changeCellColor(cell, mouseDownUp = null) {
+            if (mouseDownUp === true) {
+                isMouseDown = true; // Mouse is pressed down
+                cell.style.backgroundColor = "yellow"; // Change color on mouse down
+                // Add cell to changedCells array if not already included
+                if (!changedCells.includes(cell)) {
+                    changedCells.push(cell);
+                }
+            } else if (mouseDownUp === false) {
+                isMouseDown = false; // Mouse is released
+                // Reset the background color of all changed cells
+                resetCellColors();
+            } else if (isMouseDown) {
+                cell.style.backgroundColor = "yellow"; // Change color on mouse over while mouse is down
+                // Add cell to changedCells array if not already included
+                if (!changedCells.includes(cell)) {
+                    changedCells.push(cell);
+                }
+            }
+        }
+
+        // Function to reset the background color of all changed cells
+        function resetCellColors() {
+            changedCells.forEach(function(cell) {
+                cell.style.backgroundColor = ""; // Reset color
+            });
+            // Clear the array after resetting colors
+            changedCells = [];
+        }
+
+        // Ensure to call resetCellColors on global mouse up event
+        document.addEventListener('mouseup', function() {
+            isMouseDown = false;
+            resetCellColors(); // Reset colors on mouse up anywhere in the document
+        });
       </script>
 </body>
 </html>
