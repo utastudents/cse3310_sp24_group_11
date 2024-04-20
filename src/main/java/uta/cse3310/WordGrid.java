@@ -1,4 +1,3 @@
-package uta.cse3310;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.FileNotFoundException;
@@ -7,12 +6,13 @@ import java.util.Collections;
 import java.util.Scanner;
 import java.util.Random;
 
-public class WordGrid{
+public class New7{
     //Designing the grid
     public class Grid{
         int numAttempts;
         char [][] wordsGrid = new char[nRows][nCols];
         List<String>wordsBank = new ArrayList<>();
+        int sharedWordCount = 0;
     }
 
     // Arraylist that will store word locations 
@@ -64,9 +64,10 @@ public class WordGrid{
     public Grid createWordSearch(List<String>words){
         Grid grid = null;
         int numAttempts = 0;
+        boolean sharedLettersConditionMet = false;
 
         //we make 100 attempts to generate a grid
-        while(++numAttempts < 10){
+        while(++numAttempts < 20 && !sharedLettersConditionMet){
             Collections.shuffle(words);//we shuffle words
             grid = new Grid();
             int messageLength = placeMessage(grid, "Word Search Game");
@@ -78,13 +79,16 @@ public class WordGrid{
 
                 if (cellsFilled == target){
                     if (grid.wordsBank.size()>= minWords){
-                        grid.numAttempts = numAttempts;
-                        return grid;
+                        if (grid.sharedWordCount >= 10){
+                            sharedLettersConditionMet = true;
+                        }
+                        
 
                     }else break;//we fulfill he grid but we have not enough words, we start over!
                 }
             }
         }
+        
         grid.numAttempts = numAttempts;
         //add dashes to non-filled cells
         for (int r=0;r<nRows;r++){
@@ -149,11 +153,15 @@ public class WordGrid{
         return 0;
 
         int i,rr,cc,overlaps = 0;
+        boolean hasSharedLetters = false;
+
 
         //we check cells
         for (i=0, rr=r, cc=c;i<length;i++){
-            if (grid.wordsGrid[rr][cc]!=0 && grid.wordsGrid[rr][cc]!= word.charAt(i))
-            return 0;
+            if (grid.wordsGrid[rr][cc]!=0 && grid.wordsGrid[rr][cc]!= word.charAt(i)){
+                hasSharedLetters = true;
+                break;
+            }
 
             cc +=DIRS[dir][0];
             rr += DIRS[dir][1];
@@ -174,7 +182,10 @@ public class WordGrid{
         int lettersPlaced = length - overlaps;
         if (lettersPlaced>0)
         grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)",word,r,c,rr,cc));
-        locations.add(new WordPosition(word, r, c, rr, cc));
+        locations.add(new WordPosition(word, r, c, rr, cc, hasSharedLetters));
+        if(hasSharedLetters){
+            grid.sharedWordCount++;
+        }
         return lettersPlaced;
 
 
@@ -189,6 +200,7 @@ public class WordGrid{
 
         System.out.println("Number of Attempts :" + grid.numAttempts);
         System.out.println("Number of Words: " + size);
+        System.out.println("Number of Worfs with Shared letters: " + grid.sharedWordCount);
         System.out.println("\n      ");
 
         System.out.println();
@@ -215,13 +227,21 @@ public class WordGrid{
         if (size %2 ==1){
             System.out.println(grid.wordsBank.get(size-1));
         }
+
+        //Print words with shared letters
+        System.out.println("\nWords with Shared Letters: "+ grid.sharedWordCount);
+    //     for (WordPosition location : locations){
+    //         if (location.hasSharedLetters){
+    //     // System.out.printf("Word: %s, Start: (%d,%d), End: (%d,%d)%n", location.word, location.startRow, location.startCol, location.endRow, location.endCol);
+    // }
+    //    }
         // for (WordPosition location : locations) {
         // System.out.printf("Word: %s, Start: (%d,%d), End: (%d,%d)%n", location.word, location.startRow, location.startCol, location.endRow, location.endCol);
         // }
     }
-
-
-    
 }
+
+     
+  
     
 
