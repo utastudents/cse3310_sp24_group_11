@@ -30,7 +30,7 @@ public class App extends WebSocketServer {
   private int gameID;
   private int connectionID;
   public ArrayList<Integer> playerIDs;
-  public ArrayList<String> playerNames = new ArrayList<String>();
+  public ArrayList<Player> players = new ArrayList<Player>();
   
   public App(int port) {
     super(new InetSocketAddress(port));
@@ -51,7 +51,7 @@ public class App extends WebSocketServer {
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-    System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
+    System.out.println("IP: " + conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
     UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
 
@@ -120,20 +120,26 @@ public class App extends WebSocketServer {
     GsonBuilder builder = new GsonBuilder();
     Gson gson = builder.create();
     UserEvent E = gson.fromJson(message, UserEvent.class);
-    System.out.println("Received message: " + message);
+    System.out.println("Received message from the frontend: " + message);
     //parse message, message looks like: {"name" : "actualName"}, only print the actual name part
     String actualName = message.substring(9, message.length()-2);
-    System.out.println("actual name is: " + actualName);
-    //add to arraylist
-    playerNames.add(actualName);
+    Player newPlayer = new Player(actualName, players);
+    if(newPlayer.getPlayerName() != null) {
+        // If the username is unique, add the player to the list
+        players.add(newPlayer);
+        System.out.println("Player added: " + actualName);
+    } else {
+        System.out.println("Username already taken: " + actualName);
+    }
     //send the grid
     G.startGame();
     String jsonString = gson.toJson(G.grid);
     conn.send(jsonString);
+    System.out.println("WordGrid sent to the client successfully");
     //send the arraylist to the html
     // String jsonString = gson.toJson(playerNames);
     // conn.send(jsonString);
-    System.out.println("jsonString is: " + jsonString);
+    // System.out.println("jsonString is: " + jsonString);
     //broadcast(jsonString);
   }
 

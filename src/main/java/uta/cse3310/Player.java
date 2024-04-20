@@ -9,9 +9,12 @@ public class Player{
     PlayerType type;
 
     public Player(String playerName, ArrayList<Player> playerList){
-        this.playerList = playerList;
-        setPlayerName(playerName, playerList);
-        playerID = playerList.size()+1;
+        if(verifyUsername(playerName, playerList)){
+            this.playerName = playerName;
+            this.playerID = playerList.size() + 1; // Example ID assignment
+        } else {
+            this.playerName = null; // Indicates username was not unique
+        }
     }
 
     public boolean verifyUsername(String playerName, ArrayList<Player> playerList){

@@ -93,7 +93,7 @@ public class Game {
         wordGrid = new WordGrid();
         
         grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
-        wordGrid.printResult(grid);
+        //wordGrid.printResult(grid);
         uniquePlayerColor();
         
 
