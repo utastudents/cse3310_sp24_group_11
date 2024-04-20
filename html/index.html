@@ -138,6 +138,7 @@
         }
 
         function game(){
+            document.getElementById("Lobby").style.display = "none";
             var serverUrl;
             serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
             connection = new WebSocket(serverUrl);
