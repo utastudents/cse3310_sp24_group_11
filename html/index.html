@@ -139,7 +139,7 @@
 
         function game(){
             var serverUrl;
-            serverUrl = "ws://" + window.location.hostname +":"+ 9011;
+            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
             connection = new WebSocket(serverUrl);
             idx = -1;
             var gameid = -1;

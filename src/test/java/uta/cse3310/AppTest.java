@@ -20,7 +20,7 @@ public class AppTest extends TestCase {
      * Test setting reuseAddr flag.
      */
     public void testSetReuseAddr() {
-        App testApp = new App(9011);
+        App testApp = new App(9111);
         testApp.setReuseAddr(true);
         assertTrue("ReuseAddr flag should be set to true", testApp.isReuseAddr());
     }
