@@ -176,7 +176,7 @@ public class App extends WebSocketServer {
 
     // create and start the websocket server
 
-    port = 9011;    //websocket port set to 9011 also because we are group 11   (9000+11)
+    port = 9111;    //websocket port set to 9011 also because we are group 11   (9000+11)
     String WSPort = System.getenv("WEBSOCKET_PORT");
     if (WSPort!=null) {
       port = Integer.valueOf(WSPort);
