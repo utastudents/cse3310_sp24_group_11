@@ -6,13 +6,16 @@ public class WordPosition{
   int startCol;
   int endRow;
   int endCol;
+  boolean hasSharedLetters;
+
   
-  public WordPosition(String word, int startRow, int startCol, int endRow, int endCol) {
+  public WordPosition(String word, int startRow, int startCol, int endRow, int endCol, boolean hasSharedLetters) {
       this.word = word;
       this.startRow = startRow;
       this.startCol = startCol;
       this.endRow = endRow;
       this.endCol = endCol;
+      this.hasSharedLetters = hasSharedLetters;
   }
 
   public String getWord(){
