@@ -86,11 +86,12 @@ public class WordGrid{
             }
         }
         grid.numAttempts = numAttempts;
-        //add dashes to non-filled cells
+        //add random letters to non-filled cells
         for (int r=0;r<nRows;r++){
             for (int c=0;c<nCols;c++){
-                if (grid.wordsGrid[r][c]==0)
-                    grid.wordsGrid[r][c] = '-';
+                if (grid.wordsGrid[r][c]==0){
+                    grid.wordsGrid[r][c] = (char)('A' + RANDOM.nextInt(26));
+                }
             }
         }
         return grid;
