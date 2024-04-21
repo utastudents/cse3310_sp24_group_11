@@ -8,16 +8,19 @@ public class Player{
     ArrayList<Player> playerList;
     PlayerType type;
 
-    public Player(String playerName, ArrayList<Player> playerList){
-        if(verifyUsername(playerName, playerList)){
+    public Player(String playerName){
+        if(verifyUsername(playerName)){
             this.playerName = playerName;
             this.playerID = playerList.size() + 1; // Example ID assignment
+            playerList.add(this);
+            System.out.println("Username is unique");
         } else {
             this.playerName = null; // Indicates username was not unique
+            System.out.println("Username is not unique");
         }
     }
 
-    public boolean verifyUsername(String playerName, ArrayList<Player> playerList){
+    public boolean verifyUsername(String playerName){
 
         for (Player player: playerList) {//checks if the username is unused 
             if(playerName == player.getPlayerName()){
@@ -31,8 +34,8 @@ public class Player{
         return playerName;
     }
 
-    public void setPlayerName(String playerName, ArrayList<Player> playerList) {
-        if(verifyUsername(playerName,playerList)){
+    public void setPlayerName(String playerName) {
+        if(verifyUsername(playerName)){
             this.playerName = playerName;
         }
     } 

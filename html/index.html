@@ -60,6 +60,11 @@
     </div>
 
     <script>
+        var serverUrl;
+        serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
+        connection = new WebSocket(serverUrl);
+        idx = -1;
+        var gameid = -1;
         function checkUsername(){
             var username = document.getElementById("username").value;
             if(username == ""){
@@ -71,7 +76,7 @@
                 alert('Username must be less than 8 characters');
                 return;
             }
-            //document.write('Hello, ' + username + '!'); 
+            connection.send(JSON.stringify({name: username}));
             document.getElementById("getUsername").style.display = "none";
             document.getElementById("Lobby").style.display = "table";
         }
@@ -139,18 +144,6 @@
 
         function game(){
             document.getElementById("Lobby").style.display = "none";
-            var serverUrl;
-            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
-            connection = new WebSocket(serverUrl);
-            idx = -1;
-            var gameid = -1;
-            connection.onopen = function(e){
-                console.log("Connected to server");
-                connection.send(JSON.stringify({name: username.value}));
-            }
-            connection.onclose = function(e){
-                console.log("Disconnected from server");
-            }
             
             connection.onmessage = function(event) {
                 var wordGrid = JSON.parse(event.data);
@@ -158,7 +151,7 @@
                 for(var i = 0; i < wordGrid.wordsGrid.length; i++){
                     gridHtml += "<tr>";
                     for(var j = 0; j < wordGrid.wordsGrid[i].length; j++){
-                        gridHtml += `<td onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 5px; text-align: center; cursor: pointer;">${wordGrid.wordsGrid[i][j]}</td>`;
+                        gridHtml += `<td onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordGrid.wordsGrid[i][j]}</td>`;
                     }
                     gridHtml += "</tr>";
                 }
@@ -178,7 +171,7 @@
         function changeCellColor(cell, mouseDownUp = null) {
             if (mouseDownUp === true) {
                 isMouseDown = true; // Mouse is pressed down
-                cell.style.backgroundColor = "yellow"; // Change color on mouse down
+                cell.style.backgroundColor = "red"; // Change color on mouse down
                 // Add cell to changedCells array if not already included
                 if (!changedCells.includes(cell)) {
                     changedCells.push(cell);
@@ -188,7 +181,7 @@
                 // Reset the background color of all changed cells
                 resetCellColors();
             } else if (isMouseDown) {
-                cell.style.backgroundColor = "yellow"; // Change color on mouse over while mouse is down
+                cell.style.backgroundColor = "red"; // Change color on mouse over while mouse is down
                 // Add cell to changedCells array if not already included
                 if (!changedCells.includes(cell)) {
                     changedCells.push(cell);
