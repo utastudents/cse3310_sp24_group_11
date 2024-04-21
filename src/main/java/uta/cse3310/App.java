@@ -56,7 +56,7 @@ public class App extends WebSocketServer {
     UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
 
     //get the name passed by html
-    
+
 
     // search for a game needing a player
     Game G = null;
@@ -80,7 +80,7 @@ public class App extends WebSocketServer {
       // join an existing game
       System.out.println("not a new game");
       G.currentTurn = uta.cse3310.PlayerType.Red;
-      G.startGame();
+      //G.startGame();
     }
     System.out.println("G.currentTurn is " + G.currentTurn);
     // create an event to go to only the new player
@@ -131,11 +131,21 @@ public class App extends WebSocketServer {
     } else {
         System.out.println("Username already taken: " + actualName);
     }
-    //send the grid
-    G.startGame();
-    String jsonString = gson.toJson(G.grid);
-    conn.send(jsonString);
-    System.out.println("WordGrid sent to the client successfully");
+    System.out.println("Current Turn: " + G.currentTurn);
+    //make a new game and send the grid to both players when red player joins
+    if(G.currentTurn == uta.cse3310.PlayerType.Red) {
+        G = new Game(players, gameID);
+        gameID++;
+        G.startGame();
+        System.out.println("Game started");
+        // Send the grid to both players
+        String jsonString = gson.toJson(G.grid);
+        conn.send(jsonString);
+        System.out.println("WordGrid sent to the client successfully");
+        //System.out.println("jsonString is: " + jsonString);
+        broadcast(jsonString);
+    }
+
     //send the arraylist to the html
     // String jsonString = gson.toJson(playerNames);
     // conn.send(jsonString);
