@@ -23,10 +23,8 @@
                 <td><button onclick = "showPlayers()">Show Players</button>
                 <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
                 <td><button onclick = "GlobalChat()">Global Chat</button>
-                <td><button id="createRoom" onclick = "createRoom()">Create Room</button>
-            </tr>
-            <tr>
-                <td><button onclick = "game()">Join 2 Player Game</button>
+                <td><button id="createRoom" onclick = "addRooms()">Create Room</button>
+                <td><button onclick="fetchRooms()">Show/Refresh Rooms</button>
             </tr>
         </table>
     </div>
@@ -98,7 +96,6 @@
                 } else if(data.type && data.type === "success"){
                     document.getElementById("getUsername").style.display = "none";
                     document.getElementById("Lobby").style.display = "table";
-                    document.getElementById("AvailableRooms").style.display = "block";
                 }
             };
         }
@@ -167,6 +164,7 @@
         function game(){
             document.getElementById("Lobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "block";
+            document.getElementById("AvailableRooms").style.display = "none";
 
             connection.send(JSON.stringify({action: "join2PlayerGame"}));
             
@@ -229,28 +227,43 @@
             isMouseDown = false;
             resetCellColors(); // Reset colors on mouse up anywhere in the document
         });
-        function createRoom(){
-            currentuser = document.getElementById("username").value;
+        function addRooms() {
+            var username = document.getElementById("username").value;
+            connection.send(JSON.stringify({action: "addRoom", playerName: username}));
+            fetchRooms();
+        }
+
+        function fetchRooms() {
+            connection.send(JSON.stringify({action: "fetchRooms"}));
             
-            const roomsList = document.getElementById("roomsList");
-            const listItem = document.createElement("li");
-            listItem.textContent = `${currentuser}'s room`;
-            roomsList.appendChild(listItem);
-            document.getElementById("createRoom").style.display = "none";
-
-            const joinButton = document.createElement("button");
-            joinButton.textContent = "Join";
-            joinButton.onclick = function() {
-
+            connection.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                if (Array.isArray(data)) { // Assuming that the room list is sent as an array
+                    var roomsList = document.getElementById("roomsList");
+                    roomsList.innerHTML = ""; // Clear existing rooms
+                    data.forEach(function(room) {
+                        var listItem = document.createElement("li");
+                        listItem.textContent = room + "'s room";
+                        var joinButton = document.createElement("button");
+                        joinButton.textContent = "Join";
+                        joinButton.onclick = function() {
+                            connection.send(JSON.stringify({action: "joinRoom", roomName: room}));
+                            game();
+                        };
+                        
+                        var removeButton = document.createElement("button");
+                        removeButton.textContent = "Remove";
+                        removeButton.onclick = function() {
+                            connection.send(JSON.stringify({action: "removeRoom", roomName: room}));
+                            listItem.remove();
+                        };
+                        listItem.appendChild(joinButton);
+                        listItem.appendChild(removeButton);
+                        roomsList.appendChild(listItem);
+                    });
+                    document.getElementById("AvailableRooms").style.display = "block";
+                }
             };
-            listItem.appendChild(joinButton);
-            
-            const removeButton = document.createElement("button");
-            removeButton.textContent = "Remove";
-            removeButton.onclick = function() {
-
-            };
-            listItem.appendChild(removeButton);
         }
       </script>
 </body>

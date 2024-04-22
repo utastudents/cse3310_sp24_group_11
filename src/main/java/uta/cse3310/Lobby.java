@@ -32,16 +32,15 @@ public class Lobby{
     // //arraylist of games
     // private ArrayList<Game> gameList;
     public ArrayList<Game> games;
-    public ArrayList<Player> gameCreators;
     public ArrayList<Player> players;
     public ArrayList<String> chatMessages;
     public ArrayList<String> rooms;
 
     public Lobby(){
         games = new ArrayList<Game>();
-        gameCreators = new ArrayList<Player>();
         players = new ArrayList<Player>();
         chatMessages = new ArrayList<String>();;
+        rooms = new ArrayList<String>();
     }
 
     public void addPlayer(String playerName){
@@ -55,6 +54,20 @@ public class Lobby{
 
     public void removePlayer(String playerName) {
         players.removeIf(player -> playerName.equals(player.getPlayerName()));
+    }
+
+    public void addRoom(String playerName) {
+        rooms.add(playerName);
+        System.out.println("Room " + playerName + " added to lobby");
+    }
+
+    public void removeRoom(String playerName) {
+        rooms.remove(playerName);
+        System.out.println("Room " + playerName + " removed from lobby");
+    }
+
+    public ArrayList<String> fetchRooms() {
+        return rooms;
     }
 
     // public void display(){

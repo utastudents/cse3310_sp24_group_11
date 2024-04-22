@@ -144,6 +144,30 @@ public class App extends WebSocketServer {
           broadcast(jsonString);
           System.out.println("WordGrid sent to the client successfully");
       }
+      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchRooms")) {
+          ArrayList<String> rooms = lobby.fetchRooms();
+          Gson gson = new Gson();
+          String roomsJson = gson.toJson(rooms);
+          System.out.println("Rooms fetched successfully: " + roomsJson);
+          conn.send(roomsJson);
+      }
+      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("addRoom")) {
+        String playerName = jsonMessage.get("playerName").getAsString();
+        lobby.addRoom(playerName);
+        // Optionally, send a confirmation message back to the client
+        JsonObject confirmationMessage = new JsonObject();
+        confirmationMessage.addProperty("type", "success");
+        confirmationMessage.addProperty("msg", "Room created successfully.");
+        conn.send(confirmationMessage.toString());
+      }
+      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("removeRoom")) {
+        String playerName = jsonMessage.get("playerName").getAsString();
+        lobby.removeRoom(playerName);
+        JsonObject confirmationMessage = new JsonObject();
+        confirmationMessage.addProperty("type", "success");
+        confirmationMessage.addProperty("msg", "Room removed successfully.");
+        conn.send(confirmationMessage.toString());
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
