@@ -23,11 +23,18 @@
                 <td><button onclick = "showPlayers()">Show Players</button>
                 <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
                 <td><button onclick = "GlobalChat()">Global Chat</button>
+                <td><button id="createRoom" onclick = "createRoom()">Create Room</button>
             </tr>
             <tr>
                 <td><button onclick = "game()">Join 2 Player Game</button>
             </tr>
         </table>
+    </div>
+    <div id="AvailableRooms" style="display:none">
+        <h1>Available Rooms</h1>
+        <ul id="roomsList">
+            <!-- Rooms will be added here dynamically -->
+        </ul>
     </div>
     <div id="Players" style = "display:none">
         <h1>Players</h1>
@@ -91,6 +98,7 @@
                 } else if(data.type && data.type === "success"){
                     document.getElementById("getUsername").style.display = "none";
                     document.getElementById("Lobby").style.display = "table";
+                    document.getElementById("AvailableRooms").style.display = "block";
                 }
             };
         }
@@ -221,6 +229,29 @@
             isMouseDown = false;
             resetCellColors(); // Reset colors on mouse up anywhere in the document
         });
+        function createRoom(){
+            currentuser = document.getElementById("username").value;
+            
+            const roomsList = document.getElementById("roomsList");
+            const listItem = document.createElement("li");
+            listItem.textContent = `${currentuser}'s room`;
+            roomsList.appendChild(listItem);
+            document.getElementById("createRoom").style.display = "none";
+
+            const joinButton = document.createElement("button");
+            joinButton.textContent = "Join";
+            joinButton.onclick = function() {
+
+            };
+            listItem.appendChild(joinButton);
+            
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.onclick = function() {
+
+            };
+            listItem.appendChild(removeButton);
+        }
       </script>
 </body>
 </html>

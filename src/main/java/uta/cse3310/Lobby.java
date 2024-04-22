@@ -35,6 +35,7 @@ public class Lobby{
     public ArrayList<Player> gameCreators;
     public ArrayList<Player> players;
     public ArrayList<String> chatMessages;
+    public ArrayList<String> rooms;
 
     public Lobby(){
         games = new ArrayList<Game>();
