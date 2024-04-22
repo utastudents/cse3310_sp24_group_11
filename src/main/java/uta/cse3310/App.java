@@ -8,6 +8,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -35,7 +37,8 @@ public class App extends WebSocketServer {
   public ArrayList<Integer> playerIDs;
   public ArrayList<Player> players = new ArrayList<Player>();
   private Lobby lobby;
-  
+  private Map<WebSocket, Player> connectionPlayerMap = new HashMap<>();
+
   public App(int port) {
     super(new InetSocketAddress(port));
     lobby = new Lobby();
@@ -61,11 +64,13 @@ public class App extends WebSocketServer {
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    // Retrieve the game tied to the websocket connection
-    Game G = conn.getAttachment();
-    if (G != null) {
-        // Perform necessary actions like notifying other players, updating game status, etc.
-        System.out.println("Game ID " + G.GameId + " associated with this connection is now being handled due to disconnection.");
+    Player player = connectionPlayerMap.get(conn);
+    if (player != null) {
+        // Remove player from the global list, lobby, and the map
+        Player.removePlayer(player.playerID);
+        lobby.removePlayer(player.getPlayerName());
+        connectionPlayerMap.remove(conn); // Remove the connection from the map
+        System.out.println("Player " + player.getPlayerName() + " removed due to disconnection.");
     }
   }
 
@@ -79,7 +84,9 @@ public class App extends WebSocketServer {
         String username = jsonMessage.get("name").getAsString();
         boolean isUnique = Player.verifyUsername(username);
         if (isUnique) {
-          lobby.players.add(new Player(username));
+          Player newPlayer = new Player(username);
+          connectionPlayerMap.put(conn, newPlayer); // Track the connection
+          lobby.players.add(newPlayer);
           JsonObject successMessage = new JsonObject();
           successMessage.addProperty("type", "success");
           successMessage.addProperty("msg", "Username is unique and added.");

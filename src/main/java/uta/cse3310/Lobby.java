@@ -52,6 +52,10 @@ public class Lobby{
         System.out.println("Player " + newPlayer.playerName + " added to lobby");
     }
 
+    public void removePlayer(String playerName) {
+        players.removeIf(player -> playerName.equals(player.getPlayerName()));
+    }
+
     // public void display(){
     //     // Displays and handles functionality of lobby
     //     System.out.println("Welcome to the lobby\n
