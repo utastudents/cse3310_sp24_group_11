@@ -54,7 +54,7 @@ public class Game {
             }
         }
         String foundWord = "";
-        Player player = new Player("",null);
+        Player player = new Player("");
         if(redEvents.size()==2){
             foundWord = wordFound(redEvents.get(0).getButton(),redEvents.get(1).getButton(),PlayerType.Red);
             playerList.get(0);
@@ -93,7 +93,7 @@ public class Game {
         wordGrid = new WordGrid();
         
         grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
-        wordGrid.printResult(grid);
+        //wordGrid.printResult(grid);
         uniquePlayerColor();
         
 

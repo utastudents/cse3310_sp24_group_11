@@ -6,6 +6,7 @@
     <title>Word Search Game</title>
 </head>
 <body>
+    <div id="wordGrid" style="display:none"></div>
     <div id = "getUsername">
         <h1>Enter your username</h1>
         <input type = "text" id = "username">
@@ -58,7 +59,16 @@
         </form>
     </div>
 
+    <div id="waitingforplayer" style="display:none">
+        <h1>Waiting for another player to join</h1>
+    </div>
+
     <script>
+        var serverUrl;
+        serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
+        connection = new WebSocket(serverUrl);
+        idx = -1;
+        var gameid = -1;
         function checkUsername(){
             var username = document.getElementById("username").value;
             if(username == ""){
@@ -70,14 +80,19 @@
                 alert('Username must be less than 8 characters');
                 return;
             }
-            //document.write('Hello, ' + username + '!'); 
-            document.getElementById("getUsername").style.display = "none";
-            document.getElementById("Lobby").style.display = "table";
-            const httpPort = parseInt(process.env.HTTP_PORT); 
-            const wsPort = parseInt(process.env.WEBSOCKET_PORT); 
-
-            var connection;
-            var idx;
+            connection.send(JSON.stringify({name: username}));
+            
+            connection.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                if(data.type && data.type === "error") {
+                    alert(data.msg); // Show the error message from the server
+                    document.getElementById("getUsername").style.display = "block"; // Show the username input again
+                    document.getElementById("Lobby").style.display = "none"; // Hide the lobby
+                } else if(data.type && data.type === "success"){
+                    document.getElementById("getUsername").style.display = "none";
+                    document.getElementById("Lobby").style.display = "table";
+                }
+            };
         }
 
         function showPlayers(){
@@ -142,38 +157,70 @@
         }
 
         function game(){
-            var serverUrl;
-            serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
-            connection = new WebSocket(serverUrl);
-            idx = -1;
-            var gameid = -1;
-            connection.onopen = function(e){
-                console.log("Connected to server");
-                connection.send(JSON.stringify({name: username.value}));
-            }
-            connection.onclose = function(e){
-                console.log("Disconnected from server");
-            }
-            connection.onmessage = function(e){
-                const obj = JSON.parse(e.data);
-                document.write(obj);
-            }
-            connection.onmessage = function(e){
-                const obj = JSON.parse(e.data);
-                document.write(obj);
-            }
-        }
-        function updateWordGridDisplay(grid) {
-            var gridHtml = '';
-            for (var row of grid) {
-                gridHtml += '<div class="grid-row">';
-                for (var cell of row) {
-                    gridHtml += `<div class="grid-cell">${cell}</div>`;
+            document.getElementById("Lobby").style.display = "none";
+            document.getElementById("waitingforplayer").style.display = "block";
+
+            connection.send(JSON.stringify({action: "join2PlayerGame"}));
+            
+            connection.onmessage = function(event) {
+                var wordGrid = JSON.parse(event.data);
+                var gridHtml = "<table>";
+                for(var i = 0; i < wordGrid.wordsGrid.length; i++){
+                    gridHtml += "<tr>";
+                    for(var j = 0; j < wordGrid.wordsGrid[i].length; j++){
+                        gridHtml += `<td onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordGrid.wordsGrid[i][j]}</td>`;
+                    }
+                    gridHtml += "</tr>";
                 }
-                gridHtml += '</div>';
-            }
-            document.getElementById('wordGridContainer').innerHTML = gridHtml;
+                gridHtml += "</table>";
+                document.getElementById("waitingforplayer").style.display = "none";
+                document.getElementById("wordGrid").innerHTML = gridHtml;
+                document.getElementById("wordGrid").style.display = "block";
+
+                document.addEventListener('mouseup', function() {
+                    isMouseDown = false;
+                });
+            };
         }
+        var isMouseDown = false;
+        // Array to keep track of cells with changed color
+        var changedCells = [];
+
+        function changeCellColor(cell, mouseDownUp = null) {
+            if (mouseDownUp === true) {
+                isMouseDown = true; // Mouse is pressed down
+                cell.style.backgroundColor = "red"; // Change color on mouse down
+                // Add cell to changedCells array if not already included
+                if (!changedCells.includes(cell)) {
+                    changedCells.push(cell);
+                }
+            } else if (mouseDownUp === false) {
+                isMouseDown = false; // Mouse is released
+                // Reset the background color of all changed cells
+                resetCellColors();
+            } else if (isMouseDown) {
+                cell.style.backgroundColor = "red"; // Change color on mouse over while mouse is down
+                // Add cell to changedCells array if not already included
+                if (!changedCells.includes(cell)) {
+                    changedCells.push(cell);
+                }
+            }
+        }
+
+        // Function to reset the background color of all changed cells
+        function resetCellColors() {
+            changedCells.forEach(function(cell) {
+                cell.style.backgroundColor = ""; // Reset color
+            });
+            // Clear the array after resetting colors
+            changedCells = [];
+        }
+
+        // Ensure to call resetCellColors on global mouse up event
+        document.addEventListener('mouseup', function() {
+            isMouseDown = false;
+            resetCellColors(); // Reset colors on mouse up anywhere in the document
+        });
       </script>
 </body>
 </html>

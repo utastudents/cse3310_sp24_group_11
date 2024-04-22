@@ -21,7 +21,7 @@ public class PlayerTest extends TestCase{
     
     String username = "username";
     ArrayList<Player> playerList = new ArrayList<Player>();
-    Player player = new Player(username,playerList);
+    Player player = new Player(username);
     
     assertEquals(username, player.getPlayerName());
   }
@@ -31,14 +31,14 @@ public class PlayerTest extends TestCase{
     
     String username = "username";
     ArrayList<Player> playerList = new ArrayList<Player>();
-    Player player = new Player(username,playerList);
+    Player player = new Player(username);
     playerList.add(player);
 
     String username2 = "username";
-    Player player2 = new Player(username2,playerList);
+    Player player2 = new Player(username2);
     playerList.add(player2);
 
-    Player player3 = new Player(username, playerList);
+    Player player3 = new Player(username);
     assertFalse(player.getPlayerName() == player3.getPlayerName());
   }
 }

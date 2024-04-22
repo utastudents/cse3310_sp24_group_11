@@ -1,7 +1,21 @@
-document.addEventListener('DOMContentLoaded', function() {
-    generateGrid();
-    setupGridEvents();
-});
+function game(){
+    var serverUrl;
+    serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
+    connection = new WebSocket(serverUrl);
+    idx = -1;
+    var gameid = -1;
+    connection.onopen = function(e){
+        console.log("Connected to server");
+        connection.send(JSON.stringify({name: username.value}));
+    }
+    connection.onclose = function(e){
+        console.log("Disconnected from server");
+    }
+    connection.onmessage = function(e){
+        const obj = JSON.parse(e.data);
+        document.write(obj);
+    }
+}
 
 function generateGrid() {
     const grid = document.getElementById('wordSearchGrid');
