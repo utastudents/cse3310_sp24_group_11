@@ -168,6 +168,13 @@ public class App extends WebSocketServer {
         confirmationMessage.addProperty("msg", "Room removed successfully.");
         conn.send(confirmationMessage.toString());
       }
+      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchPlayers")) {
+          ArrayList<String> playerNames = lobby.getPlayerNames();
+          Gson gson = new Gson();
+          String playerNamesJson = gson.toJson(playerNames);
+          System.out.println("Players fetched successfully: " + playerNamesJson);
+          conn.send(playerNamesJson);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }

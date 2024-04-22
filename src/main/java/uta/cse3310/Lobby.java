@@ -70,6 +70,14 @@ public class Lobby{
         return rooms;
     }
 
+    public ArrayList<String> getPlayerNames() {
+        ArrayList<String> playerNames = new ArrayList<>();
+        for (Player player : players) {
+            playerNames.add(player.getPlayerName());
+        }
+        return playerNames;
+    }
+
     // public void display(){
     //     // Displays and handles functionality of lobby
     //     System.out.println("Welcome to the lobby\n
