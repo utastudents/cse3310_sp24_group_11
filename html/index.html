@@ -59,6 +59,10 @@
         </form>
     </div>
 
+    <div id="waitingforplayer" style="display:none">
+        <h1>Waiting for another player to join</h1>
+    </div>
+
     <script>
         function checkUsername(){
             var username = document.getElementById("username").value;
@@ -139,6 +143,7 @@
 
         function game(){
             document.getElementById("Lobby").style.display = "none";
+            document.getElementById("waitingforplayer").style.display = "block";
             var serverUrl;
             serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
             connection = new WebSocket(serverUrl);
@@ -163,6 +168,7 @@
                     gridHtml += "</tr>";
                 }
                 gridHtml += "</table>";
+                document.getElementById("waitingforplayer").style.display = "none";
                 document.getElementById("wordGrid").innerHTML = gridHtml;
                 document.getElementById("wordGrid").style.display = "block";
 
