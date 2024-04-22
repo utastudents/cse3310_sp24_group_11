@@ -77,8 +77,18 @@
                 return;
             }
             connection.send(JSON.stringify({name: username}));
-            document.getElementById("getUsername").style.display = "none";
-            document.getElementById("Lobby").style.display = "table";
+            
+            connection.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                if(data.type && data.type === "error") {
+                    alert(data.msg); // Show the error message from the server
+                    document.getElementById("getUsername").style.display = "block"; // Show the username input again
+                    document.getElementById("Lobby").style.display = "none"; // Hide the lobby
+                } else if(data.type && data.type === "success"){
+                    document.getElementById("getUsername").style.display = "none";
+                    document.getElementById("Lobby").style.display = "table";
+                }
+            };
         }
 
         function showPlayers(){
@@ -144,6 +154,8 @@
 
         function game(){
             document.getElementById("Lobby").style.display = "none";
+
+            connection.send(JSON.stringify({action: "join2PlayerGame"}));
             
             connection.onmessage = function(event) {
                 var wordGrid = JSON.parse(event.data);
