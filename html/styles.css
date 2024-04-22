@@ -1,3 +1,13 @@
+.grid-button {
+   background-color: transparent;
+   border: none;
+   cursor: pointer;
+}
+
+.selected {
+   background-color: red;
+}
+
 #wordSearchContainer table {
     border-collapse: collapse;
     margin: 20px;
