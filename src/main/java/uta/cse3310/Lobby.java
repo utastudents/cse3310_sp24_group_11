@@ -49,7 +49,6 @@ public class Lobby{
         //add a new player to the lobby
         Player newPlayer = new Player(playerName);
         players.add(newPlayer);
-        System.out.println("Player " + newPlayer.playerName + " added to lobby");
     }
 
     public void removePlayer(String playerName) {
@@ -59,16 +58,10 @@ public class Lobby{
 
     public void addRoom(String playerName) {
         rooms.add(playerName);
-        System.out.println("Room " + playerName + " added to lobby");
     }
 
     public void removeRoom(String playerName) {
-        if (rooms.contains(playerName)) {
-            rooms.remove(playerName);
-            System.out.println("Room " + playerName + " removed from lobby");
-        } else {
-            System.out.println("Room " + playerName + " not found in lobby");
-        }
+        rooms.removeIf(room -> room.equals(playerName));
     }
 
     public ArrayList<String> fetchRooms() {
@@ -81,6 +74,21 @@ public class Lobby{
             playerNames.add(player.getPlayerName());
         }
         return playerNames;
+    }
+
+    public void addChatMessage(String message) {
+        chatMessages.add(message);
+        System.out.println("Chat message added: " + message);
+    }
+
+    public ArrayList<String> getAllMessages() {
+        // Only the last 20 messages are returned
+        final int MAX_MESSAGES = 20;
+        if (chatMessages.size() <= MAX_MESSAGES) {
+            return chatMessages;
+        } else {
+            return new ArrayList<>(chatMessages.subList(chatMessages.size() - MAX_MESSAGES, chatMessages.size()));
+        }
     }
 
     // public void display(){

@@ -9,7 +9,15 @@
     <div id = "backToLobby" style = "display:none">
         <button onclick = "backToLobby()">Back to Lobby</button>
     </div>
-    <div id="wordGrid" style="display:none"></div>
+    <div id="wordGridAndChat" style="display:none; justify-content: space-evenly;">
+        <div id="wordGrid"></div>
+        <div id="GlobalChat">
+            <h1>Global Chat</h1>
+            <div id="chatMessages" style="width: 300px; height: 200px; overflow: scroll;"></div>
+            <input type="text" id="chatInput">
+            <button onclick="saveAllChats()">Send</button>
+        </div>
+    </div>
     <div id = "getUsername">
         <h1>Enter your username</h1>
         <input type = "text" id = "username">
@@ -19,11 +27,15 @@
         <h1>Word Search Game Lobby</h1>
         <table>
             <tr>
-                <!-- <td><button onclick = "showLeaderboard()">Show Leaderboard</button>
-                <td><button onclick = "GlobalChat()">Global Chat</button> -->
-                <td><button onclick="fetchPlayers()">Show/Refresh Players Online</button>
-                <td><button onclick="fetchRooms()">Show/Refresh Rooms</button>
-                <td><button id="createRoom" onclick = "addRooms()">Create Room</button>
+                <td><button onclick="fetchPlayersList(); 
+                                     document.getElementById('Players').style.display = 'block';"
+                                     >Show Players Online</button>
+                <td><button onclick="fetchRooms();
+                                     document.getElementById('AvailableRooms').style.display = 'block';"
+                                     >Show Rooms</button>
+                <td><button id="createRoom" onclick = "addRooms(); 
+                                                       document.getElementById('AvailableRooms').style.display = 'block';"
+                                                       >Create Room</button>
             </tr>
         </table>
     </div>
@@ -43,33 +55,45 @@
     <div id="waitingforplayer" style="display:none">
         <h1>Waiting for another player to join</h1>
     </div>
-    <!-- <div id =  "Leaderboard" style = "display:none">
-        <h1>Leaderboard</h1>
-        <button onclick = "backToLobby()">Back to Lobby</button>
-        <button onclick = "leaderboard()">Refresh</button>
-    </div>
-    <div id = "GlobalChat" style = "display:none">
-        <h1>Global Chat</h1>
-        <button onclick = "backToLobby()">Back to Lobby</button>
-        <button onclick = "chat()">GoToChat</button>
-    </div>
-    <div class="chatting" style="display: none">
-        <div class="chat-box" id="chatBox"></div>
-        <form id="messageForm">
-          <div class="input-box">
-            <input type="text" id="messageInput" placeholder="Enter message here">
-            <button onclick="actuallyChatting()">Send</button>
-            <button onclick = "backToLobby()">Back to Lobby</button>
-          </div>
-        </form>
-    </div> -->
+
 
     <script>
         var serverUrl;
         serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
         connection = new WebSocket(serverUrl);
-        idx = -1;
-        var gameid = -1;
+        // idx = -1;
+        // var gameid = -1;
+        connection.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            switch (data.type) {
+                case "UsernameError":
+                    handleUsernameError(data);
+                    break;
+                case "UsernameSuccess":
+                    handleUsernameSuccess(data);
+                    break;
+                case "roomList":
+                    updateRoomList(data.rooms);
+                    break;
+                case "fetchPlayerList":
+                    printPlayersList(data.players);
+                    break;
+                case "chatMessages":
+                    printChat(data.messages);
+                    break;
+                case "wordGrid":
+                    populateWordGrid(data.grid);
+                    break;
+                case "removePlayer":
+                    removePlayer(data.removePlayerName);
+                    break;
+                default:
+                    console.log("Unknown message", data);
+            }
+        };
+
+        // Username functions
+
         function checkUsername(){
             var username = document.getElementById("username").value;
             if(username == ""){
@@ -82,107 +106,126 @@
                 return;
             }
             connection.send(JSON.stringify({name: username}));
-            
-            connection.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                if(data.type && data.type === "error") {
-                    alert(data.msg); // Show the error message from the server
-                    document.getElementById("getUsername").style.display = "block"; // Show the username input again
-                    document.getElementById("Lobby").style.display = "none"; // Hide the lobby
-                } else if(data.type && data.type === "success"){
-                    document.getElementById("getUsername").style.display = "none";
-                    document.getElementById("Lobby").style.display = "table";
-                }
-            };
+        }
+        function handleUsernameError(data) {
+            alert(data.msg);
+            document.getElementById("getUsername").style.display = "block";
+            document.getElementById("Lobby").style.display = "none";
+        }
+        function handleUsernameSuccess() {
+            document.getElementById("getUsername").style.display = "none";
+            document.getElementById("Lobby").style.display = "table";
+            fetchPlayersList();
         }
 
-        // function showLeaderboard(){
-        //     document.getElementById("Lobby").style.display = "none";
-        //     document.getElementById("Leaderboard").style.display = "table";
-        // }
-        // function GlobalChat(){
-        //     document.getElementById("Lobby").style.display = "none";
-        //     document.getElementById("GlobalChat").style.display = "table";
-        // }
-        function backToLobby(){
-            document.getElementById("Lobby").style.display = "block";
-            document.getElementById("wordGrid").style.display = "none";
-            document.getElementById("backToLobby").style.display = "none";
-            document.getElementById("waitingforplayer").style.display = "none";
+        // Player functions
+
+        function fetchPlayersList() {
+            connection.send(JSON.stringify({action: "fetchPlayersList"}));
         }
-        // function showButPlay(){
-        //     //add username to play
-        //     let play = username.value + "<br>";
-        //     for(let i = 0; i < 4; i++){
-        //         play += "Player " + i + "<br>";
-        //     }
-        //     document.getElementById("content").innerHTML = play;
-        //     document.getElementById("content").style.display = "table";
-        // }
-        
-        // function leaderboard(){
-        //     //add leaderboard
-        //     let lead = "Leaderboard<br>";
-        //     lead += username.value + "<br>";
-        //     for(let i = 0; i < 4; i++){
-        //         lead += "Player " + i + "<br>";
-        //     }
-        //     document.getElementById("content").innerHTML = lead;
-        //     document.getElementById("content").style.display = "table";
-        // }
-        // function chat(){
-        //     document.getElementById("GlobalChat").style.display = "none";
-        //     document.getElementsByClassName("chatting")[0].style.display = "block";
-        // }
+        function printPlayersList(players) {
+            if(players){
+                var playerListElement = document.getElementById("playerList");
+                playerListElement.innerHTML = ""; // Clear existing list
+                players.forEach(function(player) {
+                    var listItem = document.createElement("li");
+                    listItem.textContent = player;
+                    playerListElement.appendChild(listItem);
+                });
+            }
+        }
 
-        // const chatBox = document.getElementById("chatBox");
-        // const messageForm = document.getElementById("messageForm");
-        // const messageInput = document.getElementById("messageInput");
-        // messageForm.addEventListener("submit", actuallyChatting);
-        // function actuallyChatting(){
-        //     event.preventDefault();
-        //     const message = messageInput.value;
-        //     // if(message === ""){
-        //     //     alert('Message cannot be left blank!');
-        //     //     return;
-        //     // }
-        //     messageInput.value = "";
-        //     chatBox.innerHTML += username.value + ": " + message + "<br>";
-        // }
 
-        function game(){
+        // Room functions
+
+        function addRooms() {
+            var username = document.getElementById("username").value;
+            connection.send(JSON.stringify({action: "addRoom", playerName: username}));
+            fetchRooms();
+        }
+        function fetchRooms() {
+            connection.send(JSON.stringify({action: "fetchRooms"}));
+        }  
+        function updateRoomList(data){
+            if (Array.isArray(data)) {
+                var roomsList = document.getElementById("roomsList");
+                roomsList.innerHTML = "";
+                data.forEach(function(playername) {
+                    var listItem = document.createElement("li");
+                    listItem.textContent = playername + "'s room";
+                    var joinButton = document.createElement("button");
+                    joinButton.textContent = "Join";
+                    joinButton.onclick = function() {
+                        connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
+                        fetchChat();
+                        startGame();
+                    };
+                    
+                    var removeButton = document.createElement("button");
+                    removeButton.textContent = "Remove";
+                    removeButton.onclick = function() {
+                        connection.send(JSON.stringify({action: "removeRoom", playerName: playername}));
+                        listItem.remove();
+                    };
+                    listItem.appendChild(joinButton);
+                    listItem.appendChild(removeButton);
+                    roomsList.appendChild(listItem);
+                });
+            }
+        };
+
+        // Game/WordGrid functions
+
+        function startGame(){
             document.getElementById("Lobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "block";
             document.getElementById("AvailableRooms").style.display = "none";
             document.getElementById("Players").style.display = "none";
             document.getElementById("backToLobby").style.display = "Block";
+            document.getElementById("wordGridAndChat").style.display = "flex";
 
-            connection.send(JSON.stringify({action: "join2PlayerGame"}));
-            
-            connection.onmessage = function(event) {
-                var wordGrid = JSON.parse(event.data);
-                var gridHtml = "<table>";
-                for(var i = 0; i < wordGrid.wordsGrid.length; i++){
-                    gridHtml += "<tr>";
-                    for(var j = 0; j < wordGrid.wordsGrid[i].length; j++){
-                        gridHtml += `<td><button class="grid-button" onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordGrid.wordsGrid[i][j]}</button></td>`;
-                    }
-                    gridHtml += "</tr>";
-                }
-                gridHtml += "</table>";
-                document.getElementById("waitingforplayer").style.display = "none";
-                document.getElementById("wordGrid").innerHTML = gridHtml;
-                document.getElementById("wordGrid").style.display = "block";
-
-                document.addEventListener('mouseup', function() {
-                    isMouseDown = false;
-                });
-            };
+            connection.send(JSON.stringify({action: "fetchGrid"}));
         }
+        function populateWordGrid(data) {
+            var wordGrid = data.wordsGrid;
+            var gridHtml = "<table>";
+            for(var i = 0; i < wordGrid.length; i++){
+                gridHtml += "<tr>";
+                for(var j = 0; j < wordGrid[i].length; j++){
+                    gridHtml += `<td><button class="grid-button" onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordGrid[i][j]}</button></td>`;
+                }
+                gridHtml += "</tr>";
+            }
+            gridHtml += "</table>";
+            document.getElementById("waitingforplayer").style.display = "none";
+            document.getElementById("wordGrid").innerHTML = gridHtml;
+        }
+
+        // Chat functions
+        function fetchChat(){
+            connection.send(JSON.stringify({action: "fetchChat"}));
+        }
+        function printChat(messages) {
+            var chatMessages = document.getElementById("chatMessages");
+            chatMessages.innerHTML = "";
+            if (messages && Array.isArray(messages)) {
+                messages.forEach(function(msg) {
+                    chatMessages.innerHTML += msg + "<br/>";
+                });
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
+        }
+        function saveAllChats(){
+            var message = document.getElementById("chatInput").value;
+            var username = document.getElementById("username").value;
+            if (message != "") connection.send(JSON.stringify({action: "saveAllChats", message: username + ": " + message}));
+            document.getElementById("chatInput").value = "";
+        }
+
+        // Cell functions
+
         var isMouseDown = false;
-        // Array to keep track of cells with changed color
         var changedCells = [];
-        
         function changeCellColor(cell, mouseDownUp = null) {
            var button = cell.querySelector("button"); // Gets the button
            if (mouseDownUp === true) {
@@ -199,10 +242,7 @@
            changedCells.push(button);
                }
            }
-       }
-
-        
-        // Function to reset the background color of all changed cells
+        }
         function resetCellColors() {
             changedCells.forEach(function(cell) {
                 cell.style.backgroundColor = ""; // Reset color
@@ -210,67 +250,17 @@
             // Clear the array after resetting colors
             changedCells = [];
         }
-
-        // Ensure to call resetCellColors on global mouse up event
         document.addEventListener('mouseup', function() {
             isMouseDown = false;
             resetCellColors(); // Reset colors on mouse up anywhere in the document
         });
-        function addRooms() {
-            var username = document.getElementById("username").value;
-            connection.send(JSON.stringify({action: "addRoom", playerName: username}));
-            fetchRooms();
-        }
 
-        function fetchRooms() {
-            connection.send(JSON.stringify({action: "fetchRooms"}));
-            
-            connection.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                if (Array.isArray(data)) { // Assuming that the room list is sent as an array
-                    var roomsList = document.getElementById("roomsList");
-                    roomsList.innerHTML = ""; // Clear existing rooms
-                    data.forEach(function(playername) {
-                        var listItem = document.createElement("li");
-                        listItem.textContent = playername + "'s room";
-                        var joinButton = document.createElement("button");
-                        joinButton.textContent = "Join";
-                        joinButton.onclick = function() {
-                            connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
-                            game();
-                        };
-                        
-                        var removeButton = document.createElement("button");
-                        removeButton.textContent = "Remove";
-                        removeButton.onclick = function() {
-                            connection.send(JSON.stringify({action: "removeRoom", playerName: playername}));
-                            listItem.remove();
-                        };
-                        listItem.appendChild(joinButton);
-                        listItem.appendChild(removeButton);
-                        roomsList.appendChild(listItem);
-                    });
-                    document.getElementById("AvailableRooms").style.display = "block";
-                }
-            };
-        }
 
-        function fetchPlayers() {
-            connection.send(JSON.stringify({action: "fetchPlayers"}));
-            
-            connection.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                if (Array.isArray(data)) {
-                    var playersList = document.getElementById("playerList");
-                    playersList.innerHTML = ""; // Clear existing players
-                    data.forEach(function(playerName) {
-                        var listItem = document.createElement("li");
-                        listItem.textContent = playerName;
-                        playersList.appendChild(listItem);
-                    });
-                    document.getElementById("Players").style.display = "block";
-                }
-            };
+        function backToLobby(){
+            document.getElementById("wordGridAndChat").style.display = "none";
+            document.getElementById("Lobby").style.display = "block";
+            document.getElementById("backToLobby").style.display = "none";
+            document.getElementById("waitingforplayer").style.display = "none";
         }
       </script>
 </body>

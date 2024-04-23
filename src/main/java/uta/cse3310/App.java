@@ -102,17 +102,33 @@ public class App extends WebSocketServer {
     Player player = connectionPlayerMap.get(conn);
     if (player != null) {
         // Remove player from the global list, lobby, and the map
+        connectionPlayerMap.remove(conn);
         Player.removePlayer(player.playerID);
         lobby.removePlayer(player.getPlayerName());
+        lobby.removeRoom(player.getPlayerName());
 
-        connectionPlayerMap.remove(conn); // Remove the connection from the map
         System.out.println("Player " + player.getPlayerName() + " removed due to disconnection.");
+
+        // Update all clients with the new player list
+        ArrayList<String> playerNames = lobby.getPlayerNames();
+        Gson gson = new Gson();
+        JsonObject updatePlayers = new JsonObject();
+        updatePlayers.addProperty("type", "fetchPlayerList");
+        updatePlayers.add("players", gson.toJsonTree(playerNames));
+        broadcast(updatePlayers.toString());
+
+        // Update all clients with the new rooms list
+        ArrayList<String> rooms = lobby.fetchRooms();
+        JsonObject roomsMessage = new JsonObject();
+        roomsMessage.addProperty("type", "roomList");
+        roomsMessage.add("rooms", gson.toJsonTree(rooms));
+        broadcast(roomsMessage.toString());
     }
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    System.out.println("Received message from the frontend: " + message);
+    System.out.println("Message from frontend: " + message);
 
     try {
       JsonObject jsonMessage = JsonParser.parseString(message).getAsJsonObject();
@@ -121,58 +137,93 @@ public class App extends WebSocketServer {
         boolean isUnique = Player.verifyUsername(username);
         if (isUnique) {
           Player newPlayer = new Player(username);
-          connectionPlayerMap.put(conn, newPlayer); // Track the connection
+          connectionPlayerMap.put(conn, newPlayer);
           lobby.players.add(newPlayer);
           JsonObject successMessage = new JsonObject();
-          successMessage.addProperty("type", "success");
+          successMessage.addProperty("type", "UsernameSuccess");
           successMessage.addProperty("msg", "Username is unique and added.");
           conn.send(successMessage.toString());
         } else {
           JsonObject errorMessage = new JsonObject();
-          errorMessage.addProperty("type", "error");
+          errorMessage.addProperty("type", "UsernameError");
           errorMessage.addProperty("msg", "Username is not unique. Please choose another.");
           conn.send(errorMessage.toString());
         }
       }
-      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("join2PlayerGame")) {
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchPlayersList")) {
+          ArrayList<String> playerNames = lobby.getPlayerNames();
+          Gson gson = new Gson();
+          JsonObject playerListMessage = new JsonObject();
+          playerListMessage.addProperty("type", "fetchPlayerList");
+          playerListMessage.add("players", gson.toJsonTree(playerNames));
+          broadcast(playerListMessage.toString());
+      }
+
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchRooms")) {
+          ArrayList<String> rooms = lobby.fetchRooms();
+          Gson gson = new Gson();
+          JsonObject roomsMessage = new JsonObject();
+          roomsMessage.addProperty("type", "roomList");
+          roomsMessage.add("rooms", gson.toJsonTree(rooms));
+          broadcast(roomsMessage.toString());
+      }
+
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("addRoom")) {
+        String playerName = jsonMessage.get("playerName").getAsString();
+        lobby.addRoom(playerName);
+        ArrayList<String> rooms = lobby.fetchRooms();
+        Gson gson = new Gson();
+        JsonObject roomsMessage = new JsonObject();
+        roomsMessage.addProperty("type", "roomList");
+        roomsMessage.add("rooms", gson.toJsonTree(rooms));
+        broadcast(roomsMessage.toString());
+      }
+
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("removeRoom")) {
+        String playerName = jsonMessage.get("playerName").getAsString();
+        lobby.removeRoom(playerName);
+        ArrayList<String> rooms = lobby.fetchRooms();
+        Gson gson = new Gson();
+        JsonObject roomsMessage = new JsonObject();
+        roomsMessage.addProperty("type", "roomList");
+        roomsMessage.add("rooms", gson.toJsonTree(rooms));
+        broadcast(roomsMessage.toString());
+      }
+
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGrid")) {
           Game G = conn.getAttachment();
-          G.startGame();
-          
+          G.startGame();          
           // send the grid
           GsonBuilder builder = new GsonBuilder();
           Gson gson = builder.create();
           String jsonString = gson.toJson(G.grid);
-          broadcast(jsonString);
-          System.out.println("WordGrid sent to the client successfully");
+          JsonObject gridMessage = new JsonObject();
+          gridMessage.addProperty("type", "wordGrid");
+          gridMessage.add("grid", gson.toJsonTree(G.grid));
+          broadcast(gridMessage.toString());
+          System.out.println("Game grid sent to the client successfully");
       }
-      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchRooms")) {
-          ArrayList<String> rooms = lobby.fetchRooms();
+
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {
+          ArrayList<String> allMessages = lobby.getAllMessages();
           Gson gson = new Gson();
-          String roomsJson = gson.toJson(rooms);
-          System.out.println("Rooms fetched successfully: " + roomsJson);
-          conn.send(roomsJson);
+          JsonObject chatMessagesMessage = new JsonObject();
+          chatMessagesMessage.addProperty("type", "chatMessages");
+          chatMessagesMessage.add("messages", gson.toJsonTree(allMessages));
+          System.out.println("Chat messages fetched successfully: " + chatMessagesMessage.toString());
+          broadcast(chatMessagesMessage.toString());
       }
-      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("addRoom")) {
-        String playerName = jsonMessage.get("playerName").getAsString();
-        lobby.addRoom(playerName);
-        // Optionally, send a confirmation message back to the client
-        JsonObject confirmationMessage = new JsonObject();
-        confirmationMessage.addProperty("type", "success");
-        System.out.println("Room created successfully: " + confirmationMessage.toString());
-      }
-      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("removeRoom")) {
-        String playerName = jsonMessage.get("playerName").getAsString();
-        lobby.removeRoom(playerName);
-        JsonObject confirmationMessage = new JsonObject();
-        confirmationMessage.addProperty("type", "success");
-        System.out.println("Room removed successfully: " + confirmationMessage.toString());
-      }
-      if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchPlayers")) {
-          ArrayList<String> playerNames = lobby.getPlayerNames();
+
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("saveAllChats")) {
+          String chatMessage = jsonMessage.get("message").getAsString();
+          lobby.addChatMessage(chatMessage);
+          ArrayList<String> allMessages = lobby.getAllMessages();
           Gson gson = new Gson();
-          String playerNamesJson = gson.toJson(playerNames);
-          System.out.println("Players fetched successfully: " + playerNamesJson);
-          conn.send(playerNamesJson);
+          JsonObject chatMessagesMessage = new JsonObject();
+          chatMessagesMessage.addProperty("type", "chatMessages");
+          chatMessagesMessage.add("messages", gson.toJsonTree(allMessages));
+          System.out.println("Chat messages fetched successfully: " + chatMessagesMessage.toString());
+          broadcast(chatMessagesMessage.toString());  
       }
     } catch (Exception e) {
       e.printStackTrace();
