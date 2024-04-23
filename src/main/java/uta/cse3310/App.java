@@ -225,6 +225,12 @@ public class App extends WebSocketServer {
           System.out.println("Chat messages fetched successfully: " + chatMessagesMessage.toString());
           broadcast(chatMessagesMessage.toString());  
       }
+      else if(jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("buttonClicked")){
+        Game G = conn.getAttachment();
+        int row = jsonMessage.get("row").getAsInt();
+        int column = jsonMessage.get("column").getAsInt();
+        System.out.println("row: " + row + " column: " + column);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
