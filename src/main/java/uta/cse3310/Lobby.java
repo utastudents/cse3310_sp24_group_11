@@ -32,15 +32,15 @@ public class Lobby{
     // //arraylist of games
     // private ArrayList<Game> gameList;
     public ArrayList<Game> games;
-    public ArrayList<Player> gameCreators;
     public ArrayList<Player> players;
     public ArrayList<String> chatMessages;
+    public ArrayList<String> rooms;
 
     public Lobby(){
         games = new ArrayList<Game>();
-        gameCreators = new ArrayList<Player>();
         players = new ArrayList<Player>();
         chatMessages = new ArrayList<String>();;
+        rooms = new ArrayList<String>();
     }
 
     public void addPlayer(String playerName){
@@ -49,7 +49,46 @@ public class Lobby{
         //add a new player to the lobby
         Player newPlayer = new Player(playerName);
         players.add(newPlayer);
-        System.out.println("Player " + newPlayer.playerName + " added to lobby");
+    }
+
+    public void removePlayer(String playerName) {
+        players.removeIf(player -> playerName.equals(player.getPlayerName()));
+        removeRoom(playerName);
+    }
+
+    public void addRoom(String playerName) {
+        rooms.add(playerName);
+    }
+
+    public void removeRoom(String playerName) {
+        rooms.removeIf(room -> room.equals(playerName));
+    }
+
+    public ArrayList<String> fetchRooms() {
+        return rooms;
+    }
+
+    public ArrayList<String> getPlayerNames() {
+        ArrayList<String> playerNames = new ArrayList<>();
+        for (Player player : players) {
+            playerNames.add(player.getPlayerName());
+        }
+        return playerNames;
+    }
+
+    public void addChatMessage(String message) {
+        chatMessages.add(message);
+        System.out.println("Chat message added: " + message);
+    }
+
+    public ArrayList<String> getAllMessages() {
+        // Only the last 20 messages are returned
+        final int MAX_MESSAGES = 20;
+        if (chatMessages.size() <= MAX_MESSAGES) {
+            return chatMessages;
+        } else {
+            return new ArrayList<>(chatMessages.subList(chatMessages.size() - MAX_MESSAGES, chatMessages.size()));
+        }
     }
 
     // public void display(){

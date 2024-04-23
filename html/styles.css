@@ -1,3 +1,18 @@
+.grid-button {
+   width: 20px; 
+   height: 20px; 
+   border: 1px solid black;
+   padding: 1px;
+   text-align: center;
+   cursor: pointer;
+   font-size: 20px; 
+   font-weight: bold;
+}
+
+.selected {
+   background-color: red;
+}
+
 #wordSearchContainer table {
     border-collapse: collapse;
     margin: 20px;

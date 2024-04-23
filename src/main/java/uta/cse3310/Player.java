@@ -21,7 +21,8 @@ public class Player{
     public static boolean verifyUsername(String playerName){
     for (Player player: playerList) {
         if(playerName.equals(player.getPlayerName())){
-        return false;
+            System.out.println("Player name is not unique");
+            return false;
         }
     }
     return true;
@@ -36,5 +37,8 @@ public class Player{
             this.playerName = playerName;
         }
     } 
-}
 
+    public static void removePlayer(int playerID) {
+        playerList.removeIf(player -> player.playerID == playerID);
+    }
+}
