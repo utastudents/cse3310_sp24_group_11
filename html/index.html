@@ -278,6 +278,15 @@
             document.getElementById("backToLobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "none";
         }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('chatInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    saveAllChats();
+                    event.preventDefault(); // Prevent the default action to avoid form submission
+                }
+            });
+        });
       </script>
 </body>
 </html>
