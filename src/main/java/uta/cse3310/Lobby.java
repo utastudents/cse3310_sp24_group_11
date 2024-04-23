@@ -54,6 +54,7 @@ public class Lobby{
 
     public void removePlayer(String playerName) {
         players.removeIf(player -> playerName.equals(player.getPlayerName()));
+        removeRoom(playerName);
     }
 
     public void addRoom(String playerName) {

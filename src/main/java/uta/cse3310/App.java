@@ -104,6 +104,7 @@ public class App extends WebSocketServer {
         // Remove player from the global list, lobby, and the map
         Player.removePlayer(player.playerID);
         lobby.removePlayer(player.getPlayerName());
+
         connectionPlayerMap.remove(conn); // Remove the connection from the map
         System.out.println("Player " + player.getPlayerName() + " removed due to disconnection.");
     }
