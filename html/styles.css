@@ -12,6 +12,12 @@
 .selected {
    background-color: red;
 }
+#wordGridAndChat {
+   display: flex; 
+   flex-direction: column; 
+   justify-content: space-evenly; 
+   align-items: center; 
+}
 
 #wordSearchContainer table {
     border-collapse: collapse;
