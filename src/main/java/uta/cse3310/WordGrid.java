@@ -29,7 +29,7 @@ public class WordGrid{
    
     
     //nb rows and cols for the grids
-    public int nRows = 50, nCols = 50;
+    public int nRows = 35, nCols = 35;
     public int gridSize = nRows*nCols;
     //min number of words to place on the grid generate
     public int minWords = 350;
