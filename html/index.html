@@ -6,16 +6,15 @@
     <title>Word Search Game</title>
 </head>
 <body>
+    <div id = "backToLobby" style = "display:none">
+        <button onclick = "backToLobby()">Back to Lobby</button>
+    </div>
     <div id="wordGrid" style="display:none"></div>
     <div id = "getUsername">
         <h1>Enter your username</h1>
         <input type = "text" id = "username">
         <button onclick = "checkUsername()">Submit</button>
     </div> 
-    <div id = "Game" style = "display:none">
-        <h1>Game</h1>
-        <button onclick = "backToLobby()">Back to Lobby</button>
-    </div>
     <div id = "Lobby" style = "display:none">
         <h1>Word Search Game Lobby</h1>
         <table>
@@ -37,6 +36,7 @@
     <div id="Players" style="display: none;">
         <h1>Online Players</h1>
         <ul id="playerList">
+            <!-- Players will be added here dynamically -->
         </ul>
     </div>
 
@@ -104,15 +104,11 @@
         //     document.getElementById("Lobby").style.display = "none";
         //     document.getElementById("GlobalChat").style.display = "table";
         // }
-        // function backToLobby(){
-        //     document.getElementById("Players").style.display = "none";
-        //     document.getElementById("content").style.display = "none";
-        //     document.getElementById("Leaderboard").style.display = "none";
-        //     document.getElementById("GlobalChat").style.display = "none";
-        //     document.getElementsByClassName("chatting")[0].style.display = "none";
-        //     document.getElementById("Game").style.display = "none";
-        //     document.getElementById("Lobby").style.display = "table";
-        // }
+        function backToLobby(){
+            document.getElementById("Lobby").style.display = "block";
+            document.getElementById("wordGrid").style.display = "none";
+            document.getElementById("backToLobby").style.display = "none";
+        }
         // function showButPlay(){
         //     //add username to play
         //     let play = username.value + "<br>";
@@ -158,6 +154,7 @@
             document.getElementById("waitingforplayer").style.display = "block";
             document.getElementById("AvailableRooms").style.display = "none";
             document.getElementById("Players").style.display = "none";
+            document.getElementById("backToLobby").style.display = "Block";
 
             connection.send(JSON.stringify({action: "join2PlayerGame"}));
             
