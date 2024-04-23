@@ -90,37 +90,4 @@ public class Lobby{
             return new ArrayList<>(chatMessages.subList(chatMessages.size() - MAX_MESSAGES, chatMessages.size()));
         }
     }
-
-    // public void display(){
-    //     // Displays and handles functionality of lobby
-    //     System.out.println("Welcome to the lobby\n
-    //                         Below is a list of games available to join\n");
-    //     listGames();
-    //     System.out.println("\nBelow is a list of players waiting to join a game\n");
-    //     listPlayersWaiting();
-    // }
-
-    // public void listGames(){
-    //     // List current games available to join
-    //     if(gameList.size() == 0){
-    //         System.out.println("No games available to join");
-    //     }
-    //     else{
-    //         for(Game game : gameList){
-    //             System.out.println("Game ID: %s", game.getGameID());
-    //         }
-    //     }
-    // }
-
-    // public void listPlayersWaiting(){
-    //     // List players waiting to join a game
-    //     if(playerList.size() == 0){
-    //         System.out.println("No players waiting to join a game");
-    //     }
-    //     else{
-    //         for(Player player : playerList){
-    //             System.out.println("%s", player.getPlayerName());
-    //         }
-    //     }
-    // }
 }
