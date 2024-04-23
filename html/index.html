@@ -108,6 +108,7 @@
             document.getElementById("Lobby").style.display = "block";
             document.getElementById("wordGrid").style.display = "none";
             document.getElementById("backToLobby").style.display = "none";
+            document.getElementById("waitingforplayer").style.display = "none";
         }
         // function showButPlay(){
         //     //add username to play
@@ -229,20 +230,20 @@
                 if (Array.isArray(data)) { // Assuming that the room list is sent as an array
                     var roomsList = document.getElementById("roomsList");
                     roomsList.innerHTML = ""; // Clear existing rooms
-                    data.forEach(function(room) {
+                    data.forEach(function(playername) {
                         var listItem = document.createElement("li");
-                        listItem.textContent = room + "'s room";
+                        listItem.textContent = playername + "'s room";
                         var joinButton = document.createElement("button");
                         joinButton.textContent = "Join";
                         joinButton.onclick = function() {
-                            connection.send(JSON.stringify({action: "joinRoom", roomName: room}));
+                            connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
                             game();
                         };
                         
                         var removeButton = document.createElement("button");
                         removeButton.textContent = "Remove";
                         removeButton.onclick = function() {
-                            connection.send(JSON.stringify({action: "removeRoom", roomName: room}));
+                            connection.send(JSON.stringify({action: "removeRoom", playerName: playername}));
                             listItem.remove();
                         };
                         listItem.appendChild(joinButton);

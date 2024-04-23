@@ -62,8 +62,12 @@ public class Lobby{
     }
 
     public void removeRoom(String playerName) {
-        rooms.remove(playerName);
-        System.out.println("Room " + playerName + " removed from lobby");
+        if (rooms.contains(playerName)) {
+            rooms.remove(playerName);
+            System.out.println("Room " + playerName + " removed from lobby");
+        } else {
+            System.out.println("Room " + playerName + " not found in lobby");
+        }
     }
 
     public ArrayList<String> fetchRooms() {

@@ -157,16 +157,14 @@ public class App extends WebSocketServer {
         // Optionally, send a confirmation message back to the client
         JsonObject confirmationMessage = new JsonObject();
         confirmationMessage.addProperty("type", "success");
-        confirmationMessage.addProperty("msg", "Room created successfully.");
-        conn.send(confirmationMessage.toString());
+        System.out.println("Room created successfully: " + confirmationMessage.toString());
       }
       if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("removeRoom")) {
         String playerName = jsonMessage.get("playerName").getAsString();
         lobby.removeRoom(playerName);
         JsonObject confirmationMessage = new JsonObject();
         confirmationMessage.addProperty("type", "success");
-        confirmationMessage.addProperty("msg", "Room removed successfully.");
-        conn.send(confirmationMessage.toString());
+        System.out.println("Room removed successfully: " + confirmationMessage.toString());
       }
       if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchPlayers")) {
           ArrayList<String> playerNames = lobby.getPlayerNames();
