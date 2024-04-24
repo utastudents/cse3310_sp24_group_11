@@ -9,7 +9,7 @@ public class Game {
     ArrayList<Player> playerList = new ArrayList<Player>();
     WordGrid wordGrid;
     public PlayerType currentTurn;// there are no turns?
-    public PlayerType[] button = new PlayerType[2500];
+    public PlayerType[] button = new PlayerType[400];
     ArrayList<UserEvent> redEvents = new ArrayList<>();
     ArrayList<UserEvent> blueEvents = new ArrayList<>();
     ArrayList<UserEvent> yellowEvents = new ArrayList<>();
@@ -17,6 +17,7 @@ public class Game {
     public String[] msg;
     public Statistics Stats;
     WordGrid.Grid grid;
+    public int wordBankSize;
 
 
    
@@ -67,67 +68,84 @@ public class Game {
         System.out.println(U.playerType + " " + U.getButton());
         System.out.println("Red: " + redEvents.size() + " Blue: " + blueEvents.size() + " Yellow: " + yellowEvents.size() + " Green: " + greenEvents.size());
         //print out the first button and second button and check if they arent null for blue
+        
         if(U.playerType == PlayerType.Blue && blueEvents.size()%2 == 0){
             if(blueEvents.size() > 1){
-                foundWord = wordFound(blueEvents.get(blueEvents.size()-2).getButton(), U.getButton(), U.getPlayerType());
-            }
-            if(foundWord == ""){
-                button[U.getButton()] = null;
-                button[blueEvents.get(blueEvents.size()-2).getButton()] = null;
+                foundWord = wordFound(blueEvents.get(0).getButton(), blueEvents.get(1).getButton(), PlayerType.Blue);
+            
+                if(foundWord == ""){
+                    button[blueEvents.get(0).getButton()] = null;
+                    button[blueEvents.get(1).getButton()] = null;
+                }
+                blueEvents = new ArrayList<UserEvent>();//emptys event array
             }
         }
+
         if(U.playerType == PlayerType.Red && redEvents.size()%2 == 0){
             if(redEvents.size() > 1){
-                foundWord = wordFound(redEvents.get(redEvents.size()-2).getButton(), U.getButton(), U.getPlayerType());
-            }
-            if(foundWord == ""){
-                button[U.getButton()] = null;
-                button[redEvents.get(redEvents.size()-2).getButton()] = null;
+                foundWord = wordFound(redEvents.get(0).getButton(), redEvents.get(1).getButton(), PlayerType.Red);
+            
+                if(foundWord == ""){//word not found
+                    button[redEvents.get(0).getButton()] = null;//resets button array
+                    button[redEvents.get(1).getButton()] = null;
+                }
+                redEvents = new ArrayList<UserEvent>();//emptys event array
             }
         }
+
         if(U.playerType == PlayerType.Yellow && yellowEvents.size()%2 == 0){
             if(yellowEvents.size() > 1){
-                foundWord = wordFound(yellowEvents.get(yellowEvents.size()-2).getButton(), U.getButton(), U.getPlayerType());
-            }
-            if(foundWord == ""){
-                button[U.getButton()] = null;
-                button[yellowEvents.get(yellowEvents.size()-2).getButton()] = null;
+                foundWord = wordFound(yellowEvents.get(0).getButton(), yellowEvents.get(1).getButton(), PlayerType.Yellow);
+            
+                if(foundWord == ""){
+                    button[yellowEvents.get(0).getButton()] = null;
+                    button[yellowEvents.get(1).getButton()] = null;
+                }
+                yellowEvents = new ArrayList<UserEvent>();//emptys event array
             }
         }
+
         if(U.playerType == PlayerType.Green && greenEvents.size()%2 == 0){
             if(greenEvents.size() > 1){
-                foundWord = wordFound(greenEvents.get(greenEvents.size()-2).getButton(), U.getButton(), U.getPlayerType());
-            }
-            if(foundWord == ""){
-                button[U.getButton()] = null;
-                button[greenEvents.get(greenEvents.size()-2).getButton()] = null;
+                foundWord = wordFound(greenEvents.get(0).getButton(), greenEvents.get(1).getButton(), PlayerType.Green);
+            
+                if(foundWord == ""){
+                    button[greenEvents.get(0).getButton()] = null;
+                    button[greenEvents.get(1).getButton()] = null;
+                }
+                greenEvents = new ArrayList<UserEvent>();//emptys event array
             }
         }
        
     }
 
 
+    public PlayerType[] getPlayerTypeArray(){
+        return button;
 
+    }
 
     public void startGame() {
-        for(Player player: playerList){
+        for(Player player: playerList){//sets all player scores to 0
             player.playerScore = 0;
         }
+        
         wordGrid = new WordGrid();
        
         grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
         //wordGrid.printResult(grid);
         uniquePlayerColor();
-       
-
-
+        wordBankSize = grid.wordsBank.size();
     }
 
+    public PlayerType[] getTypeGrid(){
+        return button;
+    }
 
     public boolean checkWinner() {
 
 
-        if(grid.wordsBank.size()<100){
+        if(grid.wordsBank.size()<(wordBankSize/2)){
             msg[0] = "Game Over";
             return true;
         }
