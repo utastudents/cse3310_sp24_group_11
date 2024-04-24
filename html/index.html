@@ -31,6 +31,8 @@
                 <input type="text" id="chatInput" onkeypress="handleChatKeyPress(event)">
                 <button onclick="saveAllChats()">Send</button>
             </div>
+            <div id="letterDensity">
+            </div>
         </div>
     </div>
     <div id = "getUsername">
@@ -289,6 +291,9 @@
                 saveAllChats();
                 event.preventDefault(); // Prevent the default action to avoid form submission
             }
+        }
+        function fetchLetterDensity() {
+            connection.send(JSON.stringify({ action: "fetchLetterDensity" }));
         }
       </script>
 </body>
