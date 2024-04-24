@@ -33,9 +33,10 @@ public class WordGrid{
     public int gridSize = nRows*nCols;
     //min number of words to place on the grid generate
     public int minWords = 350;
-    public double density = 1700;
+    public double density = 0;;
     //public int totalLengthOfWords = 0;
     public Random RANDOM = new Random();
+    public int numOfLetters = 0;
 
 
 
@@ -48,7 +49,7 @@ public class WordGrid{
             while(sc.hasNext()){
                 String s = sc.next().trim().toLowerCase();
                 //we pick words with length between 4 and maxLength and with a-z inside
-                if (s.matches("^[a-z]{4,"+ maxLength + "}$")){
+                if (s.matches("^[a-z]{9,10}$")){ //4,"+ maxLength + "
                     words.add(s.toUpperCase());
                     totalLengthOfWords += s.length();
                 }
@@ -90,10 +91,16 @@ public class WordGrid{
         for (int r=0;r<nRows;r++){
             for (int c=0;c<nCols;c++){
                 if (grid.wordsGrid[r][c]==0){
-                    grid.wordsGrid[r][c] = (char)('A' + RANDOM.nextInt(26));
+                    grid.wordsGrid[r][c] = (char)('A' + RANDOM.nextInt(26)); //'-';//(char)('A' + RANDOM.nextInt(26));
+                }
+                else{
+                    numOfLetters++;
                 }
             }
         }
+        density = (double)numOfLetters/gridSize;
+        System.out.println("Number of Letters: " + numOfLetters);
+        System.out.println("Density: " + density);
         return grid;
 
     }
