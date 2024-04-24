@@ -4,13 +4,12 @@
 <html>
 <head>
     <title>Word Search Game</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
     <div id = "backToLobby" style = "display:none">
         <button onclick = "backToLobby()">Back to Lobby</button>
     </div>
-    <div id="wordGridAndChat" style="display:none; justify-content: space-evenly;">
+    <div id="wordGridAndChat" style="display:none; justify-content: space-evenly; align-items: center;">
 
         <div id="waitingforplayer" style="display:none">
             <h1>Waiting for another player to join</h1>
@@ -199,7 +198,19 @@
             for(var i = 0; i < wordsGrid.length; i++){
                 gridHtml += "<tr>";
                 for(var j = 0; j < wordsGrid[i].length; j++){
-                    gridHtml += `<td><button class="grid-button" onclick="buttonHasBeenClicked(this, ${i}, ${j})" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordsGrid[i][j]}</button></td>`;
+                    gridHtml += `<td><button class="grid-button" onclick="buttonHasBeenClicked(this, ${i}, ${j})" 
+                                    style="
+                                        border: 1px solid black; 
+                                        padding: 5px; 
+                                        text-align: center; 
+                                        cursor: pointer; 
+                                        font-size: 15px; 
+                                        height: 35px; 
+                                        width: 35px; 
+                                        font-weight:bold
+                                    ">
+                                    ${wordsGrid[i][j]}
+                                </button></td>`;
                 }
                 gridHtml += "</tr>";
             }
