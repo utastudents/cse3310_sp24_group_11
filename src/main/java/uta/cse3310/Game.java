@@ -275,12 +275,20 @@ public class Game {
         }
        
     }
-    private int[] convertTo2Dcoord(int input){
+
+    public double getLetterDensity(){
+        int realLetters = 0;
+        for(String word: grid.wordsBank){
+            realLetters += word.length();
+        }
+        return realLetters/400;//change 400 if we use a different grid size 
+    }
+    public int[] convertTo2Dcoord(int input){
         int row = input/20;
         int col = input%20;
         return new int[]{row,col};
     }
-    private int convertTo1Dcoord(int row, int col){
+    public int convertTo1Dcoord(int row, int col){
         return row*20 + col;
     }
 }
