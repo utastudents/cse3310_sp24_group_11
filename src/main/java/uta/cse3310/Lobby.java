@@ -78,7 +78,6 @@ public class Lobby{
 
     public void addChatMessage(String message) {
         chatMessages.add(message);
-        System.out.println("Chat message added: " + message);
     }
 
     public ArrayList<String> getAllMessages() {

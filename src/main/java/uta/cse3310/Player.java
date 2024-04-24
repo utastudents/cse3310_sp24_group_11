@@ -21,7 +21,6 @@ public class Player{
     public static boolean verifyUsername(String playerName){
     for (Player player: playerList) {
         if(playerName.equals(player.getPlayerName())){
-            System.out.println("Player name is not unique");
             return false;
         }
     }

@@ -210,7 +210,6 @@ public class App extends WebSocketServer {
           JsonObject chatMessagesMessage = new JsonObject();
           chatMessagesMessage.addProperty("type", "chatMessages");
           chatMessagesMessage.add("messages", gson.toJsonTree(allMessages));
-          System.out.println("Chat messages fetched successfully: " + chatMessagesMessage.toString());
           broadcast(chatMessagesMessage.toString());
       }
 
@@ -222,7 +221,6 @@ public class App extends WebSocketServer {
           JsonObject chatMessagesMessage = new JsonObject();
           chatMessagesMessage.addProperty("type", "chatMessages");
           chatMessagesMessage.add("messages", gson.toJsonTree(allMessages));
-          System.out.println("Chat messages fetched successfully: " + chatMessagesMessage.toString());
           broadcast(chatMessagesMessage.toString());  
       }
       else if(jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("buttonClicked")){

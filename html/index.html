@@ -11,22 +11,28 @@
         <button onclick = "backToLobby()">Back to Lobby</button>
     </div>
     <div id="wordGridAndChat" style="display:none; justify-content: space-evenly;">
-        <div id="wordGrid"></div>
-        <div id="GlobalChat">
-            <h1>Global Chat</h1>
-            <div id="chatMessages" style="width: 300px; height: 200px; overflow: scroll;"></div>
-            <input type="text" id="chatInput">
-            <button onclick="saveAllChats()">Send</button>
+
+        <div id="waitingforplayer" style="display:none">
+            <h1>Waiting for another player to join</h1>
         </div>
-        <div id="Scoreboard">
-            <h1>Scoreboard</h1>
-            <div id = "scores" style="width: 300px; height: 200px: overflow: scroll;">
+        <div id="wordGrid"></div>
+        <div>
+            <div id="GlobalChat">
+                <h1>Global Chat</h1>
+                <div id="chatMessages" style="width: 300px; height: 200px; overflow: scroll;"></div>
+                <input type="text" id="chatInput" onkeypress="handleChatKeyPress(event)">
+                <button onclick="saveAllChats()">Send</button>
+            </div>
+            <div id="Scoreboard">
+                <h1>Scoreboard</h1>
+                <div id = "scores" style="width: 300px; height: 200px; overflow: scroll;">
+                </div>
             </div>
         </div>
     </div>
     <div id = "getUsername">
         <h1>Enter your username</h1>
-        <input type = "text" id = "username">
+        <input type = "text" id = "username" onkeypress="handleKeyPress(event)">
         <button onclick = "checkUsername()">Submit</button>
     </div> 
     <div id = "Lobby" style = "display:none">
@@ -56,10 +62,6 @@
         <ul id="playerList">
             <!-- Players will be added here dynamically -->
         </ul>
-    </div>
-
-    <div id="waitingforplayer" style="display:none">
-        <h1>Waiting for another player to join</h1>
     </div>
 <!--     <div id="wordSearchContainer">
         <table>
@@ -258,15 +260,26 @@
             document.getElementById("backToLobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "none";
         }
-        
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('chatInput').addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
                     saveAllChats();
-                    event.preventDefault(); // Prevent the default action to avoid form submission
+                    event.preventDefault();
                 }
             });
         });
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkUsername();
+                event.preventDefault();
+            }
+        }
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                saveAllChats();
+                event.preventDefault(); // Prevent the default action to avoid form submission
+            }
+        }
       </script>
 </body>
 </html>
