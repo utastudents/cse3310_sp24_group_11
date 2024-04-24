@@ -17,16 +17,20 @@
         </div>
         <div id="wordGrid"></div>
         <div>
-            <div id="GlobalChat">
+            <div>
+                <h1>Scoreboard</h1>
+                <div id = "scores" style="width: 300px; height: 200px; overflow: scroll;">
+                </div>
+            </div>
+            <div id="wordBank">
+                <h1>Word Bank</h1>
+                <div id="words" style="width: 300px; height: 200px; overflow: scroll;"></div>
+            </div>
+            <div>
                 <h1>Global Chat</h1>
                 <div id="chatMessages" style="width: 300px; height: 200px; overflow: scroll;"></div>
                 <input type="text" id="chatInput" onkeypress="handleChatKeyPress(event)">
                 <button onclick="saveAllChats()">Send</button>
-            </div>
-            <div id="Scoreboard">
-                <h1>Scoreboard</h1>
-                <div id = "scores" style="width: 300px; height: 200px; overflow: scroll;">
-                </div>
             </div>
         </div>
     </div>
@@ -53,27 +57,12 @@
     </div>
     <div id="AvailableRooms" style="display:none">
         <h1>Available Rooms</h1>
-        <ul id="roomsList">
-            <!-- Rooms will be added here dynamically -->
-        </ul>
+        <ul id="roomsList"></ul>
     </div>
     <div id="Players" style="display: none;">
         <h1>Online Players</h1>
-        <ul id="playerList">
-            <!-- Players will be added here dynamically -->
-        </ul>
+        <ul id="playerList"></ul>
     </div>
-<!--     <div id="wordSearchContainer">
-        <table>
-            <tbody id="wordSearchGrid">
-            </tbody>
-        </table>
-    </div>
-    <div id="chatContainer">
-        <div id="messages"></div>
-        <input type="text" id="messageInput" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-    </div> -->
 
     <script>
         var serverUrl;
@@ -100,7 +89,8 @@
                     printChat(data.messages);
                     break;
                 case "wordGrid":
-                    populateWordGrid(data.grid);
+                    populateWordGrid(data.grid.wordsGrid);
+                    populateWordBank(data.grid.wordsBank);
                     break;
                 case "removePlayer":
                     removePlayer(data.removePlayerName);
@@ -204,19 +194,28 @@
 
             connection.send(JSON.stringify({action: "fetchGrid"}));
         }
-        function populateWordGrid(data) {
-            var wordGrid = data.wordsGrid;
+        function populateWordGrid(wordsGrid) {
             var gridHtml = "<table>";
-            for(var i = 0; i < wordGrid.length; i++){
+            for(var i = 0; i < wordsGrid.length; i++){
                 gridHtml += "<tr>";
-                for(var j = 0; j < wordGrid[i].length; j++){
-                    gridHtml += `<td><button class="grid-button" onclick="buttonHasBeenClicked(this, ${i}, ${j})" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordGrid[i][j]}</button></td>`;
+                for(var j = 0; j < wordsGrid[i].length; j++){
+                    gridHtml += `<td><button class="grid-button" onclick="buttonHasBeenClicked(this, ${i}, ${j})" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordsGrid[i][j]}</button></td>`;
                 }
                 gridHtml += "</tr>";
             }
             gridHtml += "</table>";
             document.getElementById("waitingforplayer").style.display = "none";
             document.getElementById("wordGrid").innerHTML = gridHtml;
+        }
+        function populateWordBank(wordsBank) {
+            var wordBank = document.getElementById("words");
+            wordBank.innerHTML = "";
+            wordsBank.forEach(function(word) {
+                var wordWithoutCoords = word.split('(')[0];
+                var listItem = document.createElement("li");
+                listItem.textContent = wordWithoutCoords;
+                wordBank.appendChild(listItem);
+            });
         }
 
         // Chat functions
