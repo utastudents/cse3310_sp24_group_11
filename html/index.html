@@ -31,7 +31,8 @@
                 <input type="text" id="chatInput" onkeypress="handleChatKeyPress(event)">
                 <button onclick="saveAllChats()">Send</button>
             </div>
-            <div id="letterDensity">
+            <div id="gridStatistics" style="display:none">
+                <h1>Grid Statistics</h1>
             </div>
         </div>
     </div>
@@ -69,8 +70,6 @@
         var serverUrl;
         serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
         connection = new WebSocket(serverUrl);
-        // idx = -1;
-        // var gameid = -1;
         connection.onmessage = function(event) {
             var data = JSON.parse(event.data);
             switch (data.type) {
@@ -86,6 +85,9 @@
                 case "fetchPlayerList":
                     printPlayersList(data.players);
                     break;
+                case "fetchLetterDensity":
+                    printLetterDensity(data.letterDensity);
+                    break;
                 case "chatMessages":
                     printChat(data.messages);
                     break;
@@ -95,6 +97,9 @@
                     break;
                 case "removePlayer":
                     removePlayer(data.removePlayerName);
+                    break;
+                case "gridStatistics":
+                    displayGridStatistics(data.statistics);
                     break;
                 default:
                     console.log("Unknown message", data);
@@ -168,6 +173,7 @@
                         connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
                         fetchChat();
                         startGame();
+                        fetchGridStatistics();
                     };
                     
                     var removeButton = document.createElement("button");
@@ -292,8 +298,21 @@
                 event.preventDefault(); // Prevent the default action to avoid form submission
             }
         }
-        function fetchLetterDensity() {
-            connection.send(JSON.stringify({ action: "fetchLetterDensity" }));
+        function fetchGridStatistics() {
+            connection.send(JSON.stringify({ action: "fetchGridStatistics" }));
+        }
+        function displayGridStatistics(statistics) {
+            document.getElementById("gridStatistics").style.display = "block";
+            var statsHtml = "<ul>";
+            statsHtml += `<li>Density: ${statistics[0]}</li>`;
+            statsHtml += `<li>Filler Characters: ${statistics[1]}</li>`;
+            statsHtml += `<li>Vertical Down Count: ${statistics[2]}</li>`;
+            statsHtml += `<li>Vertical Up Count: ${statistics[3]}</li>`;
+            statsHtml += `<li>Horizontal Right Count: ${statistics[4]}</li>`;
+            statsHtml += `<li>Diagonal Down Count: ${statistics[5]}</li>`;
+            statsHtml += `<li>Diagonal Up Count: ${statistics[6]}</li>`;
+            statsHtml += "</ul>";
+            document.getElementById("gridStatistics").innerHTML = statsHtml;
         }
       </script>
 </body>

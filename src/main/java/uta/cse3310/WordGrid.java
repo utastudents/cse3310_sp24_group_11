@@ -13,17 +13,23 @@ public class WordGrid{
         int numAttempts;
         char [][] wordsGrid = new char[nRows][nCols];
         List<String>wordsBank = new ArrayList<>();
+        int verticalDownCount = 0;
+        int verticalUpCount = 0;
+        int horizontalRightCount = 0;
+        int diagonalDownCount = 0;
+        int diagonalUpCount = 0;
     }
 
     // Arraylist that will store word locations 
     List<WordPosition> locations = new ArrayList<>();
     
     //4directions to generate words on the grid
-    public final int[][]DIRS = {
-    {1, 0},   // Vertical (Downward)
-    {0, 1},   // Horizontal (Rightward)
-    {1, 1},   // Diagonal (Downward-Right)
-    {1, -1}   // Diagonal (Downward-Left)
+    public final int[][] DIRS = {
+        {1, 0},   // Vertical Down
+        {0, 1},   // Horizontal Right
+        {1, 1},   // Diagonal Down(Down-Right)
+        {-1, 0},  // Vertical Up
+        {-1, 1}   // Diagonal Up(Up-Right)
     };
 
    
@@ -180,12 +186,28 @@ public class WordGrid{
         }
 
         int lettersPlaced = length - overlaps;
-        if (lettersPlaced>0)
-        grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)",word,r,c,rr,cc));
-        locations.add(new WordPosition(word, r, c, rr, cc));
+        if (lettersPlaced > 0) {
+            grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)", word, r, c, rr, cc));
+            locations.add(new WordPosition(word, r, c, rr, cc));
+            switch (dir) {
+                case 0: // Vertical Down
+                    grid.verticalDownCount++;
+                    break;
+                case 1: // Horizontal Right
+                    grid.horizontalRightCount++;
+                    break;
+                case 2: // Diagonal Down
+                    grid.diagonalDownCount++;
+                    break;
+                case 3: // Vertical Up
+                    grid.verticalUpCount++;
+                    break;
+                case 4: // Diagonal Up
+                    grid.diagonalUpCount++;
+                    break;
+            }
+        }
         return lettersPlaced;
-
-
     }
 
     public void printResult(Grid grid){
@@ -200,6 +222,12 @@ public class WordGrid{
         System.out.println("\n      ");
 
         System.out.println();
+
+        System.out.println("Vertical Down: " + grid.verticalDownCount);
+        System.out.println("Vertical Up: " + grid.verticalUpCount);
+        System.out.println("Horizontal Right: " + grid.horizontalRightCount);
+        System.out.println("Diagonal Down: " + grid.diagonalDownCount);
+        System.out.println("Diagonal Up: " + grid.diagonalUpCount);
         // for (int r = 0; r<nRows; r++){
         //     System.out.printf("%n%d ", r);
 
@@ -228,8 +256,16 @@ public class WordGrid{
         // }
     }
 
-
+    public List<Object> getGridStatistics(Grid grid) {
+        List<Object> stats = new ArrayList<>();
+        stats.add(density);
+        stats.add(gridSize-numOfLetters);
+        stats.add(grid.verticalDownCount);
+        stats.add(grid.verticalUpCount);
+        stats.add(grid.horizontalRightCount);
+        stats.add(grid.diagonalDownCount);
+        stats.add(grid.diagonalUpCount);
+        return stats;
+    }
     
 }
-    
-

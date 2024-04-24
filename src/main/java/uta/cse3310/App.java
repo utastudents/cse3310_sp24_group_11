@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -238,6 +239,15 @@ public class App extends WebSocketServer {
         System.out.println("E.gameIdx: " + E.gameIdx + " E.getButton(): " + E.getButton() + " E.getPlayerType(): " + E.getPlayerType());
         G.update(E);
         System.out.println("G.currentTurn is " + G.currentTurn);
+      }
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGridStatistics")) {
+          Game G = conn.getAttachment();
+          List<Object> gridStats = G.wordGrid.getGridStatistics(G.grid);
+          Gson gson = new Gson();
+          JsonObject gridStatsMessage = new JsonObject();
+          gridStatsMessage.addProperty("type", "gridStatistics");
+          gridStatsMessage.add("statistics", gson.toJsonTree(gridStats));
+          conn.send(gridStatsMessage.toString());
       }
     } catch (Exception e) {
       e.printStackTrace();
