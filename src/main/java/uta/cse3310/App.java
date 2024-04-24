@@ -227,7 +227,17 @@ public class App extends WebSocketServer {
         Game G = conn.getAttachment();
         int row = jsonMessage.get("row").getAsInt();
         int column = jsonMessage.get("column").getAsInt();
-        System.out.println("row: " + row + " column: " + column);
+        int buttonNumber;
+        if (row == 0) {
+          buttonNumber = column;
+        } else {
+          buttonNumber = row * 20 + column;
+        }
+        System.out.println("row: " + row + " column: " + column + " buttonNumber: " + buttonNumber);
+        UserEvent E = new UserEvent(G.GameId, G.currentTurn, buttonNumber);
+        System.out.println("E.gameIdx: " + E.gameIdx + " E.getButton(): " + E.getButton() + " E.getPlayerType(): " + E.getPlayerType());
+        G.update(E);
+        System.out.println("G.currentTurn is " + G.currentTurn);
       }
     } catch (Exception e) {
       e.printStackTrace();
