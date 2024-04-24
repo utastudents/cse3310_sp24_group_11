@@ -198,6 +198,7 @@ public class Game {
     public boolean checkValidWord(String word) {
         System.out.println("In Check Valid Word");
         for(String possibleWord: grid.wordsBank){
+            //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
             possibleWord = possibleWord.replaceAll("\\s", "");//ignore whitespace in possibleWord
             possibleWord = possibleWord.replaceAll("\\(.*?\\)","");
             //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
