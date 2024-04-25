@@ -171,28 +171,33 @@
         function updateRoomList(data){
             if (Array.isArray(data)) {
                 var roomsList = document.getElementById("roomsList");
+                var username = document.getElementById("username").value;
                 roomsList.innerHTML = "";
-                data.forEach(function(playername) {
+                data.forEach(function(room) {
                     var listItem = document.createElement("li");
-                    listItem.textContent = playername + "'s room";
+                    listItem.textContent = room + "'s room";
                     var joinButton = document.createElement("button");
                     joinButton.textContent = "Join";
                     joinButton.onclick = function() {
-                        connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
+                        connection.send(JSON.stringify({action: "joinRoom", playerName: room}));
                         fetchChat();
                         startGame();
                         fetchWordBank();
                         fetchGridStatistics();
                     };
                     
-                    var removeButton = document.createElement("button");
-                    removeButton.textContent = "Remove";
-                    removeButton.onclick = function() {
-                        connection.send(JSON.stringify({action: "removeRoom", playerName: playername}));
-                        listItem.remove();
-                    };
                     listItem.appendChild(joinButton);
-                    listItem.appendChild(removeButton);
+
+                    if (room === username) {
+                        var removeButton = document.createElement("button");
+                        removeButton.textContent = "Remove";
+                        removeButton.onclick = function() {
+                            connection.send(JSON.stringify({action: "removeRoom", playerName: room}));
+                            listItem.remove();
+                        };
+                        listItem.appendChild(removeButton);
+                    }
+
                     roomsList.appendChild(listItem);
                 });
             }
