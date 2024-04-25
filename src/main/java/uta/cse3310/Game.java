@@ -220,7 +220,7 @@ public class Game {
     public boolean checkValidWord(String word) {
         System.out.println("In Check Valid Word");
         for(String possibleWord: grid.wordsBank){
-            //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
+            System.out.println("Word: " + word + " Possible Word: " + possibleWord);
             possibleWord = possibleWord.replaceAll("\\s", "");//ignore whitespace in possibleWord
             possibleWord = possibleWord.replaceAll("\\(.*?\\)","");
             //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
@@ -231,25 +231,59 @@ public class Game {
         }
         return false;
     }
+    /*
+     *  {1, 0},   // Vertical Down
+        {0, 1},   // Horizontal Right
+        {1, 1},   // Diagonal Down(Down-Right)
+        {-1, 0},  // Vertical Up
+        {-1, 1}   // Diagonal Up(Up-Right)
+     */
+
     private void highlightWord(WordPosition word, PlayerType type){
         int rowIncrement = 0;
         int colIncrement = 0;
-        if(word.startRow < word.endRow && word.startCol == word.endCol){// up to down
-            colIncrement = 1;
+        switch (word.getDirection()) {
+            //works
+            case "Vertical Down":
+                // rowIncrement = 1;
+                // colIncrement = 0;
+                // System.out.println("Vertical Down");
+                rowIncrement = 0;
+                colIncrement = 1;
+                System.out.println("Horizontal Right");
+                break;
+            //works
+            case "Horizontal Right":
+                // rowIncrement = 0;
+                // colIncrement = 1;
+                // System.out.println("Horizontal Right");
+                rowIncrement = 1;
+                colIncrement = 0;
+                System.out.println("Vertical Down");
+                break;
+            //works
+            case "Diagonal Down":
+                rowIncrement = 1;
+                colIncrement = 1;
+                System.out.println("Diagonal Down");
+                break;
+                //idk
+            case "Vertical Up":
+                rowIncrement = -1;
+                colIncrement = 0;
+                System.out.println("Vertical Up");
+                break;
+            //doesnt work
+            case "Diagonal Up":
+                rowIncrement = -1;
+                colIncrement = 1;
+                System.out.println("Diagonal Up");
+                break;
+            default:
+                break;
         }
-        if(word.startRow < word.endRow && word.startCol < word.endCol){//left to right up to down
-            rowIncrement = 1;
-            colIncrement = 1;
-        }
-        if(word.startRow < word.endRow && word.startCol < word.endCol){//right to left up to down
-            rowIncrement = 1;
-            colIncrement = -1;
-        }
-        if(word.startRow == word.endRow && word.startCol < word.endCol){//left to right
-           
-            colIncrement = 1;
-        }
-       
+
+
         int length = word.getWord().length()-1;
         int row = word.getstartRow();
         int col = word.getstartCol();
