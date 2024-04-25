@@ -185,22 +185,27 @@ public class WordGrid{
         int lettersPlaced = length - overlaps;
         if (lettersPlaced > 0) {
             grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)", word, r, c, rr, cc));
-            locations.add(new WordPosition(word, r, c, rr, cc));
+            //locations.add(new WordPosition(word, r, c, rr, cc));
             switch (dir) {
                 case 0: // Vertical Down
                     grid.verticalDownCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Down"));
                     break;
                 case 1: // Horizontal Right
                     grid.horizontalRightCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Horizontal Right"));
                     break;
                 case 2: // Diagonal Down
                     grid.diagonalDownCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Diagonal Down"));
                     break;
                 case 3: // Vertical Up
                     grid.verticalUpCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Up"));
                     break;
                 case 4: // Diagonal Up
                     grid.diagonalUpCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Diagonal Up"));
                     break;
             }
         }
