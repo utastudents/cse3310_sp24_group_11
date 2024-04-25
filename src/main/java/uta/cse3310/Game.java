@@ -245,21 +245,21 @@ public class Game {
         switch (word.getDirection()) {
             //works
             case "Vertical Down":
-                // rowIncrement = 1;
-                // colIncrement = 0;
-                // System.out.println("Vertical Down");
-                rowIncrement = 0;
-                colIncrement = 1;
-                System.out.println("Horizontal Right");
-                break;
-            //works
-            case "Horizontal Right":
-                // rowIncrement = 0;
-                // colIncrement = 1;
-                // System.out.println("Horizontal Right");
                 rowIncrement = 1;
                 colIncrement = 0;
                 System.out.println("Vertical Down");
+                // rowIncrement = 0;
+                // colIncrement = 1;
+                // System.out.println("Horizontal Right");
+                break;
+            //works
+            case "Horizontal Right":
+                rowIncrement = 0;
+                colIncrement = 1;
+                System.out.println("Horizontal Right");
+                // rowIncrement = 1;
+                // colIncrement = 0;
+                // System.out.println("Vertical Down");
                 break;
             //works
             case "Diagonal Down":
@@ -292,9 +292,6 @@ public class Game {
             row += rowIncrement;
             col += colIncrement;
         }
-
-
-
 
     }
 

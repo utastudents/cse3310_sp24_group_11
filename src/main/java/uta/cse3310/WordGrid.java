@@ -188,12 +188,16 @@ public class WordGrid{
             //locations.add(new WordPosition(word, r, c, rr, cc));
             switch (dir) {
                 case 0: // Vertical Down
-                    grid.verticalDownCount++;
-                    locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Down"));
-                    break;
-                case 1: // Horizontal Right
                     grid.horizontalRightCount++;
                     locations.add(new WordPosition(word, r, c, rr, cc, "Horizontal Right"));
+                    // grid.verticalDownCount++;
+                    // locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Down"));
+                    break;
+                case 1: // Horizontal Right
+                    grid.verticalDownCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Down"));
+                    //grid.horizontalRightCount++;
+                    //locations.add(new WordPosition(word, r, c, rr, cc, "Horizontal Right"));
                     break;
                 case 2: // Diagonal Down
                     grid.diagonalDownCount++;
