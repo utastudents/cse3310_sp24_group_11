@@ -197,6 +197,9 @@ public class App extends WebSocketServer {
           JsonObject gridMessage = new JsonObject();
           gridMessage.addProperty("type", "wordGrid");
           gridMessage.add("grid", gson.toJsonTree(G.grid));
+          for (String word : G.grid.wordsBank) {
+              System.out.println(word);
+          }
           broadcast(gridMessage.toString());
           System.out.println("Game grid sent to the client successfully");
       }
