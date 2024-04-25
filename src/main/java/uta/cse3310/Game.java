@@ -267,7 +267,7 @@ public class Game {
                 colIncrement = 1;
                 System.out.println("Diagonal Down");
                 break;
-            //idk
+            //works 
             case "Vertical Up":
                 rowIncrement = -1;
                 colIncrement = 0;
