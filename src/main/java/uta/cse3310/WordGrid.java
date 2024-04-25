@@ -28,7 +28,7 @@ public class WordGrid{
         {1, 0},   // Vertical Down
         {0, 1},   // Horizontal Right
         {1, 1},   // Diagonal Down(Down-Right)
-        {-1, 0},  // Vertical Up
+        {0, -1},  // Vertical Up
         {-1, 1}   // Diagonal Up(Up-Right)
     };
 
