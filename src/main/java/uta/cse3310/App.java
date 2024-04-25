@@ -53,10 +53,6 @@ public class App extends WebSocketServer {
     super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
   }
   
-  public void displayMessageBox(){
-    messageBox mb = new messageBox();
-    mb.displayMessage("Your message here");
-  }
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
@@ -235,10 +231,26 @@ public class App extends WebSocketServer {
           buttonNumber = row * 20 + column;
         }
         System.out.println("row: " + row + " column: " + column + " buttonNumber: " + buttonNumber);
-        UserEvent E = new UserEvent(G.GameId, G.currentTurn, buttonNumber);
+        UserEvent E = new UserEvent(G.GameId, PlayerType.Blue, buttonNumber);
         System.out.println("E.gameIdx: " + E.gameIdx + " E.getButton(): " + E.getButton() + " E.getPlayerType(): " + E.getPlayerType());
         G.update(E);
-        System.out.println("G.currentTurn is " + G.currentTurn);
+      }
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchButtonColors")) {
+          Game G = conn.getAttachment();
+          PlayerType[] buttonColors = G.getButtonColorArray();
+          Gson gson = new Gson();
+          JsonObject buttonColorsMessage = new JsonObject();
+          buttonColorsMessage.addProperty("type", "buttonColors");
+          buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
+          broadcast(buttonColorsMessage.toString());
+      }
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {
+          ArrayList<String> allMessages = lobby.getAllMessages();
+          Gson gson = new Gson();
+          JsonObject chatMessagesMessage = new JsonObject();
+          chatMessagesMessage.addProperty("type", "chatMessages");
+          chatMessagesMessage.add("messages", gson.toJsonTree(allMessages));
+          broadcast(chatMessagesMessage.toString());
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGridStatistics")) {
           Game G = conn.getAttachment();
@@ -248,6 +260,17 @@ public class App extends WebSocketServer {
           gridStatsMessage.addProperty("type", "gridStatistics");
           gridStatsMessage.add("statistics", gson.toJsonTree(gridStats));
           conn.send(gridStatsMessage.toString());
+      }
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchWordBank")) {
+        Game G = conn.getAttachment();
+        List<String> wordBank = G.grid.wordsBank;
+        ArrayList<Boolean> foundWords = G.getFoundWordsAsList();
+        Gson gson = new Gson();
+        JsonObject wordBankMessage = new JsonObject();
+        wordBankMessage.addProperty("type", "wordBank");
+        wordBankMessage.add("words", gson.toJsonTree(wordBank));
+        wordBankMessage.add("foundWords", gson.toJsonTree(foundWords));
+        conn.send(wordBankMessage.toString());
       }
     } catch (Exception e) {
       e.printStackTrace();

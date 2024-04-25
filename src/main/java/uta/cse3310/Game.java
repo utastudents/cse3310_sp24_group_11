@@ -18,7 +18,7 @@ public class Game {
     public Statistics Stats;
     WordGrid.Grid grid;
     public int wordBankSize;
-
+    public boolean[] foundWords;
 
    
    
@@ -120,9 +120,8 @@ public class Game {
     }
 
 
-    public PlayerType[] getPlayerTypeArray(){
+    public PlayerType[] getButtonColorArray(){
         return button;
-
     }
 
     public void startGame() {
@@ -136,6 +135,7 @@ public class Game {
         //wordGrid.printResult(grid);
         uniquePlayerColor();
         wordBankSize = grid.wordsBank.size();
+        foundWords = new boolean[400];
     }
 
     public PlayerType[] getTypeGrid(){
@@ -195,12 +195,16 @@ public class Game {
         System.out.println("First Row: " + first[0] + " First Col: " + first[1]);
         System.out.println("Second Row: " + second[0] + " Second Col: " + second[1]);
         for(WordPosition possibleWord: wordGrid.locations){
+            String formattedWord = String.format("%-10s(%d,%d)(%d,%d)", possibleWord.getWord(), possibleWord.startRow, possibleWord.startCol, possibleWord.endRow, possibleWord.endCol).trim();
+            int wordIndex = grid.wordsBank.indexOf(formattedWord);
             if(possibleWord.startRow==first[0] && possibleWord.startCol == first[1] &&
                 possibleWord.endRow == second[0] && possibleWord.endCol == second[1]){
                 System.out.println("maybe word: " + possibleWord.getWord());
                 if(checkValidWord(possibleWord.getWord())){
                     System.out.println("actual word verified: " + possibleWord.getWord());
-                    grid.wordsBank.remove(possibleWord.getWord());  
+                    if (wordIndex != -1) {
+                        foundWords[wordIndex] = true;
+                    }
                     highlightWord(possibleWord, type);
                     return possibleWord.getWord();
                 }
@@ -291,9 +295,12 @@ public class Game {
     public int convertTo1Dcoord(int row, int col){
         return row*20 + col;
     }
+
+    public ArrayList<Boolean> getFoundWordsAsList() {
+        ArrayList<Boolean> foundWordsList = new ArrayList<>();
+        for (boolean wordFound : foundWords) {
+            foundWordsList.add(wordFound);
+        }
+        return foundWordsList;
+    }
 }
-
-
-
-
-

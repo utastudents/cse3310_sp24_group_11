@@ -93,10 +93,15 @@
                     break;
                 case "wordGrid":
                     populateWordGrid(data.grid.wordsGrid);
-                    populateWordBank(data.grid.wordsBank);
+                    break;
+                case "wordBank":
+                    populateWordBank(data.words, data.foundWords);
                     break;
                 case "removePlayer":
                     removePlayer(data.removePlayerName);
+                    break;
+                case "buttonColors":
+                    updateButtonColors(data.colors);
                     break;
                 case "gridStatistics":
                     displayGridStatistics(data.statistics);
@@ -176,6 +181,7 @@
                         connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
                         fetchChat();
                         startGame();
+                        fetchWordBank();
                         fetchGridStatistics();
                     };
                     
@@ -209,7 +215,8 @@
             for(var i = 0; i < wordsGrid.length; i++){
                 gridHtml += "<tr>";
                 for(var j = 0; j < wordsGrid[i].length; j++){
-                    gridHtml += `<td><button class="grid-button" onclick="buttonHasBeenClicked(this, ${i}, ${j})" 
+                    gridHtml += `<td><button class="grid-button" 
+                                    onclick="buttonHasBeenClicked(this, ${i}, ${j}); fetchButtonColors(); fetchWordBank();"  
                                     style="
                                         border: 1px solid black; 
                                         padding: 5px; 
@@ -218,7 +225,8 @@
                                         font-size: 15px; 
                                         height: 35px; 
                                         width: 35px; 
-                                        font-weight:bold
+                                        font-weight:bold;
+                                        background-color: white;
                                     ">
                                     ${wordsGrid[i][j]}
                                 </button></td>`;
@@ -229,13 +237,20 @@
             document.getElementById("waitingforplayer").style.display = "none";
             document.getElementById("wordGrid").innerHTML = gridHtml;
         }
-        function populateWordBank(wordsBank) {
+
+        function fetchWordBank(){
+            connection.send(JSON.stringify({action: "fetchWordBank"}));
+        }
+        function populateWordBank(wordsBank, foundWords) {
             var wordBank = document.getElementById("words");
             wordBank.innerHTML = "";
-            wordsBank.forEach(function(word) {
+            wordsBank.forEach(function(word, index) {
                 var wordWithoutCoords = word.split('(')[0];
                 var listItem = document.createElement("li");
                 listItem.textContent = wordWithoutCoords;
+                if (foundWords && foundWords[index]) {
+                    listItem.style.textDecoration = "line-through";
+                }
                 wordBank.appendChild(listItem);
             });
         }
@@ -264,7 +279,7 @@
          // Cell functions
         function buttonHasBeenClicked(buttonElement, rowIndex, columnIndex) {
             // Change the color of the button
-            buttonElement.style.backgroundColor = "yellow"; // You can change this color as needed
+            //buttonElement.style.backgroundColor = "yellow"; // You can change this color as needed
 
             // Send the location of the button to the server
             connection.send(JSON.stringify({
@@ -274,6 +289,20 @@
             }));
         }
 
+        function fetchButtonColors() {
+            connection.send(JSON.stringify({action: "fetchButtonColors"}));
+        }
+
+        function updateButtonColors(colors) {
+            var buttons = document.querySelectorAll(".grid-button");
+            buttons.forEach((button, index) => {
+                if (colors[index] === "Blue")  button.style.backgroundColor = "blue";
+                else if (colors[index] === "Red") button.style.backgroundColor = "red";
+                else if (colors[index] === "Green") button.style.backgroundColor = "green";
+                else if (colors[index] === "Yellow") button.style.backgroundColor = "yellow";
+                else button.style.backgroundColor = "white";
+            });
+        }
 
         function backToLobby(){
             document.getElementById("wordGridAndChat").style.display = "none";

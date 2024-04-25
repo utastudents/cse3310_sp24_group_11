@@ -63,7 +63,6 @@ public class WordGrid{
         }catch(FileNotFoundException e){
             //manage error!
         }
-        System.out.println("Total Length of Words: " + totalLengthOfWords);
         return words;
     }
 
@@ -105,8 +104,6 @@ public class WordGrid{
             }
         }
         density = (double)numOfLetters/gridSize;
-        System.out.println("Number of Letters: " + numOfLetters);
-        System.out.println("Density: " + density);
         return grid;
 
     }
