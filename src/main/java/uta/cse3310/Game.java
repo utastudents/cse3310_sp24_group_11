@@ -220,7 +220,7 @@ public class Game {
     public boolean checkValidWord(String word) {
         System.out.println("In Check Valid Word");
         for(String possibleWord: grid.wordsBank){
-            System.out.println("Word: " + word + " Possible Word: " + possibleWord);
+            //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
             possibleWord = possibleWord.replaceAll("\\s", "");//ignore whitespace in possibleWord
             possibleWord = possibleWord.replaceAll("\\(.*?\\)","");
             //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
@@ -267,16 +267,16 @@ public class Game {
                 colIncrement = 1;
                 System.out.println("Diagonal Down");
                 break;
-                //idk
+            //idk
             case "Vertical Up":
                 rowIncrement = -1;
                 colIncrement = 0;
                 System.out.println("Vertical Up");
                 break;
-            //doesnt work
+            //works (?)
             case "Diagonal Up":
-                rowIncrement = -1;
-                colIncrement = 1;
+                rowIncrement = 1;
+                colIncrement = -1;
                 System.out.println("Diagonal Up");
                 break;
             default:
