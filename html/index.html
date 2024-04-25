@@ -101,6 +101,9 @@
                 case "gridStatistics":
                     displayGridStatistics(data.statistics);
                     break;
+                case "updateScores":
+                    updateScoreboard(data.scores);
+                    break;
                 default:
                     console.log("Unknown message", data);
             }
@@ -313,6 +316,16 @@
             statsHtml += `<li>Diagonal Up Count: ${statistics[6]}</li>`;
             statsHtml += "</ul>";
             document.getElementById("gridStatistics").innerHTML = statsHtml;
+        }
+        function updateScoreboard(scores) {
+            var scores = document.getElementById("scores");
+            scoresElement.innerHTML = "";
+
+            scores.forEach(function(score) {
+                var entry = document.createElement("div");
+                entry.textContent = score.username + ": " + score.points;
+                scoresElement.appendChild(entry);
+            });
         }
       </script>
 </body>
