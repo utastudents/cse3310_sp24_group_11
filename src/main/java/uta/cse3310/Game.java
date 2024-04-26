@@ -2,6 +2,7 @@ package uta.cse3310;
 
 
 import java.util.ArrayList;
+import com.google.gson.JsonObject;
 
 
 public class Game {
@@ -77,8 +78,10 @@ public class Game {
                 if(foundWord == ""){
                     button[blueEvents.get(0).getButton()] = null;
                     button[blueEvents.get(1).getButton()] = null;
+                } else {
+                    updateScore(PlayerType.Blue, foundWord.length()); // Update score based on word length
                 }
-                blueEvents = new ArrayList<UserEvent>();//emptys event array
+                blueEvents.clear(); // Clear events after processing
             }
         }
 
@@ -89,8 +92,10 @@ public class Game {
                 if(foundWord == ""){
                     button[redEvents.get(0).getButton()] = null;
                     button[redEvents.get(1).getButton()] = null;
+                } else {
+                    updateScore(PlayerType.Red, foundWord.length()); // Update score based on word length
                 }
-                redEvents = new ArrayList<UserEvent>();//emptys event array
+                redEvents.clear(); // Clear events after processing
             }
         }
 
@@ -101,8 +106,10 @@ public class Game {
                 if(foundWord == ""){
                     button[yellowEvents.get(0).getButton()] = null;
                     button[yellowEvents.get(1).getButton()] = null;
+                } else {
+                    updateScore(PlayerType.Yellow, foundWord.length()); // Update score based on word length
                 }
-                yellowEvents = new ArrayList<UserEvent>();//emptys event array
+                yellowEvents.clear(); // Clear events after processing
             }
         }
 
@@ -113,8 +120,10 @@ public class Game {
                 if(foundWord == ""){
                     button[greenEvents.get(0).getButton()] = null;
                     button[greenEvents.get(1).getButton()] = null;
+                } else {
+                    updateScore(PlayerType.Green, foundWord.length()); // Update score based on word length
                 }
-                greenEvents = new ArrayList<UserEvent>();//emptys event array
+                greenEvents.clear(); // Clear events after processing
             }
         }
        
@@ -335,4 +344,24 @@ public class Game {
         }
         return foundWordsList;
     }
+
+    public ArrayList<JsonObject> getPlayerScores() {
+        ArrayList<JsonObject> scores = new ArrayList<>();
+        for (Player player : playerList) {
+            JsonObject scoreDetail = new JsonObject();
+            scoreDetail.addProperty("username", player.getPlayerName());
+            scoreDetail.addProperty("points", player.playerScore);
+            scores.add(scoreDetail);
+        }
+        return scores;
+    }
+
+    public void updateScore(PlayerType playerType, int scoreIncrement) {
+    for (Player player : playerList) {
+        if (player.type == playerType) {
+            player.playerScore += scoreIncrement;
+            break;
+        }
+    }
+}
 }

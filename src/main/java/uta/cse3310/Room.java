@@ -2,6 +2,7 @@ package uta.cse3310;
 
 import org.java_websocket.WebSocket;
 import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -67,6 +68,15 @@ public class Room {
                 }
             }
         }
+    }
+
+    public void broadcastScores() {
+        ArrayList<JsonObject> scores = game.getPlayerScores();
+        Gson gson = new Gson();
+        JsonObject scoreMessage = new JsonObject();
+        scoreMessage.addProperty("type", "updateScores");
+        scoreMessage.add("scores", gson.toJsonTree(scores));
+        broadcastToRoom(scoreMessage.toString());
     }
 
     public String getRoomName() {

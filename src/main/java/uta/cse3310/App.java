@@ -218,6 +218,7 @@ public class App extends WebSocketServer {
             buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
             conn.send(buttonColorsMessage.toString()); // Send only to the new player
         }
+        room.broadcastScores(); // Broadcast updated scores
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGrid")) {
@@ -282,6 +283,7 @@ public class App extends WebSocketServer {
           buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
           Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
           room.broadcastToRoom(buttonColorsMessage.toString());
+          room.broadcastScores(); // Broadcast updated scores
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchButtonColors")) {
           Game G = conn.getAttachment();
