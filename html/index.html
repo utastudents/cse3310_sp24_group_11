@@ -180,9 +180,9 @@
                     var joinButton = document.createElement("button");
                     joinButton.textContent = "Join";
                     joinButton.onclick = function() {
-                        connection.send(JSON.stringify({action: "joinRoom", playerName: room}));
+                        connection.send(JSON.stringify({action: "joinRoom", playerName: username, roomName: room}));
                         fetchChat();
-                        startGame();
+                        startGame(room);
                         fetchWordBank();
                         fetchGridStatistics();
                     };
@@ -207,7 +207,7 @@
 
         // Game/WordGrid functions
 
-        function startGame(){
+        function startGame(roomName){
             document.getElementById("Lobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "block";
             document.getElementById("AvailableRooms").style.display = "none";
@@ -215,7 +215,9 @@
             document.getElementById("backToLobby").style.display = "Block";
             document.getElementById("wordGridAndChat").style.display = "flex";
 
-            connection.send(JSON.stringify({action: "fetchGrid", playerName: username}));
+            var username = document.getElementById("username").value;
+
+            connection.send(JSON.stringify({action: "fetchGrid", playerName: username, roomName: roomName}));
         }
         function populateWordGrid(wordsGrid) {
             var gridHtml = "<table>";

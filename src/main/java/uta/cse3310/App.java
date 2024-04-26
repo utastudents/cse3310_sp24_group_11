@@ -38,7 +38,7 @@ public class App extends WebSocketServer {
   public ArrayList<Integer> playerIDs;
   public ArrayList<Player> players = new ArrayList<Player>();
   private Lobby lobby;
-  private Map<WebSocket, Player> connectionPlayerMap = new HashMap<>();
+  public static Map<WebSocket, Player> connectionPlayerMap = new HashMap<>();
 
   public App(int port) {
     super(new InetSocketAddress(port));
@@ -191,14 +191,20 @@ public class App extends WebSocketServer {
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("joinRoom")) {
         String playerName = jsonMessage.get("playerName").getAsString();
         String roomName = jsonMessage.get("roomName").getAsString();
-        Room room = Room.getRoom(roomName);
-        if (room != null) {
-            room.addPlayer(new Player(playerName));
+        System.out.println("Player " + playerName + " is trying to join room " + roomName);
+        Room room = Room.getRoomByName(roomName);
+        Player player = connectionPlayerMap.get(conn);
+        if (player == null) {
+            player = new Player(playerName);
+            connectionPlayerMap.put(conn, player);
         }
+        room.addPlayer(player);
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGrid")) {
-          Game G = conn.getAttachment();
+          Game G = Room.getRoomByName(jsonMessage.get("roomName").getAsString()).getGame();
+          conn.setAttachment(G);
+          System.out.println("G.playerList.size(): " + G.playerList.size());
           if (G.playerList.size() == 2 && !G.gameStarted) {
               G.startGame();
               G.gameStarted = true;
@@ -213,9 +219,14 @@ public class App extends WebSocketServer {
               for (String word : G.grid.wordsBank) {
                   System.out.println(word);
               }
-              broadcast(gridMessage.toString());
+              Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+              room.broadcastToRoom(gridMessage.toString());
               System.out.println("Game grid sent to the client successfully");
           }
+          // else if (G.playerList.size() >= 2 && !G.gameStarted) {
+          //     G.startGame();
+          //     G.gameStarted = true;
+          // }
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {
@@ -224,7 +235,8 @@ public class App extends WebSocketServer {
           JsonObject chatMessagesMessage = new JsonObject();
           chatMessagesMessage.addProperty("type", "chatMessages");
           chatMessagesMessage.add("messages", gson.toJsonTree(allMessages));
-          broadcast(chatMessagesMessage.toString());
+          Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+          room.broadcastToRoom(chatMessagesMessage.toString());
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("saveAllChats")) {
@@ -259,7 +271,8 @@ public class App extends WebSocketServer {
           JsonObject buttonColorsMessage = new JsonObject();
           buttonColorsMessage.addProperty("type", "buttonColors");
           buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
-          broadcast(buttonColorsMessage.toString());
+          Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+          room.broadcastToRoom(buttonColorsMessage.toString());
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {
           ArrayList<String> allMessages = lobby.getAllMessages();
@@ -271,23 +284,29 @@ public class App extends WebSocketServer {
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGridStatistics")) {
           Game G = conn.getAttachment();
-          List<Object> gridStats = G.wordGrid.getGridStatistics(G.grid);
-          Gson gson = new Gson();
-          JsonObject gridStatsMessage = new JsonObject();
-          gridStatsMessage.addProperty("type", "gridStatistics");
-          gridStatsMessage.add("statistics", gson.toJsonTree(gridStats));
-          conn.send(gridStatsMessage.toString());
+          if (G.playerList.size() >= 2) {
+            List<Object> gridStats = G.wordGrid.getGridStatistics(G.grid);
+            Gson gson = new Gson();
+            JsonObject gridStatsMessage = new JsonObject();
+            gridStatsMessage.addProperty("type", "gridStatistics");
+            gridStatsMessage.add("statistics", gson.toJsonTree(gridStats));
+            Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+            room.broadcastToRoom(gridStatsMessage.toString());
+          }
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchWordBank")) {
         Game G = conn.getAttachment();
-        List<String> wordBank = G.grid.wordsBank;
-        ArrayList<Boolean> foundWords = G.getFoundWordsAsList();
-        Gson gson = new Gson();
-        JsonObject wordBankMessage = new JsonObject();
-        wordBankMessage.addProperty("type", "wordBank");
-        wordBankMessage.add("words", gson.toJsonTree(wordBank));
-        wordBankMessage.add("foundWords", gson.toJsonTree(foundWords));
-        conn.send(wordBankMessage.toString());
+        if (G.playerList.size() >= 2) {
+            List<String> wordBank = G.grid.wordsBank;
+            ArrayList<Boolean> foundWords = G.getFoundWordsAsList();
+            Gson gson = new Gson();
+            JsonObject wordBankMessage = new JsonObject();
+            wordBankMessage.addProperty("type", "wordBank");
+            wordBankMessage.add("words", gson.toJsonTree(wordBank));
+            wordBankMessage.add("foundWords", gson.toJsonTree(foundWords)); 
+            Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+            room.broadcastToRoom(wordBankMessage.toString());
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
