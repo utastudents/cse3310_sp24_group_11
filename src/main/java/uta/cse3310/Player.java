@@ -40,4 +40,12 @@ public class Player{
     public static void removePlayer(int playerID) {
         playerList.removeIf(player -> player.playerID == playerID);
     }
+
+    public PlayerType getType() {
+        return type;
+    }
+
+    public void setType(PlayerType type) {
+        this.type = type;
+    }
 }

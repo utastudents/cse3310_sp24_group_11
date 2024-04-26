@@ -199,6 +199,25 @@ public class App extends WebSocketServer {
             connectionPlayerMap.put(conn, player);
         }
         room.addPlayer(player);
+
+        // Fetch the current game state
+        Game G = room.getGame();
+        conn.setAttachment(G);
+        if (G.gameStarted) {
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            JsonObject gridMessage = new JsonObject();
+            gridMessage.addProperty("type", "wordGrid");
+            gridMessage.add("grid", gson.toJsonTree(G.grid));
+            conn.send(gridMessage.toString()); // Send only to the new player
+
+            // Send button colors to the new player
+            PlayerType[] buttonColors = G.getButtonColorArray();
+            JsonObject buttonColorsMessage = new JsonObject();
+            buttonColorsMessage.addProperty("type", "buttonColors");
+            buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
+            conn.send(buttonColorsMessage.toString()); // Send only to the new player
+        }
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGrid")) {
@@ -249,19 +268,20 @@ public class App extends WebSocketServer {
           broadcast(chatMessagesMessage.toString());  
       }
       else if(jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("buttonClicked")){
-        Game G = conn.getAttachment();
-        int row = jsonMessage.get("row").getAsInt();
-        int column = jsonMessage.get("column").getAsInt();
-        int buttonNumber;
-        if (row == 0) {
-          buttonNumber = column;
-        } else {
-          buttonNumber = row * 20 + column;
-        }
-        System.out.println("row: " + row + " column: " + column + " buttonNumber: " + buttonNumber);
-        UserEvent E = new UserEvent(G.GameId, PlayerType.Blue, buttonNumber);
-        System.out.println("E.gameIdx: " + E.gameIdx + " E.getButton(): " + E.getButton() + " E.getPlayerType(): " + E.getPlayerType());
-        G.update(E);
+          Game G = conn.getAttachment();
+          int row = jsonMessage.get("row").getAsInt();
+          int column = jsonMessage.get("column").getAsInt();
+          int buttonNumber = row * 20 + column;
+          UserEvent E = new UserEvent(G.GameId, connectionPlayerMap.get(conn).getType(), buttonNumber);
+          G.update(E);
+          // Send updated button colors
+          PlayerType[] buttonColors = G.getButtonColorArray();
+          Gson gson = new Gson();
+          JsonObject buttonColorsMessage = new JsonObject();
+          buttonColorsMessage.addProperty("type", "buttonColors");
+          buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
+          Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+          room.broadcastToRoom(buttonColorsMessage.toString());
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchButtonColors")) {
           Game G = conn.getAttachment();

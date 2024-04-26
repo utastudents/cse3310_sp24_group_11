@@ -184,6 +184,7 @@
                         fetchRooms();
                         fetchChat();
                         startGame(room.name);
+                        updateButtonColors();
                         fetchWordBank();
                         fetchGridStatistics();
                     };
@@ -302,11 +303,12 @@
         function updateButtonColors(colors) {
             var buttons = document.querySelectorAll(".grid-button");
             buttons.forEach((button, index) => {
-                if (colors[index] === "Blue")  button.style.backgroundColor = "blue";
-                else if (colors[index] === "Red") button.style.backgroundColor = "red";
-                else if (colors[index] === "Green") button.style.backgroundColor = "green";
-                else if (colors[index] === "Yellow") button.style.backgroundColor = "yellow";
-                else button.style.backgroundColor = "white";
+                var color = colors[index];
+                if (color === "Blue")  button.style.backgroundColor = "blue";
+                else if (color === "Red") button.style.backgroundColor = "red";
+                else if (color === "Green") button.style.backgroundColor = "green";
+                else if (color === "Yellow") button.style.backgroundColor = "yellow";
+                else button.style.backgroundColor = "white"; // No player or default
             });
         }
 

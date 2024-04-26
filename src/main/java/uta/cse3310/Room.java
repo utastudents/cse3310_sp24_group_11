@@ -21,7 +21,9 @@ public class Room {
         System.out.println("Adding player " + player.getPlayerName() + " to room " + this.roomName);
         this.players.add(player);
         this.game.playerList.add(player);
-        System.out.println("Player " + player.getPlayerName() + " added to room " + this.roomName);
+        PlayerType[] colors = {PlayerType.Blue, PlayerType.Red, PlayerType.Yellow, PlayerType.Green};
+        player.setType(colors[players.size() - 1]);
+        System.out.println("Player " + player.getPlayerName() + " added to room " + this.roomName + " with color " + player.getType());
     }
 
     public void removePlayer(Player player) {
