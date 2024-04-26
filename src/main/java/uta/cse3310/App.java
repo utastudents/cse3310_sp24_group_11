@@ -115,10 +115,10 @@ public class App extends WebSocketServer {
         broadcast(updatePlayers.toString());
 
         // Update all clients with the new rooms list
-        ArrayList<String> rooms = Room.fetchRooms();
+        ArrayList<JsonObject> roomsInfo = Room.fetchRoomsInfo();
         JsonObject roomsMessage = new JsonObject();
         roomsMessage.addProperty("type", "roomList");
-        roomsMessage.add("rooms", gson.toJsonTree(rooms));
+        roomsMessage.add("rooms", gson.toJsonTree(roomsInfo));
         broadcast(roomsMessage.toString());
     }
   }
@@ -157,11 +157,11 @@ public class App extends WebSocketServer {
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchRooms")) {
-          ArrayList<String> rooms = Room.fetchRooms();
+          ArrayList<JsonObject> roomsInfo = Room.fetchRoomsInfo();
           Gson gson = new Gson();
           JsonObject roomsMessage = new JsonObject();
           roomsMessage.addProperty("type", "roomList");
-          roomsMessage.add("rooms", gson.toJsonTree(rooms));
+          roomsMessage.add("rooms", gson.toJsonTree(roomsInfo));
           broadcast(roomsMessage.toString());
       }
 
@@ -169,22 +169,22 @@ public class App extends WebSocketServer {
           String playerName = jsonMessage.get("playerName").getAsString();
           Room newRoom = Room.addRoom(playerName);
           conn.setAttachment(newRoom.getGame());
-          ArrayList<String> rooms = Room.fetchRooms();
+          ArrayList<JsonObject> roomsInfo = Room.fetchRoomsInfo();
           Gson gson = new Gson();
           JsonObject roomsMessage = new JsonObject();
           roomsMessage.addProperty("type", "roomList");
-          roomsMessage.add("rooms", gson.toJsonTree(rooms));
+          roomsMessage.add("rooms", gson.toJsonTree(roomsInfo));
           broadcast(roomsMessage.toString());
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("removeRoom")) {
         String playerName = jsonMessage.get("playerName").getAsString();
         Room.removeRoom(playerName);
-        ArrayList<String> rooms = Room.fetchRooms();
+        ArrayList<JsonObject> roomsInfo = Room.fetchRoomsInfo();
         Gson gson = new Gson();
         JsonObject roomsMessage = new JsonObject();
         roomsMessage.addProperty("type", "roomList");
-        roomsMessage.add("rooms", gson.toJsonTree(rooms));
+        roomsMessage.add("rooms", gson.toJsonTree(roomsInfo));
         broadcast(roomsMessage.toString());
       }
 
@@ -204,7 +204,6 @@ public class App extends WebSocketServer {
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGrid")) {
           Game G = Room.getRoomByName(jsonMessage.get("roomName").getAsString()).getGame();
           conn.setAttachment(G);
-          System.out.println("G.playerList.size(): " + G.playerList.size());
           if (G.playerList.size() == 2 && !G.gameStarted) {
               G.startGame();
               G.gameStarted = true;

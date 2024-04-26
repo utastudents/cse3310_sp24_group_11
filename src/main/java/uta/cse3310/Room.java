@@ -1,6 +1,7 @@
 package uta.cse3310;
-import org.java_websocket.WebSocket;
 
+import org.java_websocket.WebSocket;
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -41,12 +42,16 @@ public class Room {
         System.out.println("Room " + roomName + " removed");
     }
 
-    public static ArrayList<String> fetchRooms() {
-        ArrayList<String> roomNames = new ArrayList<>();
+    public static ArrayList<JsonObject> fetchRoomsInfo() {
+        ArrayList<JsonObject> roomInfoList = new ArrayList<>();
         for (Room room : rooms) {
-            roomNames.add(room.getRoomName());
+            JsonObject roomInfo = new JsonObject();
+            roomInfo.addProperty("name", room.getRoomName());
+            roomInfo.addProperty("playerCount", room.players.size());
+            roomInfo.addProperty("isFull", room.players.size() >= 4);
+            roomInfoList.add(roomInfo);
         }
-        return roomNames;
+        return roomInfoList;
     }
 
     public void broadcastToRoom(String message) {
