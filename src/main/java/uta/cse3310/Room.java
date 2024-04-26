@@ -23,6 +23,12 @@ public class Room {
         System.out.println("Player " + player.getPlayerName() + " added to room " + this.roomName);
     }
 
+    public void removePlayer(Player player) {
+        this.players.remove(player);
+        this.game.playerList.remove(player);
+        System.out.println("Player " + player.getPlayerName() + " removed from room " + this.roomName);
+    }
+
     public static Room addRoom(String roomName) {
         Room newRoom = new Room(roomName);
         rooms.add(newRoom);

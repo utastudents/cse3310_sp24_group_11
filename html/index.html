@@ -316,9 +316,11 @@
         function backToLobby(){
             document.getElementById("wordGridAndChat").style.display = "none";
             document.getElementById("Lobby").style.display = "block";
+            document.getElementById("AvailableRooms").style.display = "block";
             document.getElementById("backToLobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "none";
             document.getElementById("gridStatistics").style.display = "none";
+            connection.send(JSON.stringify({action: "leaveRoom"}));
         }
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('chatInput').addEventListener('keypress', function(event) {

@@ -308,6 +308,10 @@ public class App extends WebSocketServer {
             room.broadcastToRoom(wordBankMessage.toString());
         }
       }
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("leaveRoom")) {
+        Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+        room.removePlayer(connectionPlayerMap.get(conn));
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
