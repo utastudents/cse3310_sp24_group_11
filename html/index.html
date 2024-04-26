@@ -52,7 +52,8 @@
                                      document.getElementById('AvailableRooms').style.display = 'block';"
                                      >Show Rooms</button>
                 <td><button id="createRoom" onclick = "addRooms(); 
-                                                       document.getElementById('AvailableRooms').style.display = 'block';"
+                                                       document.getElementById('AvailableRooms').style.display = 'block';
+                                                       document.getElementById('createRoom').style.display = 'none';"
                                                        >Create Room</button>
             </tr>
         </table>
@@ -192,6 +193,7 @@
                         var removeButton = document.createElement("button");
                         removeButton.textContent = "Remove";
                         removeButton.onclick = function() {
+                            document.getElementById('createRoom').style.display = 'block';
                             connection.send(JSON.stringify({action: "removeRoom", playerName: room}));
                             listItem.remove();
                         };
