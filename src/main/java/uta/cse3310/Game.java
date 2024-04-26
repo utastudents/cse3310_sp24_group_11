@@ -41,30 +41,27 @@ public class Game {
     public void update(UserEvent U){
         // Processes user actions and updated game state
         //System.out.println("Button: " + button[U.getButton()]);
-        if(button[U.getButton()] == null){
-            button[U.getButton()] = U.getPlayerType();
-            switch (U.getPlayerType()) {
-                case Red:
-                    redEvents.add(U);
-                    break;
-                case Blue:
-                    blueEvents.add(U);
-                    break;
-               
-                case Yellow:
-                    yellowEvents.add(U);
-                    break;
+        button[U.getButton()] = U.getPlayerType();
+        switch (U.getPlayerType()) {
+            case Red:
+                redEvents.add(U);
+                break;
+            case Blue:
+                blueEvents.add(U);
+                 break;
+            
+            case Yellow:
+                yellowEvents.add(U);
+                break;
+
+            case Green:
+                greenEvents.add(U);
+                break;
 
 
-                case Green:
-                    greenEvents.add(U);
-                    break;
-
-
-                default:
-                    System.out.println("Invalid Player Type");
-                    break;
-            }
+            default:
+                System.out.println("Invalid Player Type");
+                break;
         }
         String foundWord = "";
         System.out.println(U.playerType + " " + U.getButton());
