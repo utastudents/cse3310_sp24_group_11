@@ -19,8 +19,7 @@ public class Game {
     WordGrid.Grid grid;
     public int wordBankSize;
     public boolean[] foundWords;
-
-   
+    public boolean gameStarted = false;
    
    
 
@@ -32,7 +31,9 @@ public class Game {
     public Game(ArrayList<Player> playerList, int gameID){//playerList only contains players that are in this game
         GameId = gameID;
         this.playerList = playerList;
-        startGame();
+        if (playerList.size() == 2) {
+            startGame();
+        }
     }
 
 
@@ -85,8 +86,8 @@ public class Game {
             if(redEvents.size() > 1){
                 foundWord = wordFound(redEvents.get(0).getButton(), redEvents.get(1).getButton(), PlayerType.Red);
             
-                if(foundWord == ""){//word not found
-                    button[redEvents.get(0).getButton()] = null;//resets button array
+                if(foundWord == ""){
+                    button[redEvents.get(0).getButton()] = null;
                     button[redEvents.get(1).getButton()] = null;
                 }
                 redEvents = new ArrayList<UserEvent>();//emptys event array
@@ -125,17 +126,17 @@ public class Game {
     }
 
     public void startGame() {
-        for(Player player: playerList){//sets all player scores to 0
-            player.playerScore = 0;
+        if (playerList.size() == 2 && !gameStarted) { // Start the game only if exactly 2 players are present and game hasn't started
+            gameStarted = true;
+            for (Player player : playerList) { // Initialize player scores
+                player.playerScore = 0;
+            }
+            wordGrid = new WordGrid();
+            grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
+            uniquePlayerColor();
+            wordBankSize = grid.wordsBank.size();
+            foundWords = new boolean[400];
         }
-        
-        wordGrid = new WordGrid();
-       
-        grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
-        //wordGrid.printResult(grid);
-        uniquePlayerColor();
-        wordBankSize = grid.wordsBank.size();
-        foundWords = new boolean[400];
     }
 
     public PlayerType[] getTypeGrid(){
@@ -222,7 +223,7 @@ public class Game {
         for(String possibleWord: grid.wordsBank){
             //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
             possibleWord = possibleWord.replaceAll("\\s", "");//ignore whitespace in possibleWord
-            possibleWord = possibleWord.replaceAll("\\(.*?\\)","");
+            possibleWord = possibleWord.replaceAll("\\(.*?\\)","");//remove coordinates from possibleWord
             //System.out.println("Word: " + word + " Possible Word: " + possibleWord);
             if(possibleWord.equals(word)){
                 System.out.println("Word Found: " + word);

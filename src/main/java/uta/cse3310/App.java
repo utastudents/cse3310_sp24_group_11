@@ -56,42 +56,42 @@ public class App extends WebSocketServer {
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-    System.out.println("New connection at " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
-    UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
+    // System.out.println("New connection at " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+    // UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
 
-    //get the name passed by html
+    // //get the name passed by html
 
 
-    // search for a game needing a player
-    Game G = null;
-    for (Game i : ActiveGames) {
-      if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
-        G = i;
-        System.out.println("found a match");
-      }
-    }
+    // // search for a game needing a player
+    // Game G = null;
+    // for (Game i : ActiveGames) {
+    //   if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
+    //     G = i;
+    //     System.out.println("found a match");
+    //   }
+    // }
 
-    // No matches? Create a new Game.
-    if (G == null) {
-      G = new Game();
-      G.GameId = gameID;
-      gameID++;
-      // Add the first player
-      G.currentTurn = uta.cse3310.PlayerType.Blue;
-      ActiveGames.add(G);
-      System.out.println("creating a new Game");
-    } else {
-      // join an existing game
-      System.out.println("not a new game");
-      G.currentTurn = uta.cse3310.PlayerType.Red;
-      G.startGame();
-    }
-    System.out.println("G.currentTurn is " + G.currentTurn);
-    // create an event to go to only the new player
-    E.setPlayerType(G.currentTurn);
-    E.gameIdx = G.GameId;
-    // allows the websocket to give us the Game when a message arrives
-    conn.setAttachment(G);
+    // // No matches? Create a new Game.
+    // if (G == null) {
+    //   G = new Game();
+    //   G.GameId = gameID;
+    //   gameID++;
+    //   // Add the first player
+    //   G.currentTurn = uta.cse3310.PlayerType.Blue;
+    //   ActiveGames.add(G);
+    //   System.out.println("creating a new Game");
+    // } else {
+    //   // join an existing game
+    //   System.out.println("not a new game");
+    //   G.currentTurn = uta.cse3310.PlayerType.Red;
+    //   G.startGame();
+    // }
+    // System.out.println("G.currentTurn is " + G.currentTurn);
+    // // create an event to go to only the new player
+    // E.setPlayerType(G.currentTurn);
+    // E.gameIdx = G.GameId;
+    // // allows the websocket to give us the Game when a message arrives
+    // conn.setAttachment(G);
   }
 
   @Override
@@ -102,7 +102,7 @@ public class App extends WebSocketServer {
         connectionPlayerMap.remove(conn);
         Player.removePlayer(player.playerID);
         lobby.removePlayer(player.getPlayerName());
-        lobby.removeRoom(player.getPlayerName());
+        Room.removeRoom(player.getPlayerName());
 
         System.out.println("Player " + player.getPlayerName() + " removed due to disconnection.");
 
@@ -115,7 +115,7 @@ public class App extends WebSocketServer {
         broadcast(updatePlayers.toString());
 
         // Update all clients with the new rooms list
-        ArrayList<String> rooms = lobby.fetchRooms();
+        ArrayList<String> rooms = Room.fetchRooms();
         JsonObject roomsMessage = new JsonObject();
         roomsMessage.addProperty("type", "roomList");
         roomsMessage.add("rooms", gson.toJsonTree(rooms));
@@ -157,7 +157,7 @@ public class App extends WebSocketServer {
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchRooms")) {
-          ArrayList<String> rooms = lobby.fetchRooms();
+          ArrayList<String> rooms = Room.fetchRooms();
           Gson gson = new Gson();
           JsonObject roomsMessage = new JsonObject();
           roomsMessage.addProperty("type", "roomList");
@@ -166,20 +166,21 @@ public class App extends WebSocketServer {
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("addRoom")) {
-        String playerName = jsonMessage.get("playerName").getAsString();
-        lobby.addRoom(playerName);
-        ArrayList<String> rooms = lobby.fetchRooms();
-        Gson gson = new Gson();
-        JsonObject roomsMessage = new JsonObject();
-        roomsMessage.addProperty("type", "roomList");
-        roomsMessage.add("rooms", gson.toJsonTree(rooms));
-        broadcast(roomsMessage.toString());
+          String playerName = jsonMessage.get("playerName").getAsString();
+          Room newRoom = Room.addRoom(playerName);
+          conn.setAttachment(newRoom.getGame());
+          ArrayList<String> rooms = Room.fetchRooms();
+          Gson gson = new Gson();
+          JsonObject roomsMessage = new JsonObject();
+          roomsMessage.addProperty("type", "roomList");
+          roomsMessage.add("rooms", gson.toJsonTree(rooms));
+          broadcast(roomsMessage.toString());
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("removeRoom")) {
         String playerName = jsonMessage.get("playerName").getAsString();
-        lobby.removeRoom(playerName);
-        ArrayList<String> rooms = lobby.fetchRooms();
+        Room.removeRoom(playerName);
+        ArrayList<String> rooms = Room.fetchRooms();
         Gson gson = new Gson();
         JsonObject roomsMessage = new JsonObject();
         roomsMessage.addProperty("type", "roomList");
@@ -187,21 +188,34 @@ public class App extends WebSocketServer {
         broadcast(roomsMessage.toString());
       }
 
+      else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("joinRoom")) {
+        String playerName = jsonMessage.get("playerName").getAsString();
+        String roomName = jsonMessage.get("roomName").getAsString();
+        Room room = Room.getRoom(roomName);
+        if (room != null) {
+            room.addPlayer(new Player(playerName));
+        }
+      }
+
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchGrid")) {
           Game G = conn.getAttachment();
-          G.startGame();          
-          // send the grid
-          GsonBuilder builder = new GsonBuilder();
-          Gson gson = builder.create();
-          String jsonString = gson.toJson(G.grid);
-          JsonObject gridMessage = new JsonObject();
-          gridMessage.addProperty("type", "wordGrid");
-          gridMessage.add("grid", gson.toJsonTree(G.grid));
-          for (String word : G.grid.wordsBank) {
-              System.out.println(word);
+          if (G.playerList.size() == 2 && !G.gameStarted) {
+              G.startGame();
+              G.gameStarted = true;
           }
-          broadcast(gridMessage.toString());
-          System.out.println("Game grid sent to the client successfully");
+          if (G.playerList.size() >= 2 && G.playerList.size() <=4 && G.gameStarted) {
+              GsonBuilder builder = new GsonBuilder();
+              Gson gson = builder.create();
+              String jsonString = gson.toJson(G.grid);
+              JsonObject gridMessage = new JsonObject();
+              gridMessage.addProperty("type", "wordGrid");
+              gridMessage.add("grid", gson.toJsonTree(G.grid));
+              for (String word : G.grid.wordsBank) {
+                  System.out.println(word);
+              }
+              broadcast(gridMessage.toString());
+              System.out.println("Game grid sent to the client successfully");
+          }
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {

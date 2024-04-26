@@ -27,20 +27,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class Lobby{
-    // //arraylist of players
-    // private ArrayList<Player> playerList;
-    // //arraylist of games
-    // private ArrayList<Game> gameList;
-    public ArrayList<Game> games;
     public ArrayList<Player> players;
     public ArrayList<String> chatMessages;
-    public ArrayList<String> rooms;
 
     public Lobby(){
-        games = new ArrayList<Game>();
         players = new ArrayList<Player>();
         chatMessages = new ArrayList<String>();;
-        rooms = new ArrayList<String>();
     }
 
     public void addPlayer(String playerName){
@@ -53,19 +45,7 @@ public class Lobby{
 
     public void removePlayer(String playerName) {
         players.removeIf(player -> playerName.equals(player.getPlayerName()));
-        removeRoom(playerName);
-    }
-
-    public void addRoom(String playerName) {
-        rooms.add(playerName);
-    }
-
-    public void removeRoom(String playerName) {
-        rooms.removeIf(room -> room.equals(playerName));
-    }
-
-    public ArrayList<String> fetchRooms() {
-        return rooms;
+        Room.removeRoom(playerName);
     }
 
     public ArrayList<String> getPlayerNames() {

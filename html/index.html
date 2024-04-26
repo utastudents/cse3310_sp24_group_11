@@ -215,7 +215,7 @@
             document.getElementById("backToLobby").style.display = "Block";
             document.getElementById("wordGridAndChat").style.display = "flex";
 
-            connection.send(JSON.stringify({action: "fetchGrid"}));
+            connection.send(JSON.stringify({action: "fetchGrid", playerName: username}));
         }
         function populateWordGrid(wordsGrid) {
             var gridHtml = "<table>";
