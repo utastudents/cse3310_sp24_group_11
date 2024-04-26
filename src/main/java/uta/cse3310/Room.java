@@ -30,6 +30,7 @@ public class Room {
     public void removePlayer(Player player) {
         this.players.remove(player);
         this.game.playerList.remove(player);
+        this.game.removePlayerFromScores(player);
         System.out.println("Player " + player.getPlayerName() + " removed from room " + this.roomName);
     }
 
@@ -41,7 +42,7 @@ public class Room {
     }
 
     public static void removeRoom(String roomName) {
-        rooms.removeIf(room -> room.getRoomName().equals(roomName));
+        rooms.removeIf(room -> room.getRoomName().equals(roomName) && room.players.size() == 0);
         System.out.println("Room " + roomName + " removed");
     }
 

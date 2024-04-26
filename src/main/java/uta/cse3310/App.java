@@ -102,6 +102,13 @@ public class App extends WebSocketServer {
         connectionPlayerMap.remove(conn);
         Player.removePlayer(player.playerID);
         lobby.removePlayer(player.getPlayerName());
+
+        Room roomInstance = Room.getRoomByPlayer(player);
+        if (roomInstance != null) {
+            roomInstance.removePlayer(player);
+            roomInstance.broadcastScores();
+        }
+
         Room.removeRoom(player.getPlayerName());
 
         System.out.println("Player " + player.getPlayerName() + " removed due to disconnection.");

@@ -361,4 +361,9 @@ public class Game {
         }
     }
 }
+
+    public void removePlayerFromScores(Player player) {
+        playerList.remove(player);
+        getPlayerScores().removeIf(score -> score.get("username").getAsString().equals(player.getPlayerName()));
+    }
 }
