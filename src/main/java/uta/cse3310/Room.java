@@ -31,6 +31,7 @@ public class Room {
         this.players.remove(player);
         this.game.playerList.remove(player);
         this.game.removePlayerFromScores(player);
+        broadcastScores();
         System.out.println("Player " + player.getPlayerName() + " removed from room " + this.roomName);
     }
 
