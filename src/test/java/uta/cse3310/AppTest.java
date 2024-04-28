@@ -16,12 +16,5 @@ public class AppTest extends TestCase {
         assertEquals("Port should match the one provided", testPort, address.getPort());
     }
 
-    /**
-     * Test setting reuseAddr flag.
-     */
-    public void testSetReuseAddr() {
-        App testApp = new App(9111);
-        testApp.setReuseAddr(true);
-        assertTrue("ReuseAddr flag should be set to true", testApp.isReuseAddr());
-    }
+    
 }

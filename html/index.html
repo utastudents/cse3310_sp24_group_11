@@ -74,6 +74,9 @@
         connection.onmessage = function(event) {
             var data = JSON.parse(event.data);
             switch (data.type) {
+                case "version":
+                    document.title = "TWSG " + data.version;
+                    break;
                 case "UsernameError":
                     handleUsernameError(data);
                     break;

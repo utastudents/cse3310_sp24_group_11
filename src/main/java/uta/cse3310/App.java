@@ -31,6 +31,7 @@ import com.google.gson.JsonParser;
 
 public class App extends WebSocketServer {
 
+  public String version = System.getenv("VERSION") != null ? System.getenv("VERSION") : "1.0.0";
   private Vector<Game> ActiveGames = new Vector<Game>();
   private int gameID;
   private int connectionID;
@@ -55,42 +56,11 @@ public class App extends WebSocketServer {
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
-    // System.out.println("New connection at " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
-    // UserEvent E = new UserEvent(0, PlayerType.NOPLAYER, 0);  
-
-    // //get the name passed by html
-
-
-    // // search for a game needing a player
-    // Game G = null;
-    // for (Game i : ActiveGames) {
-    //   if (i.currentTurn == uta.cse3310.PlayerType.Blue) {
-    //     G = i;
-    //     System.out.println("found a match");
-    //   }
-    // }
-
-    // // No matches? Create a new Game.
-    // if (G == null) {
-    //   G = new Game();
-    //   G.GameId = gameID;
-    //   gameID++;
-    //   // Add the first player
-    //   G.currentTurn = uta.cse3310.PlayerType.Blue;
-    //   ActiveGames.add(G);
-    //   System.out.println("creating a new Game");
-    // } else {
-    //   // join an existing game
-    //   System.out.println("not a new game");
-    //   G.currentTurn = uta.cse3310.PlayerType.Red;
-    //   G.startGame();
-    // }
-    // System.out.println("G.currentTurn is " + G.currentTurn);
-    // // create an event to go to only the new player
-    // E.setPlayerType(G.currentTurn);
-    // E.gameIdx = G.GameId;
-    // // allows the websocket to give us the Game when a message arrives
-    // conn.setAttachment(G);
+      System.out.println("New connection at " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
+      JsonObject versionMessage = new JsonObject();
+      versionMessage.addProperty("type", "version");
+      versionMessage.addProperty("version", version);
+      conn.send(versionMessage.toString());
   }
 
   @Override
