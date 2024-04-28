@@ -35,6 +35,11 @@ public class Room {
         System.out.println("Player " + player.getPlayerName() + " removed from room " + this.roomName);
     }
 
+    public void removeAllPlayers() {
+        this.players.clear();
+        this.game.playerList.clear();
+    }
+
     public static Room addRoom(String roomName) {
         Room newRoom = new Room(roomName);
         rooms.add(newRoom);

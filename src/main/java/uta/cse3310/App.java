@@ -270,17 +270,27 @@ public class App extends WebSocketServer {
               System.out.println("Winner is " + connectionPlayerMap.get(conn).getPlayerName());
               winnerMessage.addProperty("winner", connectionPlayerMap.get(conn).getPlayerName());
               room.broadcastToRoom(winnerMessage.toString());
+
+              room.removeAllPlayers();
+              Room.removeRoom(room.getRoomName());
+              ArrayList<JsonObject> roomsInfo = Room.fetchRoomsInfo();
+              JsonObject roomsMessage = new JsonObject();
+              roomsMessage.addProperty("type", "roomList");
+              roomsMessage.add("rooms", gson.toJsonTree(roomsInfo));
+              broadcast(roomsMessage.toString());
           }
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchButtonColors")) {
-          Game G = conn.getAttachment();
-          PlayerType[] buttonColors = G.getButtonColorArray();
-          Gson gson = new Gson();
-          JsonObject buttonColorsMessage = new JsonObject();
-          buttonColorsMessage.addProperty("type", "buttonColors");
-          buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
-          Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
-          room.broadcastToRoom(buttonColorsMessage.toString());
+          if (Room.getRoomByPlayer(connectionPlayerMap.get(conn)) != null) {
+            Game G = conn.getAttachment();
+            PlayerType[] buttonColors = G.getButtonColorArray();
+            Gson gson = new Gson();
+            JsonObject buttonColorsMessage = new JsonObject();
+            buttonColorsMessage.addProperty("type", "buttonColors");
+            buttonColorsMessage.add("colors", gson.toJsonTree(buttonColors));
+            Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+            room.broadcastToRoom(buttonColorsMessage.toString());
+          }
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {
           ArrayList<String> allMessages = lobby.getAllMessages();
@@ -317,8 +327,10 @@ public class App extends WebSocketServer {
         }
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("leaveRoom")) {
-        Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
-        room.removePlayer(connectionPlayerMap.get(conn));
+        if (Room.getRoomByPlayer(connectionPlayerMap.get(conn)) != null) {
+            Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
+            room.removePlayer(connectionPlayerMap.get(conn));
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();
