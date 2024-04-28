@@ -4,24 +4,41 @@
 <html>
 <head>
     <title>Word Search Game</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
     <div id = "backToLobby" style = "display:none">
         <button onclick = "backToLobby()">Back to Lobby</button>
     </div>
-    <div id="wordGridAndChat" style="display:none; justify-content: space-evenly;">
-        <div id="wordGrid"></div>
-        <div id="GlobalChat">
-            <h1>Global Chat</h1>
-            <div id="chatMessages" style="width: 300px; height: 200px; overflow: scroll;"></div>
-            <input type="text" id="chatInput">
-            <button onclick="saveAllChats()">Send</button>
+    <div id="wordGridAndChat" style="display:none; justify-content: space-evenly; align-items: center;">
+
+        <div id="waitingforplayer" style="display:none">
+            <h1>Waiting for another player to join</h1>
         </div>
+        <div id="wordGrid"></div>
+        <div>
+            <div>
+                <h1>Scoreboard</h1>
+                <div id = "scores" style="width: 300px; height: 200px; overflow: scroll;">
+                </div>
+            </div>
+            <div id="wordBank">
+                <h1>Word Bank</h1>
+                <div id="words" style="width: 300px; height: 200px; overflow: scroll;"></div>
+            </div>
+            <div>
+                <h1>Global Chat</h1>
+                <div id="chatMessages" style="width: 300px; height: 200px; overflow: scroll;"></div>
+                <input type="text" id="chatInput" onkeypress="handleChatKeyPress(event)">
+                <button onclick="saveAllChats()">Send</button>
+            </div>
+        </div>
+    </div>
+    <div id="gridStatistics" style="display:none">
+        <h1>Grid Statistics</h1>
     </div>
     <div id = "getUsername">
         <h1>Enter your username</h1>
-        <input type = "text" id = "username">
+        <input type = "text" id = "username" onkeypress="handleKeyPress(event)">
         <button onclick = "checkUsername()">Submit</button>
     </div> 
     <div id = "Lobby" style = "display:none">
@@ -35,48 +52,31 @@
                                      document.getElementById('AvailableRooms').style.display = 'block';"
                                      >Show Rooms</button>
                 <td><button id="createRoom" onclick = "addRooms(); 
-                                                       document.getElementById('AvailableRooms').style.display = 'block';"
+                                                       document.getElementById('AvailableRooms').style.display = 'block';
+                                                       document.getElementById('createRoom').style.display = 'none';"
                                                        >Create Room</button>
             </tr>
         </table>
     </div>
     <div id="AvailableRooms" style="display:none">
         <h1>Available Rooms</h1>
-        <ul id="roomsList">
-            <!-- Rooms will be added here dynamically -->
-        </ul>
+        <ul id="roomsList"></ul>
     </div>
     <div id="Players" style="display: none;">
         <h1>Online Players</h1>
-        <ul id="playerList">
-            <!-- Players will be added here dynamically -->
-        </ul>
+        <ul id="playerList"></ul>
     </div>
-
-    <div id="waitingforplayer" style="display:none">
-        <h1>Waiting for another player to join</h1>
-    </div>
-<!--     <div id="wordSearchContainer">
-        <table>
-            <tbody id="wordSearchGrid">
-            </tbody>
-        </table>
-    </div>
-    <div id="chatContainer">
-        <div id="messages"></div>
-        <input type="text" id="messageInput" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-    </div> -->
 
     <script>
         var serverUrl;
         serverUrl = "ws://" + window.location.hostname +":"+ (parseInt(location.port) + 100);
         connection = new WebSocket(serverUrl);
-        // idx = -1;
-        // var gameid = -1;
         connection.onmessage = function(event) {
             var data = JSON.parse(event.data);
             switch (data.type) {
+                case "version":
+                    document.title = "TWSG " + data.version;
+                    break;
                 case "UsernameError":
                     handleUsernameError(data);
                     break;
@@ -89,19 +89,42 @@
                 case "fetchPlayerList":
                     printPlayersList(data.players);
                     break;
+                case "fetchLetterDensity":
+                    printLetterDensity(data.letterDensity);
+                    break;
                 case "chatMessages":
                     printChat(data.messages);
                     break;
                 case "wordGrid":
-                    populateWordGrid(data.grid);
+                    populateWordGrid(data.grid.wordsGrid);
+                    break;
+                case "wordBank":
+                    populateWordBank(data.words, data.foundWords);
                     break;
                 case "removePlayer":
                     removePlayer(data.removePlayerName);
+                    break;
+                case "buttonColors":
+                    updateButtonColors(data.colors);
+                    break;
+                case "gridStatistics":
+                    displayGridStatistics(data.statistics);
+                    break;
+                case "updateScores":
+                    updateScoreboard(data.scores);
+                    break;
+                case "winner":
+                    winner(data.winner);
                     break;
                 default:
                     console.log("Unknown message", data);
             }
         };
+        function winner(win){
+            alert("The winner is: " + win);
+            backToLobby();
+        }
+
 
         // Username functions
 
@@ -158,58 +181,96 @@
             connection.send(JSON.stringify({action: "fetchRooms"}));
         }  
         function updateRoomList(data){
-            if (Array.isArray(data)) {
-                var roomsList = document.getElementById("roomsList");
-                roomsList.innerHTML = "";
-                data.forEach(function(playername) {
-                    var listItem = document.createElement("li");
-                    listItem.textContent = playername + "'s room";
+            var roomsList = document.getElementById("roomsList");
+            var username = document.getElementById("username").value;
+            roomsList.innerHTML = "";
+            data.forEach(function(room) {
+                var listItem = document.createElement("li");
+                listItem.textContent = room.name + " (" + room.playerCount + "/4)";
+                if (!room.isFull) {
                     var joinButton = document.createElement("button");
                     joinButton.textContent = "Join";
                     joinButton.onclick = function() {
-                        connection.send(JSON.stringify({action: "joinRoom", playerName: playername}));
+                        connection.send(JSON.stringify({action: "joinRoom", playerName: username, roomName: room.name}));
+                        fetchRooms();
                         fetchChat();
-                        startGame();
+                        startGame(room.name);
+                        updateButtonColors();
+                        fetchWordBank();
+                        fetchGridStatistics();
                     };
-                    
+                    listItem.appendChild(joinButton);
+                }
+                if (room.name === username) {
                     var removeButton = document.createElement("button");
                     removeButton.textContent = "Remove";
                     removeButton.onclick = function() {
-                        connection.send(JSON.stringify({action: "removeRoom", playerName: playername}));
+                        document.getElementById('createRoom').style.display = 'block';
+                        connection.send(JSON.stringify({action: "removeRoom", playerName: room.name}));
                         listItem.remove();
                     };
-                    listItem.appendChild(joinButton);
                     listItem.appendChild(removeButton);
-                    roomsList.appendChild(listItem);
-                });
-            }
+                }
+                roomsList.appendChild(listItem);
+            });
         };
 
         // Game/WordGrid functions
 
-        function startGame(){
+        function startGame(roomName){
             document.getElementById("Lobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "block";
             document.getElementById("AvailableRooms").style.display = "none";
             document.getElementById("Players").style.display = "none";
             document.getElementById("backToLobby").style.display = "Block";
             document.getElementById("wordGridAndChat").style.display = "flex";
+            var username = document.getElementById("username").value;
 
-            connection.send(JSON.stringify({action: "fetchGrid"}));
+            connection.send(JSON.stringify({action: "fetchGrid", playerName: username, roomName: roomName}));
         }
-        function populateWordGrid(data) {
-            var wordGrid = data.wordsGrid;
+        function populateWordGrid(wordsGrid) {
             var gridHtml = "<table>";
-            for(var i = 0; i < wordGrid.length; i++){
+            for(var i = 0; i < wordsGrid.length; i++){
                 gridHtml += "<tr>";
-                for(var j = 0; j < wordGrid[i].length; j++){
-                    gridHtml += `<td><button class="grid-button" onmousedown="changeCellColor(this, true)" onmouseover="changeCellColor(this)" onmouseup="changeCellColor(this, false)" style="border: 1px solid black; padding: 2px; text-align: center; cursor: pointer; font-size: 10px;">${wordGrid[i][j]}</button></td>`;
+                for(var j = 0; j < wordsGrid[i].length; j++){
+                    gridHtml += `<td><button class="grid-button" 
+                                    onclick="buttonHasBeenClicked(this, ${i}, ${j}); fetchButtonColors(); fetchWordBank();"  
+                                    style="
+                                        border: 1px solid black; 
+                                        padding: 5px; 
+                                        text-align: center; 
+                                        cursor: pointer; 
+                                        font-size: 15px; 
+                                        height: 35px; 
+                                        width: 35px; 
+                                        font-weight:bold;
+                                        background-color: white;
+                                    ">
+                                    ${wordsGrid[i][j]}
+                                </button></td>`;
                 }
                 gridHtml += "</tr>";
             }
             gridHtml += "</table>";
             document.getElementById("waitingforplayer").style.display = "none";
             document.getElementById("wordGrid").innerHTML = gridHtml;
+        }
+
+        function fetchWordBank(){
+            connection.send(JSON.stringify({action: "fetchWordBank"}));
+        }
+        function populateWordBank(wordsBank, foundWords) {
+            var wordBank = document.getElementById("words");
+            wordBank.innerHTML = "";
+            wordsBank.forEach(function(word, index) {
+                var wordWithoutCoords = word.split('(')[0];
+                var listItem = document.createElement("li");
+                listItem.textContent = wordWithoutCoords;
+                if (foundWords && foundWords[index]) {
+                    listItem.style.textDecoration = "line-through";
+                }
+                wordBank.appendChild(listItem);
+            });
         }
 
         // Chat functions
@@ -233,45 +294,92 @@
             document.getElementById("chatInput").value = "";
         }
 
-        // Cell functions
+         // Cell functions
+        function buttonHasBeenClicked(buttonElement, rowIndex, columnIndex) {
+            // Change the color of the button
+            //buttonElement.style.backgroundColor = "yellow"; // You can change this color as needed
 
-        var isMouseDown = false;
-        var changedCells = [];
-        function changeCellColor(cell, mouseDownUp = null) {
-           var button = cell.querySelector("button"); // Gets the button
-           if (mouseDownUp === true) {
-               button.classList.add("selected");
-               if (!changedCells.includes(button)) {
-                   changedCells.push(button);
-               }
-           } else if (mouseDownUp === false) {
-               button.classList.remove("selected"); // Remove the selected class from the button
-           } else if (isMouseDown) {
-               button.classList.add("selected"); // Add the selected class to the button
-               // Add the button to changedCells array if not already included
-               if (!changedCells.includes(button)) {
-           changedCells.push(button);
-               }
-           }
+            // Send the location of the button to the server
+            connection.send(JSON.stringify({
+                action: "buttonClicked",
+                row: rowIndex,
+                column: columnIndex
+            }));
         }
-        function resetCellColors() {
-            changedCells.forEach(function(cell) {
-                cell.style.backgroundColor = ""; // Reset color
+
+        function fetchButtonColors() {
+            connection.send(JSON.stringify({action: "fetchButtonColors"}));
+        }
+
+        function updateButtonColors(colors) {
+            var buttons = document.querySelectorAll(".grid-button");
+            buttons.forEach((button, index) => {
+                var color = colors[index];
+                if (color === "Blue")  button.style.backgroundColor = "lightblue";
+                else if (color === "Red") button.style.backgroundColor = "red";
+                else if (color === "Green") button.style.backgroundColor = "green";
+                else if (color === "Yellow") button.style.backgroundColor = "yellow";
+                else button.style.backgroundColor = "white"; // No player or default
             });
-            // Clear the array after resetting colors
-            changedCells = [];
         }
-        document.addEventListener('mouseup', function() {
-            isMouseDown = false;
-            resetCellColors(); // Reset colors on mouse up anywhere in the document
-        });
-
 
         function backToLobby(){
             document.getElementById("wordGridAndChat").style.display = "none";
             document.getElementById("Lobby").style.display = "block";
+            document.getElementById("AvailableRooms").style.display = "block";
             document.getElementById("backToLobby").style.display = "none";
             document.getElementById("waitingforplayer").style.display = "none";
+            document.getElementById("gridStatistics").style.display = "none";
+            
+            connection.send(JSON.stringify({action: "leaveRoom"}));
+
+            fetchRooms();
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('chatInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    saveAllChats();
+                    event.preventDefault();
+                }
+            });
+        });
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkUsername();
+                event.preventDefault();
+            }
+        }
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                saveAllChats();
+                event.preventDefault(); // Prevent the default action to avoid form submission
+            }
+        }
+        function fetchGridStatistics() {
+            connection.send(JSON.stringify({ action: "fetchGridStatistics" }));
+        }
+        function displayGridStatistics(statistics) {
+            document.getElementById("gridStatistics").style.display = "block";
+            var statsHtml = "<ul>";
+            statsHtml += `<li>Density: ${statistics[0]}</li>`;
+            statsHtml += `<li>Filler Characters: ${statistics[1]}</li>`;
+            statsHtml += `<li>Vertical Down Count: ${statistics[2]}</li>`;
+            statsHtml += `<li>Vertical Up Count: ${statistics[3]}</li>`;
+            statsHtml += `<li>Horizontal Right Count: ${statistics[4]}</li>`;
+            statsHtml += `<li>Diagonal Down Count: ${statistics[5]}</li>`;
+            statsHtml += `<li>Diagonal Up Count: ${statistics[6]}</li>`;
+            statsHtml += "</ul>";
+            document.getElementById("gridStatistics").innerHTML = statsHtml;
+        }
+        function updateScoreboard(scores) {
+            var scoresElement = document.getElementById("scores");
+            scoresElement.innerHTML = "";
+
+            scores.forEach(function(score) {
+                var entry = document.createElement("div");
+                entry.textContent = score.username + ": " + score.points;
+                scoresElement.appendChild(entry);
+            });
         }
       </script>
 </body>

@@ -27,20 +27,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class Lobby{
-    // //arraylist of players
-    // private ArrayList<Player> playerList;
-    // //arraylist of games
-    // private ArrayList<Game> gameList;
-    public ArrayList<Game> games;
     public ArrayList<Player> players;
     public ArrayList<String> chatMessages;
-    public ArrayList<String> rooms;
 
     public Lobby(){
-        games = new ArrayList<Game>();
         players = new ArrayList<Player>();
         chatMessages = new ArrayList<String>();;
-        rooms = new ArrayList<String>();
     }
 
     public void addPlayer(String playerName){
@@ -53,19 +45,7 @@ public class Lobby{
 
     public void removePlayer(String playerName) {
         players.removeIf(player -> playerName.equals(player.getPlayerName()));
-        removeRoom(playerName);
-    }
-
-    public void addRoom(String playerName) {
-        rooms.add(playerName);
-    }
-
-    public void removeRoom(String playerName) {
-        rooms.removeIf(room -> room.equals(playerName));
-    }
-
-    public ArrayList<String> fetchRooms() {
-        return rooms;
+        Room.removeRoom(playerName);
     }
 
     public ArrayList<String> getPlayerNames() {
@@ -78,7 +58,6 @@ public class Lobby{
 
     public void addChatMessage(String message) {
         chatMessages.add(message);
-        System.out.println("Chat message added: " + message);
     }
 
     public ArrayList<String> getAllMessages() {
@@ -90,37 +69,4 @@ public class Lobby{
             return new ArrayList<>(chatMessages.subList(chatMessages.size() - MAX_MESSAGES, chatMessages.size()));
         }
     }
-
-    // public void display(){
-    //     // Displays and handles functionality of lobby
-    //     System.out.println("Welcome to the lobby\n
-    //                         Below is a list of games available to join\n");
-    //     listGames();
-    //     System.out.println("\nBelow is a list of players waiting to join a game\n");
-    //     listPlayersWaiting();
-    // }
-
-    // public void listGames(){
-    //     // List current games available to join
-    //     if(gameList.size() == 0){
-    //         System.out.println("No games available to join");
-    //     }
-    //     else{
-    //         for(Game game : gameList){
-    //             System.out.println("Game ID: %s", game.getGameID());
-    //         }
-    //     }
-    // }
-
-    // public void listPlayersWaiting(){
-    //     // List players waiting to join a game
-    //     if(playerList.size() == 0){
-    //         System.out.println("No players waiting to join a game");
-    //     }
-    //     else{
-    //         for(Player player : playerList){
-    //             System.out.println("%s", player.getPlayerName());
-    //         }
-    //     }
-    // }
 }

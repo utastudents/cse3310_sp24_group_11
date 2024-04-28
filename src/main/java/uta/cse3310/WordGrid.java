@@ -13,29 +13,36 @@ public class WordGrid{
         int numAttempts;
         char [][] wordsGrid = new char[nRows][nCols];
         List<String>wordsBank = new ArrayList<>();
+        int verticalDownCount = 0;
+        int verticalUpCount = 0;
+        int horizontalRightCount = 0;
+        int diagonalDownCount = 0;
+        int diagonalUpCount = 0;
     }
 
     // Arraylist that will store word locations 
     List<WordPosition> locations = new ArrayList<>();
     
     //4directions to generate words on the grid
-    public final int[][]DIRS = {
-    {1, 0},   // Vertical (Downward)
-    {0, 1},   // Horizontal (Rightward)
-    {1, 1},   // Diagonal (Downward-Right)
-    {1, -1}   // Diagonal (Downward-Left)
+    public final int[][] DIRS = {
+        {1, 0},   // Vertical Down
+        {0, 1},   // Horizontal Right
+        {1, 1},   // Diagonal Down(Down-Right)
+        {0, -1},  // Vertical Up
+        {-1, 1}   // Diagonal Up(Up-Right)
     };
 
    
     
     //nb rows and cols for the grids
-    public int nRows = 35, nCols = 35;
+    public int nRows = 20, nCols = 20;
     public int gridSize = nRows*nCols;
     //min number of words to place on the grid generate
     public int minWords = 350;
-    public double density = 1700;
+    public double density = 0;;
     //public int totalLengthOfWords = 0;
     public Random RANDOM = new Random();
+    public int numOfLetters = 0;
 
 
 
@@ -48,7 +55,7 @@ public class WordGrid{
             while(sc.hasNext()){
                 String s = sc.next().trim().toLowerCase();
                 //we pick words with length between 4 and maxLength and with a-z inside
-                if (s.matches("^[a-z]{4,"+ maxLength + "}$")){
+                if (s.matches("^[a-z]{9,10}$")){ //4,"+ maxLength + "
                     words.add(s.toUpperCase());
                     totalLengthOfWords += s.length();
                 }
@@ -56,7 +63,6 @@ public class WordGrid{
         }catch(FileNotFoundException e){
             //manage error!
         }
-        System.out.println("Total Length of Words: " + totalLengthOfWords);
         return words;
     }
 
@@ -90,10 +96,14 @@ public class WordGrid{
         for (int r=0;r<nRows;r++){
             for (int c=0;c<nCols;c++){
                 if (grid.wordsGrid[r][c]==0){
-                    grid.wordsGrid[r][c] = (char)('A' + RANDOM.nextInt(26));
+                    grid.wordsGrid[r][c] = (char)('A' + RANDOM.nextInt(26)); //'-';//(char)('A' + RANDOM.nextInt(26));
+                }
+                else{
+                    numOfLetters++;
                 }
             }
         }
+        density = (double)numOfLetters/gridSize;
         return grid;
 
     }
@@ -173,12 +183,37 @@ public class WordGrid{
         }
 
         int lettersPlaced = length - overlaps;
-        if (lettersPlaced>0)
-        grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)",word,r,c,rr,cc));
-        locations.add(new WordPosition(word, r, c, rr, cc));
+        if (lettersPlaced > 0) {
+            grid.wordsBank.add(String.format("%-10s(%d,%d)(%d,%d)", word, r, c, rr, cc));
+            //locations.add(new WordPosition(word, r, c, rr, cc));
+            switch (dir) {
+                case 0: // Vertical Down
+                    grid.horizontalRightCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Horizontal Right"));
+                    // grid.verticalDownCount++;
+                    // locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Down"));
+                    break;
+                case 1: // Horizontal Right
+                    grid.verticalDownCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Down"));
+                    //grid.horizontalRightCount++;
+                    //locations.add(new WordPosition(word, r, c, rr, cc, "Horizontal Right"));
+                    break;
+                case 2: // Diagonal Down
+                    grid.diagonalDownCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Diagonal Down"));
+                    break;
+                case 3: // Vertical Up
+                    grid.verticalUpCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Vertical Up"));
+                    break;
+                case 4: // Diagonal Up
+                    grid.diagonalUpCount++;
+                    locations.add(new WordPosition(word, r, c, rr, cc, "Diagonal Up"));
+                    break;
+            }
+        }
         return lettersPlaced;
-
-
     }
 
     public void printResult(Grid grid){
@@ -193,6 +228,12 @@ public class WordGrid{
         System.out.println("\n      ");
 
         System.out.println();
+
+        System.out.println("Vertical Down: " + grid.verticalDownCount);
+        System.out.println("Vertical Up: " + grid.verticalUpCount);
+        System.out.println("Horizontal Right: " + grid.horizontalRightCount);
+        System.out.println("Diagonal Down: " + grid.diagonalDownCount);
+        System.out.println("Diagonal Up: " + grid.diagonalUpCount);
         // for (int r = 0; r<nRows; r++){
         //     System.out.printf("%n%d ", r);
 
@@ -221,8 +262,130 @@ public class WordGrid{
         // }
     }
 
-
+    public List<Object> getGridStatistics(Grid grid) {
+        List<Object> stats = new ArrayList<>();
+        stats.add(density);
+        stats.add(gridSize-numOfLetters);
+        stats.add(grid.verticalDownCount);
+        stats.add(grid.verticalUpCount);
+        stats.add(grid.horizontalRightCount);
+        stats.add(grid.diagonalDownCount);
+        stats.add(grid.diagonalUpCount);
+        return stats;
+    }
     
+    // Method to get a preset grid based on an index
+    public Grid getPresetGrid(int index) {
+        Grid grid = new Grid();
+        switch (index) {
+            case 1:
+                grid.wordsGrid[0][0] = 'H';
+                grid.wordsGrid[0][1] = 'E';
+                grid.wordsGrid[0][2] = 'L';
+                grid.wordsGrid[0][3] = 'L';
+                grid.wordsGrid[0][4] = 'O';
+                grid.wordsBank.add("HELLO(0,0)(0,4)");
+
+                grid.wordsGrid[1][0] = 'W';
+                grid.wordsGrid[2][0] = 'O';
+                grid.wordsGrid[3][0] = 'R';
+                grid.wordsGrid[4][0] = 'L';
+                grid.wordsGrid[5][0] = 'D';
+                grid.wordsBank.add("WORLD(1,0)(5,0)");
+
+                grid.wordsGrid[6][6] = 'J';
+                grid.wordsGrid[7][7] = 'A';
+                grid.wordsGrid[8][8] = 'V';
+                grid.wordsGrid[9][9] = 'A';
+                grid.wordsBank.add("JAVA(6,6)(9,9)");
+
+                grid.verticalDownCount = 1; // "WORLD"
+                grid.horizontalRightCount = 1; // "HELLO"
+                grid.diagonalDownCount = 1; // "JAVA"
+
+                break;
+            case 2:
+                grid.wordsGrid[0][0] = 'D';
+                grid.wordsGrid[0][1] = 'A';
+                grid.wordsGrid[0][2] = 'T';
+                grid.wordsGrid[0][3] = 'A';
+                grid.wordsBank.add("DATA(0,0)(0,3)");
+
+                grid.wordsGrid[1][0] = 'S';
+                grid.wordsGrid[2][0] = 'C';
+                grid.wordsGrid[3][0] = 'I';
+                grid.wordsGrid[4][0] = 'E';
+                grid.wordsGrid[5][0] = 'N';
+                grid.wordsGrid[6][0] = 'C';
+                grid.wordsGrid[7][0] = 'E';
+                grid.wordsBank.add("SCIENCE(1,0)(7,0)");
+
+                grid.horizontalRightCount = 1; // "DATA"
+                grid.verticalDownCount = 1; // "SCIENCE"
+                break;
+            case 3:
+                grid.wordsGrid[0][0] = 'C';
+                grid.wordsGrid[1][1] = 'O';
+                grid.wordsGrid[2][2] = 'D';
+                grid.wordsGrid[3][3] = 'E';
+                grid.wordsBank.add("CODE(0,0)(3,3)");
+
+                grid.wordsGrid[5][0] = 'J';
+                grid.wordsGrid[5][1] = 'A';
+                grid.wordsGrid[5][2] = 'V';
+                grid.wordsGrid[5][3] = 'A';
+                grid.wordsBank.add("JAVA(5,0)(5,3)");
+
+                grid.diagonalDownCount = 1; // "CODE"
+                grid.horizontalRightCount = 1; // "JAVA"
+                break;
+            case 4:
+                grid.wordsGrid[0][0] = 'N';
+                grid.wordsGrid[1][0] = 'O';
+                grid.wordsGrid[2][0] = 'D';
+                grid.wordsGrid[3][0] = 'E';
+                grid.wordsBank.add("NODE(0,0)(3,0)");
+
+                grid.wordsGrid[0][0] = 'R';
+                grid.wordsGrid[0][1] = 'E';
+                grid.wordsGrid[0][2] = 'A';
+                grid.wordsGrid[0][3] = 'C';
+                grid.wordsGrid[0][4] = 'T';
+                grid.wordsBank.add("REACT(0,0)(0,4)");
+
+                grid.verticalDownCount = 1; // "NODE"
+                grid.horizontalRightCount = 1; // "REACT"
+                break;
+            case 5:
+                grid.wordsGrid[0][0] = 'G';
+                grid.wordsGrid[1][0] = 'R';
+                grid.wordsGrid[2][0] = 'I';
+                grid.wordsGrid[3][0] = 'D';
+                grid.wordsBank.add("GRID(0,0)(3,0)");
+
+                grid.wordsGrid[0][0] = 'T';
+                grid.wordsGrid[0][1] = 'E';
+                grid.wordsGrid[0][2] = 'S';
+                grid.wordsGrid[0][3] = 'T';
+                grid.wordsBank.add("TEST(0,0)(0,3)");
+
+                grid.verticalDownCount = 1; // "GRID"
+                grid.horizontalRightCount = 1; // "TEST"
+                break;
+            default:
+                return createWordSearch(realWords("filteredWords.txt")); // Default to generating a grid
+        }
+        fillEmptyCells(grid);
+        return grid;
+    }
+
+    private void fillEmptyCells(Grid grid) {
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0; j < nCols; j++) {
+                if (grid.wordsGrid[i][j] == 0) { // Check if the cell is empty
+                    grid.wordsGrid[i][j] = (char) ('A' + RANDOM.nextInt(26));
+                }
+            }
+        }
+    }
 }
-    
-
