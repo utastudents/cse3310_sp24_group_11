@@ -32,7 +32,7 @@ public class Game {
         GameId = gameID;
         this.playerList = playerList;
         if (playerList.size() == 2) {
-            startGame();
+            startGame(null);
         }
     }
 
@@ -130,17 +130,21 @@ public class Game {
         return button;
     }
 
-    public void startGame() {
+    public void startGame(Integer gridIndex) {
         if (playerList.size() == 2 && !gameStarted) { // Start the game only if exactly 2 players are present and game hasn't started
             gameStarted = true;
             for (Player player : playerList) { // Initialize player scores
                 player.playerScore = 0;
             }
             wordGrid = new WordGrid();
-            grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt"));
+            if (gridIndex != null) {
+                grid = wordGrid.getPresetGrid(gridIndex); // Use a preset grid
+            } else {
+                grid = wordGrid.createWordSearch(wordGrid.realWords("filteredWords.txt")); // Generate a new grid
+            }
             uniquePlayerColor();
             wordBankSize = grid.wordsBank.size();
-            foundWords = new boolean[400];
+            foundWords = new boolean[wordBankSize];
         }
     }
 
