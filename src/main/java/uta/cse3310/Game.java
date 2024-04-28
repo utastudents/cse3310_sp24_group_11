@@ -16,7 +16,6 @@ public class Game {
     ArrayList<UserEvent> yellowEvents = new ArrayList<>();
     ArrayList<UserEvent> greenEvents = new ArrayList<>();
     public String[] msg;
-    public Statistics Stats;
     WordGrid.Grid grid;
     public int wordBankSize;
     public boolean[] foundWords;
@@ -307,10 +306,6 @@ public class Game {
         // Displays player usernames/handles and their scores
     }
 
-
-    public Statistics getStatistics(){
-        return Stats;
-    }
     public void addPlayer(Player player){
         if(playerList.size()<4){
             playerList.add(player);

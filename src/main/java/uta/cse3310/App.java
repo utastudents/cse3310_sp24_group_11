@@ -31,7 +31,6 @@ import com.google.gson.JsonParser;
 
 public class App extends WebSocketServer {
 
-  private Statistics stats;
   private Vector<Game> ActiveGames = new Vector<Game>();
   private int gameID;
   private int connectionID;
