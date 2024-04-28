@@ -122,7 +122,7 @@ public class Game {
                 greenEvents.clear(); // Clear events after processing
             }
         }
-       
+        
     }
 
 
@@ -149,13 +149,14 @@ public class Game {
     }
 
     public boolean checkWinner() {
-
-
-        if(grid.wordsBank.size()<(wordBankSize/2)){
-            msg[0] = "Game Over";
-            return true;
+        //a player has won the game if their score is greater or equal to 100
+        for(Player player: playerList){
+            if(player.playerScore >= 100){
+                //msg[0] = player.getPlayerName();
+                return true;
+            }
         }
-        return false;  
+        return false;
     }
 
 

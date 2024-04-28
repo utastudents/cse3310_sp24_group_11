@@ -260,6 +260,13 @@ public class App extends WebSocketServer {
           Room room = Room.getRoomByPlayer(connectionPlayerMap.get(conn));
           room.broadcastToRoom(buttonColorsMessage.toString());
           room.broadcastScores(); // Broadcast updated scores
+          if(G.checkWinner()){
+              JsonObject winnerMessage = new JsonObject();
+              winnerMessage.addProperty("type", "winner");
+              System.out.println("Winner is " + connectionPlayerMap.get(conn).getPlayerName());
+              winnerMessage.addProperty("winner", connectionPlayerMap.get(conn).getPlayerName());
+              room.broadcastToRoom(winnerMessage.toString());
+          }
       }
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchButtonColors")) {
           Game G = conn.getAttachment();
