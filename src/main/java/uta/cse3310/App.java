@@ -39,6 +39,7 @@ public class App extends WebSocketServer {
   public ArrayList<Player> players = new ArrayList<Player>();
   private Lobby lobby;
   public static Map<WebSocket, Player> connectionPlayerMap = new HashMap<>();
+  String test_grid = System.getenv("TEST_GRID");
 
   public App(int port) {
     super(new InetSocketAddress(port));
@@ -201,7 +202,14 @@ public class App extends WebSocketServer {
           Game G = Room.getRoomByName(jsonMessage.get("roomName").getAsString()).getGame();
           conn.setAttachment(G);
           if (G.playerList.size() == 2 && !G.gameStarted) {
-              G.startGame();
+              if(test_grid != null){
+                int gridNo = Integer.valueOf(test_grid);
+                System.out.println("Environment Variable is set at" + gridNo + " Generating preset grid no." + gridNo);
+                G.startGame(gridNo);
+              }
+              else{
+                G.startGame(null);
+              }
               G.gameStarted = true;
           }
           if (G.playerList.size() >= 2 && G.playerList.size() <=4 && G.gameStarted) {
@@ -218,10 +226,6 @@ public class App extends WebSocketServer {
               room.broadcastToRoom(gridMessage.toString());
               System.out.println("Game grid sent to the client successfully");
           }
-          // else if (G.playerList.size() >= 2 && !G.gameStarted) {
-          //     G.startGame();
-          //     G.gameStarted = true;
-          // }
       }
 
       else if (jsonMessage.has("action") && jsonMessage.get("action").getAsString().equals("fetchChat")) {

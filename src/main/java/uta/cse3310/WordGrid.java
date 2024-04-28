@@ -274,4 +274,118 @@ public class WordGrid{
         return stats;
     }
     
+    // Method to get a preset grid based on an index
+    public Grid getPresetGrid(int index) {
+        Grid grid = new Grid();
+        switch (index) {
+            case 1:
+                grid.wordsGrid[0][0] = 'H';
+                grid.wordsGrid[0][1] = 'E';
+                grid.wordsGrid[0][2] = 'L';
+                grid.wordsGrid[0][3] = 'L';
+                grid.wordsGrid[0][4] = 'O';
+                grid.wordsBank.add("HELLO(0,0)(0,4)");
+
+                grid.wordsGrid[1][0] = 'W';
+                grid.wordsGrid[2][0] = 'O';
+                grid.wordsGrid[3][0] = 'R';
+                grid.wordsGrid[4][0] = 'L';
+                grid.wordsGrid[5][0] = 'D';
+                grid.wordsBank.add("WORLD(1,0)(5,0)");
+
+                grid.wordsGrid[6][6] = 'J';
+                grid.wordsGrid[7][7] = 'A';
+                grid.wordsGrid[8][8] = 'V';
+                grid.wordsGrid[9][9] = 'A';
+                grid.wordsBank.add("JAVA(6,6)(9,9)");
+
+                grid.verticalDownCount = 1; // "WORLD"
+                grid.horizontalRightCount = 1; // "HELLO"
+                grid.diagonalDownCount = 1; // "JAVA"
+
+                break;
+            case 2:
+                grid.wordsGrid[0][0] = 'D';
+                grid.wordsGrid[0][1] = 'A';
+                grid.wordsGrid[0][2] = 'T';
+                grid.wordsGrid[0][3] = 'A';
+                grid.wordsBank.add("DATA(0,0)(0,3)");
+
+                grid.wordsGrid[1][0] = 'S';
+                grid.wordsGrid[2][0] = 'C';
+                grid.wordsGrid[3][0] = 'I';
+                grid.wordsGrid[4][0] = 'E';
+                grid.wordsGrid[5][0] = 'N';
+                grid.wordsGrid[6][0] = 'C';
+                grid.wordsGrid[7][0] = 'E';
+                grid.wordsBank.add("SCIENCE(1,0)(7,0)");
+
+                grid.horizontalRightCount = 1; // "DATA"
+                grid.verticalDownCount = 1; // "SCIENCE"
+                break;
+            case 3:
+                grid.wordsGrid[0][0] = 'C';
+                grid.wordsGrid[1][1] = 'O';
+                grid.wordsGrid[2][2] = 'D';
+                grid.wordsGrid[3][3] = 'E';
+                grid.wordsBank.add("CODE(0,0)(3,3)");
+
+                grid.wordsGrid[5][0] = 'J';
+                grid.wordsGrid[5][1] = 'A';
+                grid.wordsGrid[5][2] = 'V';
+                grid.wordsGrid[5][3] = 'A';
+                grid.wordsBank.add("JAVA(5,0)(5,3)");
+
+                grid.diagonalDownCount = 1; // "CODE"
+                grid.horizontalRightCount = 1; // "JAVA"
+                break;
+            case 4:
+                grid.wordsGrid[0][0] = 'N';
+                grid.wordsGrid[1][0] = 'O';
+                grid.wordsGrid[2][0] = 'D';
+                grid.wordsGrid[3][0] = 'E';
+                grid.wordsBank.add("NODE(0,0)(3,0)");
+
+                grid.wordsGrid[0][0] = 'R';
+                grid.wordsGrid[0][1] = 'E';
+                grid.wordsGrid[0][2] = 'A';
+                grid.wordsGrid[0][3] = 'C';
+                grid.wordsGrid[0][4] = 'T';
+                grid.wordsBank.add("REACT(0,0)(0,4)");
+
+                grid.verticalDownCount = 1; // "NODE"
+                grid.horizontalRightCount = 1; // "REACT"
+                break;
+            case 5:
+                grid.wordsGrid[0][0] = 'G';
+                grid.wordsGrid[1][0] = 'R';
+                grid.wordsGrid[2][0] = 'I';
+                grid.wordsGrid[3][0] = 'D';
+                grid.wordsBank.add("GRID(0,0)(3,0)");
+
+                grid.wordsGrid[0][0] = 'T';
+                grid.wordsGrid[0][1] = 'E';
+                grid.wordsGrid[0][2] = 'S';
+                grid.wordsGrid[0][3] = 'T';
+                grid.wordsBank.add("TEST(0,0)(0,3)");
+
+                grid.verticalDownCount = 1; // "GRID"
+                grid.horizontalRightCount = 1; // "TEST"
+                break;
+            default:
+                return createWordSearch(realWords("filteredWords.txt")); // Default to generating a grid
+        }
+        fillEmptyCells(grid);
+        return grid;
+    }
+
+    private void fillEmptyCells(Grid grid) {
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0; j < nCols; j++) {
+                if (grid.wordsGrid[i][j] == 0) { // Check if the cell is empty
+                    grid.wordsGrid[i][j] = (char) ('A' + RANDOM.nextInt(26));
+                }
+            }
+        }
+    }
 }
