@@ -5,9 +5,6 @@ import org.java_websocket.WebSocketImpl;
 
 public class AppTest extends TestCase {
 
-    /**
-     * Test creating an App instance with a specific port.
-     */
     public void testAppCreationWithPort() {
         int testPort = 9111;
         App testApp = new App(testPort);
@@ -15,6 +12,5 @@ public class AppTest extends TestCase {
         InetSocketAddress address = testApp.getAddress();
         assertEquals("Port should match the one provided", testPort, address.getPort());
     }
-
     
 }
