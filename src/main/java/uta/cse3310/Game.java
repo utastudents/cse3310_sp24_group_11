@@ -217,6 +217,7 @@ public class Game {
                     System.out.println("actual word verified: " + possibleWord.getWord());
                     if (wordIndex != -1) {
                         foundWords[wordIndex] = true;
+                        grid.wordsBank.remove(wordIndex);
                     }
                     highlightWord(possibleWord, type);
                     return possibleWord.getWord();
