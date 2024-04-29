@@ -8,6 +8,8 @@ import junit.framework.TestCase;
 public class GameTest extends TestCase{
     public void testPlayerTypeButtonArray(){
         Game g = new Game();
+        g.addPlayer(new Player("player1"));
+        g.addPlayer(new Player("player2"));
         g.startGame(1);
 
         //creates a new word to test the word checker and playertype array
