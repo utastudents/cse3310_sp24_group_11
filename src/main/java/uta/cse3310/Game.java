@@ -11,6 +11,7 @@ public class Game {
     WordGrid wordGrid;
     public PlayerType currentTurn;// there are no turns?
     public PlayerType[] button = new PlayerType[400];
+    public PlayerType[] previousButtonColors = new PlayerType[400]; // Store previous colors
     ArrayList<UserEvent> redEvents = new ArrayList<>();
     ArrayList<UserEvent> blueEvents = new ArrayList<>();
     ArrayList<UserEvent> yellowEvents = new ArrayList<>();
@@ -39,7 +40,8 @@ public class Game {
 
     public void update(UserEvent U){
         // Processes user actions and updated game state
-        //System.out.println("Button: " + button[U.getButton()]);
+        // Before updating the button color, store the previous color
+        previousButtonColors[U.getButton()] = button[U.getButton()];
         button[U.getButton()] = U.getPlayerType();
         switch (U.getPlayerType()) {
             case Red:
@@ -72,8 +74,8 @@ public class Game {
                 foundWord = wordFound(blueEvents.get(0).getButton(), blueEvents.get(1).getButton(), PlayerType.Blue);
             
                 if(foundWord == ""){
-                    button[blueEvents.get(0).getButton()] = null;
-                    button[blueEvents.get(1).getButton()] = null;
+                    button[blueEvents.get(0).getButton()] = previousButtonColors[blueEvents.get(0).getButton()];
+                    button[blueEvents.get(1).getButton()] = previousButtonColors[blueEvents.get(1).getButton()];
                 } else {
                     updateScore(PlayerType.Blue, foundWord.length()); // Update score based on word length
                 }
@@ -86,8 +88,8 @@ public class Game {
                 foundWord = wordFound(redEvents.get(0).getButton(), redEvents.get(1).getButton(), PlayerType.Red);
             
                 if(foundWord == ""){
-                    button[redEvents.get(0).getButton()] = null;
-                    button[redEvents.get(1).getButton()] = null;
+                    button[redEvents.get(0).getButton()] = previousButtonColors[redEvents.get(0).getButton()];
+                    button[redEvents.get(1).getButton()] = previousButtonColors[redEvents.get(1).getButton()];
                 } else {
                     updateScore(PlayerType.Red, foundWord.length()); // Update score based on word length
                 }
@@ -100,8 +102,8 @@ public class Game {
                 foundWord = wordFound(yellowEvents.get(0).getButton(), yellowEvents.get(1).getButton(), PlayerType.Yellow);
             
                 if(foundWord == ""){
-                    button[yellowEvents.get(0).getButton()] = null;
-                    button[yellowEvents.get(1).getButton()] = null;
+                    button[yellowEvents.get(0).getButton()] = previousButtonColors[yellowEvents.get(0).getButton()];
+                    button[yellowEvents.get(1).getButton()] = previousButtonColors[yellowEvents.get(1).getButton()];
                 } else {
                     updateScore(PlayerType.Yellow, foundWord.length()); // Update score based on word length
                 }
@@ -114,8 +116,8 @@ public class Game {
                 foundWord = wordFound(greenEvents.get(0).getButton(), greenEvents.get(1).getButton(), PlayerType.Green);
             
                 if(foundWord == ""){
-                    button[greenEvents.get(0).getButton()] = null;
-                    button[greenEvents.get(1).getButton()] = null;
+                    button[greenEvents.get(0).getButton()] = previousButtonColors[greenEvents.get(0).getButton()];
+                    button[greenEvents.get(1).getButton()] = previousButtonColors[greenEvents.get(1).getButton()];
                 } else {
                     updateScore(PlayerType.Green, foundWord.length()); // Update score based on word length
                 }
