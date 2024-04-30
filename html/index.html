@@ -187,6 +187,7 @@
         function updateRoomList(data){
             var roomsList = document.getElementById("roomsList");
             var username = document.getElementById("username").value;
+            document.getElementById("createRoom").style.display = "block";
             roomsList.innerHTML = "";
             data.forEach(function(room) {
                 var listItem = document.createElement("li");
@@ -214,6 +215,7 @@
                         listItem.remove();
                     };
                     listItem.appendChild(removeButton);
+                    document.getElementById("createRoom").style.display = "none";
                 }
                 roomsList.appendChild(listItem);
             });
