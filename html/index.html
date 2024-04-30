@@ -271,9 +271,6 @@
                 var wordWithoutCoords = word.split('(')[0];
                 var listItem = document.createElement("li");
                 listItem.textContent = wordWithoutCoords;
-                if (foundWords && foundWords[index]) {
-                    listItem.style.textDecoration = "line-through";
-                }
                 wordBank.appendChild(listItem);
             });
         }
