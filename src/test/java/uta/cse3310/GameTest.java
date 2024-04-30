@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 
 public class GameTest extends TestCase{
-    public void testTwoInput(){//R041 R042 R037
+    public void testTwoInput(){ //R041 R042 R037
         Game g = new Game();
         g.addPlayer(new Player("player1"));
         g.addPlayer(new Player("player2"));
@@ -29,7 +29,7 @@ public class GameTest extends TestCase{
 
     }
 
-    public void testInvalidWord(){//R030
+    public void testInvalidWord(){ //R030
         Game g = new Game();
         g.addPlayer(new Player("player1"));
         g.addPlayer(new Player("player2"));
@@ -45,7 +45,7 @@ public class GameTest extends TestCase{
         
     }
 
-    public void testOneInput(){//test requirement R008
+    public void testOneInput(){ //test requirement R008
         Game g = new Game();
         g.addPlayer(new Player("Player 1"));
         g.addPlayer(new Player("Player 2"));
@@ -59,7 +59,7 @@ public class GameTest extends TestCase{
     }
 
 
-    public void testPointsAdded(){//R009 an R010
+    public void testPointsAdded(){ //R009 and R010
         Game g = new Game();
         g.addPlayer(new Player("player1"));
         g.addPlayer(new Player("player2"));
@@ -79,7 +79,24 @@ public class GameTest extends TestCase{
 
     }
 
-    public void printButton(int start, int end, PlayerType[] array){//method for debugging/testing
+    public void testWinner(){ //R026
+        Game g = new Game();
+        g.addPlayer(new Player("player1"));
+        g.addPlayer(new Player("player2"));
+        g.startGame(1);
+        String testword = "testing";
+        while(g.playerList.get(0).playerScore < 100){
+            g.wordGrid.locations.add(new WordPosition(testword, 0, 0, 0, testword.length()-1, "Horizontal Right"));
+            g.grid.wordsBank.add("testing");
+            g.update(new UserEvent(0, PlayerType.Blue, 0));
+            g.update(new UserEvent(0, PlayerType.Blue, testword.length()-1));
+        }
+        System.out.println("Player Score: "+g.playerList.get(0).playerScore);
+        assertTrue(g.checkWinner());
+    }
+
+
+    public void printButton(int start, int end, PlayerType[] array){ //method for debugging/testing
         for(int i = start; i <= end; i++){
             if(i%20==0){
                 System.out.println("");
