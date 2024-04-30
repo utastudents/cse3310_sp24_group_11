@@ -38,7 +38,7 @@ public class WordGrid{
     public int nRows = 20, nCols = 20;
     public int gridSize = nRows*nCols;
     //min number of words to place on the grid generate
-    public int minWords = 350;
+    public int minWords = 268;
     public double density = 0;;
     //public int totalLengthOfWords = 0;
     public Random RANDOM = new Random();
@@ -70,9 +70,10 @@ public class WordGrid{
     public Grid createWordSearch(List<String>words){
         Grid grid = null;
         int numAttempts = 0;
+        boolean minWordsConditionMet = false;
 
         //we make 100 attempts to generate a grid
-        while(++numAttempts < 10){
+        while(++numAttempts < 100){
             Collections.shuffle(words);//we shuffle words
             grid = new Grid();
             int messageLength = placeMessage(grid, "Word Search Game");
@@ -83,14 +84,38 @@ public class WordGrid{
                 cellsFilled +=tryPlaceWord(grid, word);
 
                 if (cellsFilled == target){
-                    if (grid.wordsBank.size()>= minWords){
-                        grid.numAttempts = numAttempts;
-                        return grid;
-
-                    }else break;//we fulfill he grid but we have not enough words, we start over!
+                     break;//we fulfill he grid but we have not enough words, we start over!
                 }
             }
+
+            //check if the minimum word count is met for each direction
+            boolean verticalDownConditionMet = (grid.verticalDownCount >= 60);
+            boolean verticalUpConditionMet = (grid.verticalUpCount >= 60);
+            boolean horizontalRightConditionMet = (grid.horizontalRightCount >= 60);
+            boolean diagonalConditionMet = ((grid.diagonalUpCount + grid.diagonalDownCount) >=60);
+
+            //Try to add more words for direction that don't meet the minimum word count
+            // Try to add more words for directions that don't meet the minimum word count
+            if (!verticalDownConditionMet || !verticalUpConditionMet) {
+            addMoreWords(grid, words, 1, 3, verticalDownConditionMet, verticalUpConditionMet);
+            }
+            if (!horizontalRightConditionMet) {
+            addMoreWords(grid, words, 0, -1, horizontalRightConditionMet, false);
+            }
+            if (!diagonalConditionMet) {
+                addMoreWords(grid, words, 2, -1, diagonalConditionMet, false);
+            }
+
+        int totalWordsPlaced = grid.wordsBank.size();
+
+            minWordsConditionMet = (verticalDownConditionMet && verticalDownConditionMet&& horizontalRightConditionMet&&diagonalConditionMet);
+
+            if (minWordsConditionMet){
+                grid.numAttempts = numAttempts;
+                break;
+            }
         }
+
         grid.numAttempts = numAttempts;
         //add random letters to non-filled cells
         for (int r=0;r<nRows;r++){
@@ -146,11 +171,69 @@ public class WordGrid{
         return 0;
     }
 
+    //To add more words in the grid of the condition is not met
+    public void addMoreWords(Grid grid, List<String> words, int dir1, int dir2, boolean condition1, boolean condition2) {
+    for (String word : words) {
+        if (condition1 && (dir2 == -1 || condition2)) {
+            break;
+        }
+        if (!condition1) {
+            int lettersPlaced = tryPlaceWord(grid, word);
+            if (lettersPlaced > 0) {
+                tryLocation(grid, word, dir1, -1);
+            }
+        }
+        if (dir2 != -1 && !condition2) {
+            int lettersPlaced = tryPlaceWord(grid, word);
+            if (lettersPlaced > 0) {
+                tryLocation(grid, word, dir2, -1);
+            }
+        }
+    }
+    }
+
+    
+
     // Method to try placing a word at a location on the grid
     public int tryLocation(Grid grid, String word, int dir, int pos){
-        int r=pos/nCols;
-        int c = pos%nCols;
-        int length = word.length();
+        int r, c, length = word.length();
+        if (pos == -1) {
+        // Find a suitable position to place the word
+        for (int i = 0; i < gridSize; i++) {
+            r = i / nCols;
+            c = i % nCols;
+
+            // Check bounds and availability
+            if ((DIRS[dir][0] == 1 && (length + c) > nCols)
+                    || (DIRS[dir][0] == -1 && (length - 1) > c)
+                    || (DIRS[dir][1] == 1 && (length + r) > nRows)
+                    || (DIRS[dir][1] == -1 && (length - 1) > r))
+                continue;
+
+            int rr = r, cc = c, overlaps = 0;
+            for (int j = 0; j < length; j++) {
+                if (grid.wordsGrid[rr][cc] != 0 && grid.wordsGrid[rr][cc] != word.charAt(j))
+                    break;
+
+                cc += DIRS[dir][0];
+                rr += DIRS[dir][1];
+                if (j == length - 1) {
+                    // Found a suitable position
+                    pos = i;
+                    break;
+                }
+            }
+            if (pos != -1)
+                break;
+        }
+        if (pos == -1)
+            return 0; // No suitable position found
+    } else {
+        r = pos / nCols;
+        c = pos % nCols;
+    }
+    r = pos / nCols;
+    c = pos % nCols;
 
         //we check bounds
         if ((DIRS[dir][0]==1&&(length+c)>nCols)
@@ -378,6 +461,7 @@ public class WordGrid{
         fillEmptyCells(grid);
         return grid;
     }
+
 
     private void fillEmptyCells(Grid grid) {
         for (int i = 0; i < nRows; i++) {
