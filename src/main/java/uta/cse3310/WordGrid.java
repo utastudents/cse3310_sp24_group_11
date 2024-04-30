@@ -375,16 +375,25 @@ public class WordGrid{
         // System.out.printf("Word: %s, Start: (%d,%d), End: (%d,%d)%n", location.word, location.startRow, location.startCol, location.endRow, location.endCol);
         // }
     }
+    /*
+     * int verticalDownCount = 0;
+        int verticalUpCount = 0;
+        int horizontalRightCount = 0;
+        int diagonalDownCount = 0;
+        int diagonalUpCount = 0;
+     */
 
     public List<Object> getGridStatistics(Grid grid) {
         List<Object> stats = new ArrayList<>();
+        int totalWordsPlaced = grid.wordsBank.size();
         stats.add(density);
         stats.add(gridSize-numOfLetters);
-        stats.add(grid.verticalDownCount);
-        stats.add(grid.verticalUpCount);
-        stats.add(grid.horizontalRightCount);
-        stats.add(grid.diagonalDownCount);
-        stats.add(grid.diagonalUpCount);
+        stats.add(grid.verticalDownCount + "(" + (grid.verticalDownCount * 100 / totalWordsPlaced) + "%)");
+        stats.add(grid.verticalUpCount+ "(" + (grid.verticalUpCount * 100 / totalWordsPlaced) + "%)");
+        stats.add(grid.horizontalRightCount + "(" + (grid.horizontalRightCount * 100 / totalWordsPlaced) + "%)");
+        stats.add(grid.diagonalDownCount + "(" + (grid.diagonalDownCount * 100 / totalWordsPlaced) + "%)");
+        stats.add(grid.diagonalUpCount + "(" + (grid.diagonalUpCount * 100 / totalWordsPlaced) + "%)");
+        stats.add(grid.diagonalDownCount + grid.diagonalUpCount + "(" + ((grid.diagonalDownCount + grid.diagonalUpCount) * 100 / totalWordsPlaced) + "%)");
         return stats;
     }
     
