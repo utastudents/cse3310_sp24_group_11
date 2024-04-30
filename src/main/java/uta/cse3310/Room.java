@@ -33,6 +33,10 @@ public class Room {
         this.game.removePlayerFromScores(player);
         broadcastScores();
         System.out.println("Player " + player.getPlayerName() + " removed from room " + this.roomName);
+        if (this.players.isEmpty()) {
+            rooms.remove(this);
+            System.out.println("Room " + this.roomName + " removed as it is now empty");
+        }
     }
 
     public void removeAllPlayers() {
