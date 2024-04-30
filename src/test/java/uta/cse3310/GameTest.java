@@ -9,6 +9,8 @@ public class GameTest extends TestCase{
         g.addPlayer(new Player("player1"));
         g.addPlayer(new Player("player2"));
         g.startGame(null);
+        //tests if colors are correect
+        assertTrue(g.playerList.get(0).type == PlayerType.Blue && g.playerList.get(1).type == PlayerType.Red);
 
         //creates a new word to test the word checker and playertype array
 
